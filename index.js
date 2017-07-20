@@ -13,6 +13,7 @@ module.exports = class FormModule extends Module {
     static defaultConfig() {
         return {
             formsRootPath: "forms",
+            fieldsRootPath: "forms/fields",
             webserverModuleName: "webserver"
         }
     }
@@ -52,6 +53,7 @@ module.exports = class FormModule extends Module {
             this.forms = {};
 
             Tools.ensureFolderExists(this.config.formsRootPath, Application.config.root_path);
+            Tools.ensureFolderExists(this.config.fieldsRootPath, Application.config.root_path);
 
             let formPath = path.join(Application.config.root_path, this.config.formsRootPath);
             let files = fs.readdirSync(formPath);
@@ -59,6 +61,12 @@ module.exports = class FormModule extends Module {
             for (let i = 0; i < files.length; i++) {
                 let file = files[i];
                 let parsed = path.parse(file);
+                let stat = fs.lstatSync(path.join(formPath, file));
+
+                if (stat.isDirectory()) {
+                    continue;
+                }
+
                 this.forms[parsed.name] = require(path.join(formPath, file));
             }
 
