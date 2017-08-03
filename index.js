@@ -70,6 +70,7 @@ module.exports = class FormModule extends Module {
                 try {
                     this.forms[parsed.name] = require(path.join(formPath, file));
                 } catch (e) {
+                    this.log.error("Error while loading form " + file + " from " + path.join(formPath, file));
                     this.log.error(e);
                 }
             }
