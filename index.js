@@ -67,7 +67,11 @@ module.exports = class FormModule extends Module {
                     continue;
                 }
 
-                this.forms[parsed.name] = require(path.join(formPath, file));
+                try {
+                    this.forms[parsed.name] = require(path.join(formPath, file));
+                } catch (e) {
+                    this.log.error(e);
+                }
             }
 
             resolve();
