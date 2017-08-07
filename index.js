@@ -8,12 +8,15 @@ const Promise = require("bluebird");
 const path = require("path");
 const fs = require("fs");
 
+let validatorTypes = {};
+
 module.exports = class FormModule extends Module {
 
     static defaultConfig() {
         return {
             formsRootPath: "forms",
             fieldsRootPath: "forms/fields",
+            validatorsRootPath: "forms/validators",
             webserverModuleName: "webserver"
         }
     }
@@ -22,14 +25,34 @@ module.exports = class FormModule extends Module {
         this.log.debug("Initializing...");
         return this.loadForms().then(() => {
 
-            Application.modules[this.config.webserverModuleName].addRoute("get", "/form-api/:form", (req, res, next) => {
+            Application.modules[this.config.webserverModuleName].addRoute("get", "/form-api/:form/:_id?", (req, res, next) => {
                 let form = this.getForm(req.params.form);
 
                 if (!form) {
                     return res.status(404).end();
                 }
 
-                return form.getSchema().then((schema) => {
+                let loadData = Promise.resolve();
+
+                if (req.params._id) {
+                    loadData = form.loadDataFromId(req.params._id);
+                }
+
+                return loadData.then(() => {
+                    return form.getSchema()
+                }).then((schema) => {
+                    res.json(schema);
+                });
+            }, 9999);
+
+            Application.modules[this.config.webserverModuleName].addRoute("post", "/form-api/:form", (req, res, next) => {
+                let form = this.getForm(req.params.form);
+
+                if (!form) {
+                    return res.status(404).end();
+                }
+
+                return form.submit(req.body.data || {}).then((schema) => {
                     res.json(schema);
                 });
             }, 9999);
@@ -48,12 +71,52 @@ module.exports = class FormModule extends Module {
         return new form();
     }
 
+    /**
+     *
+     * @param config
+     */
+    getValidator(config, field, fieldPath) {
+        let type;
+        let form = field.getForm();
+
+        if (typeof config === "string") {
+            type = config;
+            config = {};
+        } else if (config instanceof Object) {
+            type = config.name;
+        }
+
+        if (validatorTypes[type]) {
+            return new validatorTypes[type](config, field, form);
+        }
+
+
+        Application.modules.form.log.debug("Loading Validator " + type);
+        try {
+            validatorTypes[type] = require(path.join(
+                __dirname,
+                "validators",
+                type + ".js"
+            ));
+        } catch (e) {
+            Application.modules.form.log.debug("Couldn't find Validator " + type + " in built in validators, trying external");
+            validatorTypes[type] = require(path.join(
+                Application.config.root_path,
+                Application.modules.form.config.validatorsRootPath,
+                type + ".js"
+            ));
+        }
+
+        return new validatorTypes[type](config, field, form, fieldPath);
+    }
+
     loadForms() {
         return new Promise((resolve, reject) => {
             this.forms = {};
 
             Tools.ensureFolderExists(this.config.formsRootPath, Application.config.root_path);
             Tools.ensureFolderExists(this.config.fieldsRootPath, Application.config.root_path);
+            Tools.ensureFolderExists(this.config.validatorsRootPath, Application.config.root_path);
 
             let formPath = path.join(Application.config.root_path, this.config.formsRootPath);
             let files = fs.readdirSync(formPath);

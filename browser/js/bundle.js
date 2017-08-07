@@ -61,7 +61,7 @@
 	neatFormModule.directive("neatForm", [function () {
 	    return {
 	        restrict: "E",
-	        template: " \n                {{config}}\n            ",
+	        template: "\n                <neat-form-section config=\"conf\" ng-repeat=\"conf in config\">\n                    <neat-form-field config=\"conf.type\" ng-repeat=\"fieldConf in \"></neat-form-field>\n                </neat-form-section>\n            ",
 	        scope: {
 	            form: "="
 	        },

@@ -1,33 +1,28 @@
 "use strict";
 
-import ng from "angular";
 import neatApi from "neat-api";
 
-const neatFormModule = ng.module("neat-form", [
-    "neat-api"
-]);
+(function (window, ng) {
 
-neatFormModule.directive("neatForm", [
-    function () {
-        return {
-            restrict: "E",
-            template: ` 
-                {{config}}
-            `,
-            scope: {
-                form: "="
-            },
-            controller: "neatFormCtrl"
-        };
-    }
-]);
+    const neatFormModule = ng.module("neat-form", [
+        "neat-api"
+    ]);
 
-neatFormModule.controller("neatFormCtrl", [
-    "$scope",
-    "neatApi",
-    function ($scope, neatApi) {
-        $scope.config = neatApi.form({
-            form: $scope.form
-        });
-    }
-]);
+    neatFormModule.templateRoot = "./templates/";
+
+    require("./form.js")(neatFormModule);
+    require("./section.js")(neatFormModule);
+    require("./field.js")(neatFormModule);
+
+    var fieldContext = require.context("./fields", true, /^.*\.js$/);
+    fieldContext.keys().forEach(function (directivePath) {
+        var parts = directivePath.split("/");
+        parts.shift();
+        var firstPart = parts.shift();
+        var directiveName = "neatFormField" + firstPart;
+        directiveName = directiveName.replace(/\.js$/i, "");
+        directivePath = directivePath.replace(/^\.\//i, "");
+        neatFormModule.directive(directiveName, require("./fields/" + directivePath)(neatFormModule));
+    });
+
+})(window, window.angular);

@@ -1,0 +1,47 @@
+<style>
+    .neat-form-section-body {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .neat-3-col-form {
+        width: 33%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
+    .neat-2-col-form {
+        width: 50%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
+    .neat-1-col-form {
+        width: 100%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+</style>
+<form ng-submit="submit()" class="form form-horizontal panel neat-form" ng-class="{'panel-loading': loading}">
+    <div class="panel-body">
+        <div class="panel-loader" ng-if="loading">
+            <div class="spinner-small"></div>
+        </div>
+        <div class="row" ng-repeat="conf in config">
+            <neat-form-section config="conf" ng-if="conf.fields">
+            </neat-form-section>
+        </div>
+        <div class="row">
+            <div class="panel panel-inverse">
+                <div class="panel-body">
+                    <div class="col-md-10" style="padding-left: 0">
+                        <button type="submit" class="btn btn-primary btn-block col-md-10">{{config.renderOptions.saveButtonLabel || "Save"}}</button>
+                    </div>
+                    <div class="col-md-2" style="padding-right: 0">
+                        <button type="button" ng-click="reset()" class="btn btn-white btn-block col-md-2">{{config.renderOptions.resetButtonLabel || "Reset"}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

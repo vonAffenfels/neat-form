@@ -1,0 +1,11 @@
+<div class="form-group" ng-class="{'has-error': config.errors}">
+    <label class="col-md-2 control-label">{{config.label}}</label>
+    <div class="col-md-10">
+        <div class="radio" ng-repeat="(value, label) in config.options">
+            <label>
+                <input type="radio" name="{{config._id}}" ng-value="value" ng-model="config.value">
+                {{label}}
+            </label>
+        </div>
+    </div>
+</div>
