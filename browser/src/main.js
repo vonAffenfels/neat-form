@@ -14,12 +14,12 @@
     require("./section.js")(neatFormModule);
     require("./field.js")(neatFormModule);
 
-    var fieldContext = require.context("./fields", true, /^.*\.js$/);
+    let fieldContext = require.context("./fields", true, /^.*\.js$/);
     fieldContext.keys().forEach(function (directivePath) {
-        var parts = directivePath.split("/");
+        let parts = directivePath.split("/");
         parts.shift();
-        var firstPart = parts.shift();
-        var directiveName = "neatFormField" + firstPart;
+        let firstPart = parts.shift();
+        let directiveName = "neatFormField" + firstPart;
         directiveName = directiveName.replace(/\.js$/i, "");
         directivePath = directivePath.replace(/^\.\//i, "");
         neatFormModule.directive(directiveName, require("./fields/" + directivePath)(neatFormModule));
