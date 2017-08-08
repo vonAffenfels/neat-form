@@ -1,9 +1,9 @@
 "use strict";
 
-import neatApi from "neat-api";
 
 (function (window, ng) {
 
+    let neatApi = require("neat-api");
     const neatFormModule = ng.module("neat-form", [
         "neat-api"
     ]);
