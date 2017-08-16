@@ -6,5 +6,5 @@ const Tools = require("neat-base").Tools;
 const Promise = require("bluebird");
 const Field = require("../lib/Field.js");
 
-module.exports = class Input extends Field {
+module.exports = class Email extends Field {
 }
