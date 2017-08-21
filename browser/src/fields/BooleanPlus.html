@@ -3,7 +3,7 @@
     <div class="col-md-10">
         <label class="radio-inline">
             <input type="radio" name="{{config._id}}" ng-value="null" ng-model="config.value">
-            {{config.renderOptions.labels.null || "Unknown"}}
+            {{config.renderOptions.labels.null || config.renderOptions.emptySelectLabel || "Unknown"}}
         </label>
         <label class="radio-inline">
             <input type="radio" name="{{config._id}}" ng-value="true" ng-model="config.value">

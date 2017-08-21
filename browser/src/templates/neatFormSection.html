@@ -1,12 +1,16 @@
 <div class="panel panel-inverse">
-    <div class="panel-heading">
+    <div class="panel-heading" ng-if="config.label">
         <h4 class="panel-title">{{config.label}}</h4>
     </div>
     <div class="panel-body neat-form-section-body">
         <div ng-repeat="conf in config.fields" ng-class="{
+            'neat-7-col-form': config.columns === 7,
+            'neat-6-col-form': config.columns === 6,
+            'neat-5-col-form': config.columns === 5,
+            'neat-4-col-form': config.columns === 4,
             'neat-3-col-form': config.columns === 3,
             'neat-2-col-form': config.columns === 2,
-            'neat-1-col-form': config.columns === 1
+            'neat-1-col-form': config.columns === 1 || !config.columns
         }">
             <neat-form-section config="conf" ng-if="conf.fields">
             </neat-form-section>

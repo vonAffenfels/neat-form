@@ -4,6 +4,30 @@
         flex-wrap: wrap;
     }
 
+    .neat-7-col-form {
+        width: 14.28571428571429%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
+    .neat-6-col-form {
+        width: 16.66666667%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
+    .neat-5-col-form {
+        width: 20%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
+    .neat-4-col-form {
+        width: 25%;
+        padding: 0 0 0 15px;
+        flex-flow: column;
+    }
+
     .neat-3-col-form {
         width: 33%;
         padding: 0 0 0 15px;
@@ -27,11 +51,15 @@
         <div class="panel-loader" ng-if="loading">
             <div class="spinner-small"></div>
         </div>
-        <div class="row" ng-repeat="conf in config">
+        <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups">
             <neat-form-section config="conf" ng-if="conf.fields">
             </neat-form-section>
         </div>
-        <div class="row">
+        <div class="row" ng-if="config.fields">
+            <neat-form-section config="config">
+            </neat-form-section>
+        </div>
+        <div class="row" ng-if="!isSubForm">
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="col-md-10" style="padding-left: 0">

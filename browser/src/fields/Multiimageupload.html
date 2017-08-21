@@ -1,0 +1,38 @@
+<div class="images">
+    <div class="images-container row clearfix">
+        <div class="image col-md-6" ng-repeat="item in config.value">
+            <div class="image-container">
+                <button ng-if="item._id" class="remove btn btn-sm btn-danger" type="button" ng-click="imageRemove($index)">
+                    <i class="fa fa-trash"></i>
+                </button>
+
+                <button ng-if="item._id && $index > 0" class="move-left btn btn-sm btn-primary" type="button" ng-click="imageMoveLeft($index)">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+
+                <button ng-if="item._id && $index < config.value.length - 1" class="move-right btn btn-sm btn-primary" type="button" ng-click="imageMoveRight($index)">
+                    <i class="fa fa-arrow-right"></i>
+                </button>
+
+                <a ng-attr-href="{{item.fileurl.orig}}" data-lightbox="config.value" ng-attr-data-title="{{item[lang].caption}}">
+                    <img ng-attr-src="{{item.fileurl.thumbBackend}}" ng-if="item.fileurl.thumbBackend">
+                </a>
+
+                <canvas ng-show="item.uploading" ng-if="!item._id"></canvas>
+                <div ng-show="item.progress" ng-if="!item._id" class="progress" ng-style="{height: item.progress + '%'}"></div>
+            </div>
+            <div class="data-container">
+                <neat-form form="config.renderOptions.subform" id="item._id" is-sub-form="true"></neat-form>
+            </div>
+        </div>
+
+        <div class="image upload col-md-6">
+            <div class="image-container">
+                <div class="fileselect-button">
+                    <input class="fileselect" type="file" nv-file-select="" uploader="uploader"/>
+                    <i class="fa fa-plus-circle fa-4x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -52,7 +52,14 @@ module.exports = class FormModule extends Module {
                     return res.status(404).end();
                 }
 
+                if (req.body._id) {
+                    form.setConnectedId(req.body._id);
+                }
+
                 return form.submit(req.body.data || {}).then((schema) => {
+                    if (schema.hasError) {
+                        res.status(400);
+                    }
                     res.json(schema);
                 });
             }, 9999);

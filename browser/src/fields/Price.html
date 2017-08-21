@@ -1,0 +1,12 @@
+<div class="form-group" ng-class="{'has-error': config.errors}">
+    <label class="col-md-2 control-label">{{config.label}}</label>
+    <div class="col-md-10">
+        <div class="input-group">
+            <input type="text" ng-readonly="config.readonly" number-formatter ng-model="config.value.price" class="form-control">
+            <span class="input-group-btn">
+                <select class="form-control currency-select" ng-readonly="config.readonly" ng-model="config.value.currency" ng-options="option as option for option in config.renderOptions.currencies">
+                </select>
+            </span>
+        </div>
+    </div>
+</div>

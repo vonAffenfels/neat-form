@@ -5,7 +5,7 @@ module.exports = function (neatFormModule) {
         function () {
             return {
                 restrict: "E",
-                template: require("./Booleanplus.html"),
+                template: require("./Textarea.html"),
                 scope: {
                     config: "="
                 },

@@ -1,0 +1,15 @@
+<div class="form-group" ng-class="{'has-error': config.errors}" ng-if="!config.renderOptions.inline">
+    <label class="col-md-2 control-label">{{config.label}}</label>
+    <div class="col-md-10">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="config.value">
+            </label>
+        </div>
+    </div>
+</div>
+
+<label class="checkbox-inline" ng-if="config.renderOptions.inline">
+    <input type="checkbox" ng-model="config.value">
+    {{config.label}}
+</label>

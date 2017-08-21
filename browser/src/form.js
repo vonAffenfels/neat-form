@@ -9,7 +9,8 @@ module.exports = function (neatFormModule) {
                 template: require(neatFormModule.templateRoot + "neatForm.html"),
                 scope: {
                     id: "=",
-                    form: "="
+                    form: "=",
+                    isSubForm: "="
                 },
                 controller: "neatFormCtrl"
             };
@@ -18,15 +19,15 @@ module.exports = function (neatFormModule) {
 
     neatFormModule.controller("neatFormCtrl", [
         "$scope",
+        "$q",
         "neatApi",
-        function ($scope, neatApi) {
+        function ($scope, $q, neatApi) {
             $scope.reset = function () {
                 if ($scope.loading) {
                     return;
                 }
 
                 $scope.loading = true;
-
                 neatApi.form({
                     form: $scope.form,
                     _id: $scope.id
@@ -36,6 +37,12 @@ module.exports = function (neatFormModule) {
                     $scope.error = null;
                 });
             }
+
+            $scope.subforms = [];
+            $scope.$emit("neat-form-register", $scope);
+            $scope.$on("neat-form-register", function (event, subformscope) {
+                $scope.subforms.push(subformscope);
+            });
 
             $scope.reset();
 
@@ -52,6 +59,11 @@ module.exports = function (neatFormModule) {
                         let field = sectionsOrFields.fields[i];
                         $scope.getValues(field, values);
                     }
+                } else if (sectionsOrFields.groups) {
+                    for (let i = 0; i < sectionsOrFields.groups.length; i++) {
+                        let field = sectionsOrFields.groups[i];
+                        $scope.getValues(field, values);
+                    }
                 } else {
                     values[sectionsOrFields.id] = sectionsOrFields.value;
                 }
@@ -61,23 +73,52 @@ module.exports = function (neatFormModule) {
 
             $scope.submit = function () {
                 if ($scope.loading) {
-                    return;
+                    return $scope.submitProm;
                 }
 
-                $scope.loading = true;
+                $scope.submitProm = $q((resolve, reject) => {
+                    let toSave = [];
+                    if ($scope.subforms && $scope.subforms.length) {
+                        for (let i = 0; i < $scope.subforms.length; i++) {
+                            toSave.push($scope.subforms[i]);
+                        }
+                    }
 
-                neatApi.formSubmit({
-                    _id: $scope.id,
-                    data: $scope.getValues($scope.config),
-                    form: $scope.form
-                }, (config) => {
-                    $scope.loading = false;
-                    $scope.config = config;
-                }, (err) => {
-                    $scope.loading = false;
+                    $scope.saveAllSubforms(toSave).then(() => {
+                        neatApi.formSubmit({
+                            _id: $scope.id,
+                            data: $scope.getValues($scope.config),
+                            form: $scope.form
+                        }, (config) => {
+                            $scope.loading = false;
+                            $scope.config = config;
+                            resolve();
+                        }, (err) => {
+                            $scope.config = err.data;
+                            $scope.loading = false;
+                            reject(err);
+                        });
+                    }, (err) => {
+                        $scope.loading = false;
+                        reject(err);
+                    });
+                });
+
+                $scope.loading = true;
+                return $scope.submitProm;
+            }
+
+            $scope.saveAllSubforms = function (subforms) {
+                return $q((resolve, reject) => {
+                    if (!subforms || !subforms.length) {
+                        return resolve();
+                    }
+
+                    return subforms.shift().submit().then(() => {
+                        return $scope.saveAllSubforms(subforms).then(resolve, reject);
+                    }, reject);
                 });
             }
         }
     ]);
-
 }
