@@ -17,12 +17,16 @@ module.exports = class FormModule extends Module {
             formsRootPath: "forms",
             fieldsRootPath: "forms/fields",
             validatorsRootPath: "forms/validators",
-            webserverModuleName: "webserver"
+            webserverModuleName: "webserver",
+            dbModuleName: "database"
         }
     }
 
     init() {
         this.log.debug("Initializing...");
+
+        Application.modules[this.config.dbModuleName].registerModel("neat-form-plain", require("./models/neat-form-plain.js"));
+
         return this.loadForms().then(() => {
 
             Application.modules[this.config.webserverModuleName].addRoute("get", "/form-api/:form/:_id?", (req, res, next) => {

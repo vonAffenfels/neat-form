@@ -1,0 +1,10 @@
+<div class="panel-body">
+    <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups">
+        <neat-form-section config="conf" ng-if="conf.fields">
+        </neat-form-section>
+    </div>
+    <div class="row" ng-if="config.fields">
+        <neat-form-section config="config">
+        </neat-form-section>
+    </div>
+</div>

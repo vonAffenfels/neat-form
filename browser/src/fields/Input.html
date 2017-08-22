@@ -1,7 +1,10 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
     <label class="col-md-2 control-label">{{config.label}}</label>
     <div class="col-md-10">
-        <input type="text" ng-readonly="config.readonly" ng-model="config.value" class="form-control">
+        <div class="input-group" ng-if="config.renderOptions.unit">
+            <input type="text" placeholder="{{config.renderOptions.placeholder}}" ng-readonly="config.readonly" ng-model="config.value" class="form-control">
+            <span class="input-group-addon">{{config.renderOptions.unit}}</span>
+        </div>
+        <input type="text" ng-if="!config.renderOptions.unit" placeholder="{{config.renderOptions.placeholder}}" ng-readonly="config.readonly" ng-model="config.value" class="form-control">
     </div>
 </div>
-

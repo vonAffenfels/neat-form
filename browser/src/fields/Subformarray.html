@@ -1,0 +1,39 @@
+<div class="form-group">
+    <div class="panel panel-inverse">
+        <div class="panel-heading">
+            <h4 class="panel-title">{{config.label}}</h4>
+        </div>
+        <div class="panel-body">
+            <div class="panel" ng-repeat="item in forms" ng-init="collapsed = item.__collapsed === false ? false : true;" style="margin: 0;border-bottom: 1px solid #ccc">
+                <div class="panel-heading" ng-click="collapsed = !collapsed" style=" cursor: pointer; ">
+                    <div class="btn-group pull-right">
+                        <button type="button" ng-click="move($event, $index, $index-1)" ng-if="$index > 0" class="btn btn-primary btn-xs">
+                            <i class="fa fa-caret-up"></i> {{config.renderOptions.moveUpButtonLabel}}
+                        </button>
+                        <button type="button" ng-click="move($event, $index, $index+1)" ng-if="$index < forms.length" class="btn btn-primary btn-xs">
+                            <i class="fa fa-caret-down"></i> {{config.renderOptions.moveDownButtonLabel}}
+                        </button>
+                    </div>
+                    <div class="btn-group pull-right" style="margin-right: 15px;">
+                        <button type="button" class="btn btn-danger btn-xs" ng-if="!collapsed" ng-click="removeItem($event,$index)">
+                            <i class="fa fa-remove"></i> {{config.renderOptions.removeButtonLabel}}
+                        </button>
+                    </div>
+                    <h4 class="panel-title">#{{$index}} {{config.renderOptions.positionLabel}}</h4>
+                </div>
+                <neat-form-field-subform ng-if="!collapsed" config="item" value="config.value[$index]"></neat-form-field-subform>
+            </div>
+
+            <div class="row">
+                <div class="panel panel-inverse">
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <button ng-click="addItem($event)" type="button" class="btn btn-primary btn-block col-md-10"><i class="fa fa-plus"></i>{{config.renderOptions.addButtonLabel || ""}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
