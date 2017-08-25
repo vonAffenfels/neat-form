@@ -7,6 +7,49 @@ module.exports = function (grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
+        sass: {
+            dist: {
+                options: {
+                    lineNumbers: true,
+                    includePaths: [
+                        './browser/sass/',
+                        './node_modules',
+                        './node_modules/font-awesome/scss/'
+                    ],
+                    outputStyle: 'compact',
+                    sourceMap: true,
+                    'default-encoding': 'utf-8'
+                },
+                files: {
+                    './browser/css/default.css': './browser/sass/default.scss'
+                }
+            }
+        },
+
+        cssmin: {
+            clean: {
+                options: {
+                    report: 'min'
+                },
+                files: {
+                    './browser/css/default.css': './browser/css/default.css'
+                }
+            }
+        },
+
+        watch: {
+            sass: {
+                files: ['./browser/sass/**/*.scss'],
+                tasks: ['sass']
+            },
+            options: {
+                livereload: {
+                    host: 'localhost',
+                    port: 35732
+                }
+            }
+        },
+
         uglify: {
             bundle: {
                 options: {
@@ -41,6 +84,11 @@ module.exports = function (grunt) {
                         {
                             test: /\.html$/,
                             loader: 'html-loader'
+                        },
+                        {
+                            test: /\.(eot|svg|ttf|woff|woff2)$/,
+                            exclude: /node_modules/,
+                            loader: 'file-loader'
                         }
                     ]
                 },
@@ -69,14 +117,23 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-keepalive');
     grunt.loadNpmTasks('grunt-webpack');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-sass');
 
     grunt.registerTask('build', [
         'webpack',
-        "uglify"
+        "uglify",
+        'sass',
+        "cssmin"
     ]);
 
     grunt.registerTask('dev', [
         "webpack",
         "keepalive"
+    ]);
+
+    grunt.registerTask('devCss', [
+        "sass",
+        "watch"
     ]);
 };

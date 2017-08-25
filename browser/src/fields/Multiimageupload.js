@@ -9,12 +9,22 @@ module.exports = function (neatFormModule) {
                 scope: {
                     config: "="
                 },
-                controller: [
+                controller: [ 
                     "$scope",
+                    "$location",
                     "FileUploader",
-                    function ($scope, FileUploader) {
+                    function ($scope, $location, FileUploader) {
+
+                        let rootUrl = "//" + $location.host() + ":" + $location.port();
+                        if (window.NEAT_API_ROOT_URL) {
+                            rootUrl = window.NEAT_API_ROOT_URL;
+                        }
+                        if (window.NEAT_API_UPLOAD_ROOT_URL) {
+                            rootUrl = window.NEAT_API_UPLOAD_ROOT_URL;
+                        }
+
                         let uploader = new FileUploader({
-                            url: '/upload'
+                            url: rootUrl + "/upload"
                         });
 
                         $scope.uploader = uploader;

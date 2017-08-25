@@ -1,0 +1,48 @@
+neat-form {
+  .neat-form-section-body {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .neat-7-col-form {
+    width: 14.28571428571429%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-6-col-form {
+    width: 16.66666667%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-5-col-form {
+    width: 20%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-4-col-form {
+    width: 25%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-3-col-form {
+    width: 33%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-2-col-form {
+    width: 50%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+
+  .neat-1-col-form {
+    width: 100%;
+    padding: 0 0 0 15px;
+    flex-flow: column;
+  }
+}

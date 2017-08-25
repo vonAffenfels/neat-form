@@ -1,0 +1,30 @@
+$fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts" !default;
+
+@import "font-awesome";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+neat-form {
+
+  input[type=checkbox], input[type=radio] {
+    display: block;
+    opacity: 1;
+  }
+
+  @import "bootstrap/scaffolding";
+  @import "bootstrap/grid";
+  @import "bootstrap/forms";
+  @import "bootstrap/panels";
+  @import "bootstrap/input-groups";
+  @import "bootstrap/labels";
+  @import "bootstrap/dropdowns";
+  @import "bootstrap/buttons";
+
+  .form-control {
+    background-image: inherit;
+  }
+
+}
+
+@import "sections";
+@import "Multiimageupload";

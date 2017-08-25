@@ -1,10 +1,16 @@
 "use strict";
 
+import ngMap from 'ngmap'
+import ngDatePicker from 'angular-date-picker'
+import angularFileUpload from 'angular-file-upload'
 
 (function (window, ng) {
 
     let neatApi = require("neat-api");
     const neatFormModule = ng.module("neat-form", [
+        "ngMap",
+        "mp.datePicker",
+        "angularFileUpload",
         "neat-api"
     ]);
 
