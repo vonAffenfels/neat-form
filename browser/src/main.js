@@ -20,6 +20,19 @@ import angularFileUpload from 'angular-file-upload'
     require("./section.js")(neatFormModule);
     require("./field.js")(neatFormModule);
 
+    neatFormModule.filter("optionSort", function () {
+        return function (obj) {
+            let result = [];
+            ng.forEach(obj, function (label, value) {
+                result.push({
+                    value,
+                    label
+                });
+            });
+            return result;
+        };
+    });
+
     let fieldContext = require.context("./fields", true, /^.*\.js$/);
     fieldContext.keys().forEach(function (directivePath) {
         let parts = directivePath.split("/");
