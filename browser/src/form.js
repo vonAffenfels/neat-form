@@ -20,8 +20,9 @@ module.exports = function (neatFormModule) {
     neatFormModule.controller("neatFormCtrl", [
         "$scope",
         "$q",
+        "$sce",
         "neatApi",
-        function ($scope, $q, neatApi) {
+        function ($scope, $q, $sce, neatApi) {
             $scope.reset = function () {
                 if ($scope.loading) {
                     return;
@@ -42,6 +43,11 @@ module.exports = function (neatFormModule) {
             $scope.$emit("neat-form-register", $scope);
             $scope.$on("neat-form-register", function (event, subformscope) {
                 $scope.subforms.push(subformscope);
+            });
+            $scope.fields = {};
+            $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+                fieldscope.setFormScope($scope);
+                $scope.fields[id] = fieldscope;
             });
 
             $scope.reset();
@@ -92,6 +98,20 @@ module.exports = function (neatFormModule) {
                         }, (config) => {
                             $scope.loading = false;
                             $scope.config = config;
+
+                            // set id after create in case we want to just keep the form open (html decides)
+                            if ($scope.config.connectedId) {
+                                $scope.id = $scope.config.connectedId;
+                            }
+
+                            if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
+                                $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
+                            }
+
+                            if ($scope.config.submitted && !$scope.config.hasError && $scope.config.renderOptions.successMessage && $scope.config.renderOptions.successMessage) {
+                                $scope.showSuccess = true;
+                            }
+
                             resolve();
                         }, (err) => {
                             $scope.config = err.data;

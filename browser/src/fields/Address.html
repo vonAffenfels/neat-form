@@ -1,3 +1,11 @@
+<div class="form-group" ng-if="googlePlaces.ready">
+    <label class="col-md-2 control-label">{{config.label.google || 'Search Address'}}</label>
+    <div class="col-md-10">
+        <input type="text" g-places-autocomplete ng-model="googlePlaces.value" class="form-control" options="googlePlaces.options" forceSelection="true"
+               placeholder="{{(config.label.google || 'Search Address') + '...'}}">
+    </div>
+</div>
+
 <neat-form-field config="countryConfig">
 </neat-form-field>
 <div class="form-group" ng-class="{
@@ -13,13 +21,23 @@
         </div>
     </div>
 </div>
+
+<div class="form-group" ng-class="{
+    'has-error': config.errors.district
+}">
+    <label class="col-md-2 control-label">{{config.label.district}}</label>
+    <div class="col-md-10">
+        <input type="text" ng-readonly="config.readonly" ng-model="config.value.district" class="form-control">
+    </div>
+</div>
+
 <div class="form-group" ng-class="{
     'has-error': config.errors.street || config.errors.streetnumber
 }">
     <label class="col-md-2 control-label">{{config.label.street}} / {{config.label.streetnumber}}</label>
     <div class="col-md-10">
         <div class="col-md-10" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.street" class="form-control ">
+            <input type="text" ng-readonly="config.readonly" ng-model="config.value.street" class="form-control">
         </div>
         <div class="col-md-2" style="padding-right: 0;">
             <input type="text" ng-readonly="config.readonly" ng-model="config.value.streetnumber" class="form-control">

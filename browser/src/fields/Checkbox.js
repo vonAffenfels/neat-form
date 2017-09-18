@@ -11,8 +11,11 @@ module.exports = function (neatFormModule) {
                 },
                 controller: [
                     "$scope",
-                    function ($scope) {
-
+                    "$sce",
+                    function ($scope, $sce) {
+                        if (typeof $scope.config.label === "string") {
+                            $scope.config.label = $sce.trustAsHtml($scope.config.label);
+                        }
                     }
                 ]
             };

@@ -11,6 +11,10 @@ module.exports = function (config, field, form) {
             val = val.trim();
         }
 
+        if (typeof val === "boolean") {
+            return true; // if this is boolean its a valid value!
+        }
+
         return !!val;
     }
 };

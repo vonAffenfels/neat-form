@@ -14,14 +14,59 @@
     </div>
 </div>
 
+<div class="form-group" ng-if="config.renderOptions.bindToAddress">
+    <label class="col-md-2 control-label"></label>
+    <div class="col-md-10">
+        <button ng-click="getCoordinatesFromAddressField()" type="button" class="btn btn-primary"><i class="fa fa-globe"></i>&nbsp;{{config.label.syncWithAddressButton || "Sync with address"}}
+        </button>
+    </div>
+</div>
+
 <div class="form-group" ng-class="{'has-error': config.errors.lat || config.errors.lon}">
     <label class="col-md-2 control-label">{{config.label.lat}} / {{config.label.lon}}</label>
     <div class="col-md-10">
         <div class="col-md-6" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.lat" class="form-control ">
+            <input type="text" ng-readonly="config.readonly" ng-change="onValueChanged()" ng-model="config.value.lat" class="form-control ">
         </div>
         <div class="col-md-6" style="padding-right: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.lon" class="form-control">
+            <input type="text" ng-readonly="config.readonly" ng-change="onValueChanged()" ng-model="config.value.lon" class="form-control">
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group" ng-if="config.renderOptions.showDegreeFields">
+    <label class="col-md-2 control-label">{{config.label.lat}}</label>
+    <div class="col-md-10">
+        <div class="input-group">
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lat.deg">
+            <span class="input-group-addon">°</span>
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lat.min">
+            <span class="input-group-addon">'</span>
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lat.sec">
+            <span class="input-group-addon">"</span>
+            <select ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lat.pos">
+                <option value="{{config.renderOptions.values.north || 'N'}}">{{config.label.north || "N"}}</option>
+                <option value="{{config.renderOptions.values.south || 'S'}}">{{config.label.south || "S"}}</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form-group" ng-if="config.renderOptions.showDegreeFields">
+    <label class="col-md-2 control-label">{{config.label.lon}}</label>
+    <div class="col-md-10">
+        <div class="input-group">
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lon.deg">
+            <span class="input-group-addon">°</span>
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lon.min">
+            <span class="input-group-addon">'</span>
+            <input type="text" ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lon.sec">
+            <span class="input-group-addon">"</span>
+            <select ng-readonly="config.readonly" ng-change="onDegValueChanged()" class="form-control" ng-model="degValue.lon.pos">
+                <option value="{{config.renderOptions.values.west || 'W'}}">{{config.label.west || "W"}}</option>
+                <option value="{{config.renderOptions.values.east || 'E'}}">{{config.label.east || "E"}}</option>
+            </select>
         </div>
     </div>
 </div>

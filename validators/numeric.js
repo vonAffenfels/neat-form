@@ -7,6 +7,10 @@ const Promise = require("bluebird");
 
 module.exports = function (config, field, form) {
     return function (val) {
+        if (!val) {
+            return true;
+        }
+
         val = String(val);
 
         return /^-?[\d.]+(?:e-?\d+)?$/.test(val);

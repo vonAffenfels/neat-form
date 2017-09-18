@@ -3,6 +3,8 @@
 import ngMap from 'ngmap'
 import ngDatePicker from 'angular-date-picker'
 import angularFileUpload from 'angular-file-upload'
+import googlePlaces from 'angular-google-places-autocomplete'
+import angularLoad from 'angular-load'
 
 (function (window, ng) {
 
@@ -10,7 +12,9 @@ import angularFileUpload from 'angular-file-upload'
     const neatFormModule = ng.module("neat-form", [
         "ngMap",
         "mp.datePicker",
+        "google.places",
         "angularFileUpload",
+        "angularLoad",
         "neat-api"
     ]);
 

@@ -80,8 +80,13 @@ module.exports = function (neatFormModule) {
                         }
                     }
 
+                    $scope.setFormScope = function (formScope) {
+                        $scope.neatFormScope = formScope;
+                    }
+
                     try {
-                        $compile('<neat-form-field-' + $scope.config.type + ' config="config" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
+                        $compile('<neat-form-field-' + $scope.config.type + ' config="config" form="neatFormScope" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
+                            $scope.$emit("neat-form-field-register", $scope.config.id, $scope);
                             element.append(el);
                         });
                     } catch (e) {

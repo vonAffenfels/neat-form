@@ -3,15 +3,17 @@
         <div class="panel-loader" ng-if="loading">
             <div class="spinner-small"></div>
         </div>
-        <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups">
+        <div class="row" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
+        </div>
+        <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess">
             <neat-form-section config="conf" ng-if="conf.fields">
             </neat-form-section>
         </div>
-        <div class="row" ng-if="config.fields">
+        <div class="row" ng-if="config.fields && !showSuccess">
             <neat-form-section config="config">
             </neat-form-section>
         </div>
-        <div class="row" ng-if="!isSubForm">
+        <div class="row" ng-if="!isSubForm && !showSuccess">
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="col-md-10" style="padding-left: 0">

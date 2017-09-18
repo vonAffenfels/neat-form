@@ -58,18 +58,26 @@
 
 	var _angularFileUpload2 = _interopRequireDefault(_angularFileUpload);
 
+	var _angularGooglePlacesAutocomplete = __webpack_require__(6);
+
+	var _angularGooglePlacesAutocomplete2 = _interopRequireDefault(_angularGooglePlacesAutocomplete);
+
+	var _angularLoad = __webpack_require__(8);
+
+	var _angularLoad2 = _interopRequireDefault(_angularLoad);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	(function (window, ng) {
 
-	    var neatApi = __webpack_require__(6);
-	    var neatFormModule = ng.module("neat-form", ["ngMap", "mp.datePicker", "angularFileUpload", "neat-api"]);
+	    var neatApi = __webpack_require__(9);
+	    var neatFormModule = ng.module("neat-form", ["ngMap", "mp.datePicker", "google.places", "angularFileUpload", "angularLoad", "neat-api"]);
 
 	    neatFormModule.templateRoot = "./templates/";
 
-	    __webpack_require__(7)(neatFormModule);
 	    __webpack_require__(10)(neatFormModule);
 	    __webpack_require__(13)(neatFormModule);
+	    __webpack_require__(16)(neatFormModule);
 
 	    neatFormModule.filter("optionSort", function () {
 	        return function (obj) {
@@ -84,7 +92,7 @@
 	        };
 	    });
 
-	    var fieldContext = __webpack_require__(14);
+	    var fieldContext = __webpack_require__(17);
 	    fieldContext.keys().forEach(function (directivePath) {
 	        var parts = directivePath.split("/");
 	        parts.shift();
@@ -92,7 +100,7 @@
 	        var directiveName = "neatFormField" + firstPart;
 	        directiveName = directiveName.replace(/\.js$/i, "");
 	        directivePath = directivePath.replace(/^\.\//i, "");
-	        neatFormModule.directive(directiveName, __webpack_require__(53)("./" + directivePath)(neatFormModule));
+	        neatFormModule.directive(directiveName, __webpack_require__(56)("./" + directivePath)(neatFormModule));
 	    });
 	})(window, window.angular);
 
@@ -39662,6 +39670,210 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(7);
+	module.exports = 'google.places';
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";angular.module("google.places",[]).factory("googlePlacesApi",["$window",function(a){if(!a.google)throw"Global `google` var missing. Did you forget to include the places API script?";return a.google}]).directive("gPlacesAutocomplete",["$parse","$compile","$timeout","$document","googlePlacesApi",function(a,b,c,d,e){return{restrict:"A",require:"^ngModel",scope:{model:"=ngModel",options:"=?",forceSelection:"=?",customPlaces:"=?"},controller:["$scope",function(a){}],link:function(a,f,g,h){function i(){f.bind("keydown",l),f.bind("blur",m),f.bind("submit",m),a.$watch("selected",n)}function j(){var c,e=angular.element("<div g-places-autocomplete-drawer></div>"),f=angular.element(d[0].body);e.attr({input:"input",query:"query",predictions:"predictions",active:"active",selected:"selected"}),c=b(e)(a),f.append(c),a.$on("$destroy",function(){c.remove()})}function k(){h.$parsers.push(o),h.$formatters.push(p),h.$render=q}function l(b){0!==a.predictions.length&&-1!==w(A,b.which)&&(b.preventDefault(),b.which===z.down?(a.active=(a.active+1)%a.predictions.length,a.$digest()):b.which===z.up?(a.active=(a.active?a.active:a.predictions.length)-1,a.$digest()):13===b.which||9===b.which?(a.forceSelection&&(a.active=-1===a.active?0:a.active),a.$apply(function(){a.selected=a.active,-1===a.selected&&r()})):27===b.which&&a.$apply(function(){b.stopPropagation(),r()}))}function m(b){0!==a.predictions.length&&(a.forceSelection&&(a.selected=-1===a.selected?0:a.selected),a.$digest(),a.$apply(function(){-1===a.selected&&r()}))}function n(){var b;b=a.predictions[a.selected],b&&(b.is_custom?a.$apply(function(){a.model=b.place,a.$emit("g-places-autocomplete:select",b.place),c(function(){h.$viewChangeListeners.forEach(function(a){a()})})}):C.getDetails({placeId:b.place_id},function(b,d){d==e.maps.places.PlacesServiceStatus.OK&&a.$apply(function(){a.model=b,a.$emit("g-places-autocomplete:select",b),c(function(){h.$viewChangeListeners.forEach(function(a){a()})})})}),r())}function o(b){var c;return b&&u(b)?(a.query=b,c=angular.extend({input:b},a.options),B.getPlacePredictions(c,function(b,c){a.$apply(function(){var d;r(),a.customPlaces&&(d=s(a.query),a.predictions.push.apply(a.predictions,d)),c==e.maps.places.PlacesServiceStatus.OK&&a.predictions.push.apply(a.predictions,b),a.predictions.length>5&&(a.predictions.length=5)})}),a.forceSelection?h.$modelValue:b):b}function p(a){var b="";return u(a)?b=a:v(a)&&(b=a.formatted_address),b}function q(){return f.val(h.$viewValue)}function r(){a.active=-1,a.selected=-1,a.predictions=[]}function s(b){var c,d,e,f=[];for(e=0;e<a.customPlaces.length;e++)c=a.customPlaces[e],d=t(b,c),d.matched_substrings.length>0&&f.push({is_custom:!0,custom_prediction_label:c.custom_prediction_label||"(Custom Non-Google Result)",description:c.formatted_address,place:c,matched_substrings:d.matched_substrings,terms:d.terms});return f}function t(a,b){var c,d,e,f=a+"",g=[],h=[];for(d=b.formatted_address.split(","),e=0;e<d.length;e++)c=d[e].trim(),f.length>0&&(c.length>=f.length?(x(c,f)&&h.push({length:f.length,offset:e}),f=""):x(f,c)?(h.push({length:c.length,offset:e}),f=f.replace(c,"").trim()):f=""),g.push({value:c,offset:b.formatted_address.indexOf(c)});return{matched_substrings:h,terms:g}}function u(a){return"[object String]"==Object.prototype.toString.call(a)}function v(a){return"[object Object]"==Object.prototype.toString.call(a)}function w(a,b){var c,d;if(null==a)return-1;for(d=a.length,c=0;d>c;c++)if(a[c]===b)return c;return-1}function x(a,b){return 0===y(a).lastIndexOf(y(b),0)}function y(a){return null==a?"":a.toLowerCase()}var z={tab:9,enter:13,esc:27,up:38,down:40},A=[z.tab,z.enter,z.esc,z.up,z.down],B=new e.maps.places.AutocompleteService,C=new e.maps.places.PlacesService(f[0]);!function(){a.query="",a.predictions=[],a.input=f,a.options=a.options||{},j(),i(),k()}()}}}]).directive("gPlacesAutocompleteDrawer",["$window","$document",function(a,b){var c=['<div class="pac-container" ng-if="isOpen()" ng-style="{top: position.top+\'px\', left: position.left+\'px\', width: position.width+\'px\'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">','  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"','       ng-repeat="prediction in predictions track by $index" ng-class="{\'pac-item-selected\': isActive($index) }"','       ng-mouseenter="selectActive($index)" ng-click="selectPrediction($index)" role="option" id="{{prediction.id}}">',"  </div>","</div>"];return{restrict:"A",scope:{input:"=",query:"=",predictions:"=",active:"=",selected:"="},template:c.join(""),link:function(c,d){function e(c){var d=c[0],e=d.getBoundingClientRect(),f=b[0].documentElement,g=b[0].body,h=a.pageYOffset||f.scrollTop||g.scrollTop,i=a.pageXOffset||f.scrollLeft||g.scrollLeft;return{width:e.width,height:e.height,top:e.top+e.height+h,left:e.left+i}}d.bind("mousedown",function(a){a.preventDefault()}),a.onresize=function(){c.$apply(function(){c.position=e(c.input)})},c.isOpen=function(){return c.predictions.length>0},c.isActive=function(a){return c.active===a},c.selectActive=function(a){c.active=a},c.selectPrediction=function(a){c.selected=a},c.$watch("predictions",function(){c.position=e(c.input)},!0)}}}]).directive("gPlacesAutocompletePrediction",[function(){var a=['<span class="pac-icon pac-icon-marker"></span>','<span class="pac-item-query" ng-bind-html="prediction | highlightMatched"></span>','<span ng-repeat="term in prediction.terms | unmatchedTermsOnly:prediction">{{term.value | trailingComma:!$last}}&nbsp;</span>','<span class="custom-prediction-label" ng-if="prediction.is_custom">&nbsp;{{prediction.custom_prediction_label}}</span>'];return{restrict:"A",scope:{index:"=",prediction:"=",query:"="},template:a.join("")}}]).filter("highlightMatched",["$sce",function(a){return function(b){var c,d="",e="";return b.matched_substrings.length>0&&b.terms.length>0&&(c=b.matched_substrings[0],d=b.terms[0].value.substr(c.offset,c.length),e=b.terms[0].value.substr(c.offset+c.length)),a.trustAsHtml('<span class="pac-matched">'+d+"</span>"+e)}}]).filter("unmatchedTermsOnly",[function(){return function(a,b){var c,d,e=[];for(c=0;c<a.length;c++)d=a[c],b.matched_substrings.length>0&&d.offset>b.matched_substrings[0].length&&e.push(d);return e}}]).filter("trailingComma",[function(){return function(a,b){return b?a+",":a}}]);
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory();
+		else if(typeof define === 'function' && define.amd)
+			define([], factory);
+		else if(typeof exports === 'object')
+			exports["angularLoad"] = factory();
+		else
+			root["angularLoad"] = factory();
+	})(this, function() {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+	/******/
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+	/******/
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId]) {
+	/******/ 			return installedModules[moduleId].exports;
+	/******/ 		}
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			i: moduleId,
+	/******/ 			l: false,
+	/******/ 			exports: {}
+	/******/ 		};
+	/******/
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+	/******/
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.l = true;
+	/******/
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+	/******/
+	/******/
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+	/******/
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+	/******/
+	/******/ 	// identity function for calling harmony imports with the correct context
+	/******/ 	__webpack_require__.i = function(value) { return value; };
+	/******/
+	/******/ 	// define getter function for harmony exports
+	/******/ 	__webpack_require__.d = function(exports, name, getter) {
+	/******/ 		if(!__webpack_require__.o(exports, name)) {
+	/******/ 			Object.defineProperty(exports, name, {
+	/******/ 				configurable: false,
+	/******/ 				enumerable: true,
+	/******/ 				get: getter
+	/******/ 			});
+	/******/ 		}
+	/******/ 	};
+	/******/
+	/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+	/******/ 	__webpack_require__.n = function(module) {
+	/******/ 		var getter = module && module.__esModule ?
+	/******/ 			function getDefault() { return module['default']; } :
+	/******/ 			function getModuleExports() { return module; };
+	/******/ 		__webpack_require__.d(getter, 'a', getter);
+	/******/ 		return getter;
+	/******/ 	};
+	/******/
+	/******/ 	// Object.prototype.hasOwnProperty.call
+	/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+	/******/
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+	/******/
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+
+	/* angular-load.js / v0.4.2 / (c) 2014, 2015, 2016 Uri Shaked / MIT Licence */
+
+	angular.module('angularLoad', []).service('angularLoad', ['$document', '$q', '$timeout', function ($document, $q, $timeout) {
+		var document = $document[0];
+		var promises = {};
+
+		function loader(createElement) {
+			return function (url) {
+				if (typeof promises[url] === 'undefined') {
+					var deferred = $q.defer();
+					var element = createElement(url);
+
+					element.onload = element.onreadystatechange = function (e) {
+						if (element.readyState && element.readyState !== 'complete' && element.readyState !== 'loaded') {
+							return;
+						}
+
+						$timeout(function () {
+							deferred.resolve(e);
+						});
+					};
+					element.onerror = function (e) {
+						$timeout(function () {
+							deferred.reject(e);
+						});
+					};
+
+					promises[url] = deferred.promise;
+				}
+
+				return promises[url];
+			};
+		}
+
+		/**
+	  * Dynamically loads the given script
+	  * @param src The url of the script to load dynamically
+	  * @returns {*} Promise that will be resolved once the script has been loaded.
+	  */
+		this.loadScript = loader(function (src) {
+			var script = document.createElement('script');
+
+			script.src = src;
+
+			document.body.appendChild(script);
+			return script;
+		});
+
+		/**
+	  * Dynamically loads the given CSS file
+	  * @param href The url of the CSS to load dynamically
+	  * @returns {*} Promise that will be resolved once the CSS file has been loaded.
+	  */
+		this.loadCSS = loader(function (href) {
+			var style = document.createElement('link');
+
+			style.rel = 'stylesheet';
+			style.type = 'text/css';
+			style.href = href;
+
+			document.head.appendChild(style);
+			return style;
+		});
+
+		/**
+	  * Dynamically unloads the given CSS file
+	  * @param href The url of the CSS to unload dynamically
+	  * @returns boolean that will be true once the CSS file has been unloaded successfully or otherwise false.
+	  */
+		this.unloadCSS = function (href) {
+			delete promises[href];
+			var docHead = document.head;
+			if (docHead) {
+				var targetCss = docHead.querySelector('[href="' + href + '"]');
+				if (targetCss) {
+					targetCss.remove();
+					return true;
+				}
+			}
+			return false;
+		};
+	}]);
+
+	/***/ }),
+	/* 1 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	__webpack_require__(0);
+
+	exports.default = 'angularLoad';
+
+	/***/ })
+	/******/ ]);
+	});
+
+/***/ },
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39800,7 +40012,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -39810,7 +40022,7 @@
 	    neatFormModule.directive("neatForm", [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(8)(neatFormModule.templateRoot + "neatForm.html"),
+	            template: __webpack_require__(11)(neatFormModule.templateRoot + "neatForm.html"),
 	            scope: {
 	                id: "=",
 	                form: "=",
@@ -39820,7 +40032,7 @@
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormCtrl", ["$scope", "$q", "neatApi", function ($scope, $q, neatApi) {
+	    neatFormModule.controller("neatFormCtrl", ["$scope", "$q", "$sce", "neatApi", function ($scope, $q, $sce, neatApi) {
 	        $scope.reset = function () {
 	            if ($scope.loading) {
 	                return;
@@ -39841,6 +40053,11 @@
 	        $scope.$emit("neat-form-register", $scope);
 	        $scope.$on("neat-form-register", function (event, subformscope) {
 	            $scope.subforms.push(subformscope);
+	        });
+	        $scope.fields = {};
+	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+	            fieldscope.setFormScope($scope);
+	            $scope.fields[id] = fieldscope;
 	        });
 
 	        $scope.reset();
@@ -39891,6 +40108,20 @@
 	                    }, function (config) {
 	                        $scope.loading = false;
 	                        $scope.config = config;
+
+	                        // set id after create in case we want to just keep the form open (html decides)
+	                        if ($scope.config.connectedId) {
+	                            $scope.id = $scope.config.connectedId;
+	                        }
+
+	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
+	                            $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
+	                        }
+
+	                        if ($scope.config.submitted && !$scope.config.hasError && $scope.config.renderOptions.successMessage && $scope.config.renderOptions.successMessage) {
+	                            $scope.showSuccess = true;
+	                        }
+
 	                        resolve();
 	                    }, function (err) {
 	                        $scope.config = err.data;
@@ -39922,60 +40153,11 @@
 	};
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./templates/neatForm.html": 9
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 8;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false\">{{config.renderOptions.labels.save || \"Save\"}}</button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-
-	    neatFormModule.directive("neatFormSection", [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(11)(neatFormModule.templateRoot + "neatFormSection.html"),
-	            scope: {
-	                config: "="
-	            },
-	            controller: "neatFormSectionCtrl"
-	        };
-	    }]);
-
-	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {}]);
-	};
-
-/***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./templates/neatFormSection.html": 12
+		"./templates/neatForm.html": 12
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -39995,10 +40177,59 @@
 /* 12 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"panel panel-inverse\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <!--\r\n        <div class=\"btn-group pull-right\">\r\n            <button type=\"submit\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-plus\"></i>\r\n            </button>\r\n        </div>\r\n        -->\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\">\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields && !showSuccess\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm && !showSuccess\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false\">{{config.renderOptions.labels.save || \"Save\"}}</button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
 
 /***/ },
 /* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+
+	    neatFormModule.directive("neatFormSection", [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(14)(neatFormModule.templateRoot + "neatFormSection.html"),
+	            scope: {
+	                config: "="
+	            },
+	            controller: "neatFormSectionCtrl"
+	        };
+	    }]);
+
+	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {}]);
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./templates/neatFormSection.html": 15
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 14;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"panel panel-inverse\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <!--\r\n        <div class=\"btn-group pull-right\">\r\n            <button type=\"submit\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-plus\"></i>\r\n            </button>\r\n        </div>\r\n        -->\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\">\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
+
+/***/ },
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -40083,8 +40314,13 @@
 	                    }
 	                };
 
+	                $scope.setFormScope = function (formScope) {
+	                    $scope.neatFormScope = formScope;
+	                };
+
 	                try {
-	                    $compile('<neat-form-field-' + $scope.config.type + ' config="config" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
+	                    $compile('<neat-form-field-' + $scope.config.type + ' config="config" form="neatFormScope" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
+	                        $scope.$emit("neat-form-field-register", $scope.config.id, $scope);
 	                        element.append(el);
 	                    });
 	                } catch (e) {
@@ -40097,29 +40333,29 @@
 	};
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./Address.js": 15,
-		"./Booleanplus.js": 17,
-		"./Checkbox.js": 19,
-		"./Doubleselect.js": 21,
-		"./Email.js": 23,
-		"./Gps.js": 25,
-		"./Headline.js": 27,
-		"./Input.js": 29,
-		"./Multifieldselect.js": 31,
-		"./Multiimageupload.js": 33,
-		"./Multiselect.js": 35,
-		"./Password.js": 37,
-		"./Price.js": 39,
-		"./Priceperunit.js": 41,
-		"./Radio.js": 43,
-		"./Select.js": 45,
-		"./Subform.js": 47,
-		"./Subformarray.js": 49,
-		"./Textarea.js": 51
+		"./Address.js": 18,
+		"./Booleanplus.js": 20,
+		"./Checkbox.js": 22,
+		"./Doubleselect.js": 24,
+		"./Email.js": 26,
+		"./Gps.js": 28,
+		"./Headline.js": 30,
+		"./Input.js": 32,
+		"./Multifieldselect.js": 34,
+		"./Multiimageupload.js": 36,
+		"./Multiselect.js": 38,
+		"./Password.js": 40,
+		"./Price.js": 42,
+		"./Priceperunit.js": 44,
+		"./Radio.js": 46,
+		"./Select.js": 48,
+		"./Subform.js": 50,
+		"./Subformarray.js": 52,
+		"./Textarea.js": 54
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -40132,24 +40368,27 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 14;
+	webpackContext.id = 17;
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var googleLoaded = false;
 	module.exports = function (neatFormModule) {
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(16),
+	            template: __webpack_require__(19),
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", function ($scope) {
+	            controller: ["$scope", "angularLoad", function ($scope, angularLoad) {
 
 	                var errors = $scope.config.errors || {};
 
@@ -40170,19 +40409,82 @@
 
 	                    $scope.config.value.country = val;
 	                });
+
+	                $scope.googlePlaces = {
+	                    ready: false,
+	                    options: {
+	                        /*
+	                        types: $scope.types,
+	                        componentRestrictions: {
+	                          country: $scope.restrict
+	                        }
+	                        */
+	                    },
+	                    value: ""
+	                };
+
+	                $scope.$watch("googlePlaces.value", function () {
+	                    if (_typeof($scope.googlePlaces.value) !== "object" || !$scope.googlePlaces.value.address_components) {
+	                        return;
+	                    }
+
+	                    var googleResult = {};
+	                    $scope.googlePlaces.value.address_components.map(function (v) {
+	                        for (var i = 0; i < v.types.length; i++) {
+	                            var type = v.types[i];
+	                            var val = v.long_name;
+	                            if (type === "country") {
+	                                val = v.short_name;
+	                            }
+	                            googleResult[type] = val;
+	                        }
+	                    });
+
+	                    if (googleResult.country) {
+	                        $scope.countryConfig.value = googleResult.country;
+	                    }
+
+	                    if (googleResult.locality) {
+	                        $scope.config.value.city = googleResult.locality;
+	                    }
+
+	                    if (googleResult.street_number) {
+	                        $scope.config.value.streetnumber = googleResult.street_number;
+	                    }
+
+	                    if (googleResult.route) {
+	                        $scope.config.value.street = googleResult.route;
+	                    }
+
+	                    if (googleResult.postal_code) {
+	                        $scope.config.value.zip = googleResult.postal_code;
+	                    }
+	                });
+
+	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey || googleLoaded) {
+	                    if (!googleLoaded) {
+	                        googleLoaded = true;
+	                        var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
+	                        angularLoad.loadScript(googleScriptSource).then(function () {
+	                            $scope.googlePlaces.ready = true;
+	                        });
+	                    } else {
+	                        $scope.googlePlaces.ready = true;
+	                    }
+	                }
 	            }]
 	        };
 	    }];
 	};
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
-	module.exports = "<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"googlePlaces.ready\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.google || 'Search Address'}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" g-places-autocomplete ng-model=\"googlePlaces.value\" class=\"form-control\" options=\"googlePlaces.options\" forceSelection=\"true\"\r\n               placeholder=\"{{(config.label.google || 'Search Address') + '...'}}\">\r\n    </div>\r\n</div>\r\n\r\n<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.district\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.district}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.district\" class=\"form-control\">\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40191,7 +40493,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(18),
+	            template: __webpack_require__(21),
 	            scope: {
 	                config: "="
 	            },
@@ -40201,13 +40503,13 @@
 	};
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"null\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.null || config.renderOptions.emptySelectLabel || \"Unknown\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"true\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.true || \"Yes\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"false\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.false || \"No\"}}\r\n        </label>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40216,23 +40518,27 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(20),
+	            template: __webpack_require__(23),
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", function ($scope) {}]
+	            controller: ["$scope", "$sce", function ($scope, $sce) {
+	                if (typeof $scope.config.label === "string") {
+	                    $scope.config.label = $sce.trustAsHtml($scope.config.label);
+	                }
+	            }]
 	        };
 	    }];
 	};
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    {{config.label}}\r\n</label>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline && !config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\" ng-bind-html=\"config.label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    <span ng-bind-html=\"config.label\"></span>\r\n</label>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </label>\r\n    <div class=\"col-md-10\" ng-bind-html=\"config.label\">\r\n    </div>\r\n</div>\r\n";
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40241,7 +40547,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(22),
+	            template: __webpack_require__(25),
 	            scope: {
 	                config: "="
 	            },
@@ -40251,13 +40557,13 @@
 	};
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div ng-class=\"'col-md-' + (config.renderOptions.value1Width || (config.renderOptions.seperatorLabel ? 4 : 5))\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value1\" ng-options=\"key as label for (key, label) in config.options.value1\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n    <label class=\"col-md-2 control-label\" ng-class=\"'col-md-' + (config.renderOptions.seperatorLabelWidth || 2)\" ng-if=\"config.renderOptions.seperatorLabel\">{{config.renderOptions.seperatorLabel}}\r\n    </label>\r\n    <div ng-class=\"'col-md-' + (config.renderOptions.value2Width || (config.renderOptions.seperatorLabel ? 4 : 5))\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value2\" ng-options=\"key as label for (key, label) in config.options.value2\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40266,7 +40572,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(24),
+	            template: __webpack_require__(27),
 	            scope: {
 	                config: "="
 	            },
@@ -40276,13 +40582,13 @@
 	};
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"email\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40291,12 +40597,14 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(26),
+	            template: __webpack_require__(29),
 	            scope: {
-	                config: "="
+	                config: "=",
+	                form: "="
 	            },
-	            controller: ["$scope", "$timeout", "NgMap", function ($scope, $timeout, NgMap) {
+	            controller: ["$scope", "$timeout", "NgMap", "GeoCoder", function ($scope, $timeout, NgMap, GeoCoder) {
 	                $scope.defaultPos = [50.9953258, 11.4175722];
+	                $scope.degValue = {};
 
 	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.defaultPosition) {
 	                    $scope.defaultPos = $scope.config.renderOptions.defaultPosition;
@@ -40324,29 +40632,152 @@
 
 	                $scope.syncMapCoords = function (value) {
 	                    $scope.config.value = value;
+	                    $scope.onValueChanged();
 	                };
 
-	                $scope.$watchGroup(["config.value.lat", "config.value.lon"], function () {
+	                $scope.onValueChanged = function () {
 	                    $scope.markerConfig.pos = $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos;
 	                    $scope.mapConfig.center = $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos;
 
 	                    if ($scope.map) {
 	                        $scope.map.setCenter($scope.mapConfig.center);
 	                    }
-	                });
+
+	                    $scope.degValue = $scope.dezToDeg($scope.config.value.lat, $scope.config.value.lon);
+	                };
+
+	                $scope.onDegValueChanged = function () {
+	                    $scope.config.value = $scope.degToDez($scope.degValue.lat, $scope.degValue.lon);
+
+	                    $scope.markerConfig.pos = $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos;
+	                    $scope.mapConfig.center = $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos;
+
+	                    if ($scope.map) {
+	                        $scope.map.setCenter($scope.mapConfig.center);
+	                    }
+	                };
+
+	                $scope.getCoordinatesFromAddressField = function () {
+	                    if (!$scope.config.renderOptions.bindToAddress || !$scope.form.fields || !$scope.form.fields[$scope.config.renderOptions.bindToAddress]) {
+	                        return;
+	                    }
+
+	                    var addressField = $scope.form.fields[$scope.config.renderOptions.bindToAddress];
+	                    var address = [addressField.config.value.street, addressField.config.value.streetnumber].filter(function (v) {
+	                        return !!v;
+	                    }).join(" ").trim();
+	                    var components = {};
+
+	                    if (addressField.config.value.country) {
+	                        components.country = addressField.config.value.country;
+	                    }
+	                    if (addressField.config.value.zip) {
+	                        components.postalCode = addressField.config.value.zip;
+	                    }
+	                    if (addressField.config.value.city) {
+	                        components.locality = addressField.config.value.city;
+	                    }
+
+	                    GeoCoder.geocode({
+	                        address: address,
+	                        componentRestrictions: components
+	                    }).then(function (result) {
+	                        if (!result) {
+	                            return;
+	                        }
+
+	                        result = result.shift();
+	                        $scope.config.value.lat = result.geometry.location.lat();
+	                        $scope.config.value.lon = result.geometry.location.lng();
+	                        $scope.onValueChanged();
+	                    }, function (status) {});
+	                };
+
+	                /**
+	                 *
+	                 * @param lat {deg: int, min: int, sec: int, pos: N|S}
+	                 * @param lon {deg: int, min: int, sec: int, pos: W|O}
+	                 * @returns {{lat: number, lon: number}}
+	                 */
+	                $scope.degToDez = function (lat, lon) {
+	                    if (!lat || !lon) {
+	                        return {};
+	                    }
+
+	                    var ret = { lat: 0, lon: 0 };
+	                    ret.lat = (parseInt(lat.deg) + parseInt(lat.min) / 60 + parseInt(lat.sec) / 3600) * (lat.pos == "N" ? 1 : -1);
+	                    ret.lon = (parseInt(lon.deg) + parseInt(lon.min) / 60 + parseInt(lon.sec) / 3600) * (lon.pos == "E" ? 1 : -1);
+
+	                    return ret;
+	                };
+
+	                /**
+	                 *
+	                 * @param lat
+	                 * @param lon
+	                 * @returns {{lat: {deg: number, min: number, sec: number, pos: string}, lon: {deg: number, min: number, sec: number, pos: string}}}
+	                 */
+	                $scope.dezToDeg = function (lat, lon) {
+	                    if (!lat || !lon) {
+	                        return {};
+	                    }
+
+	                    var ret = {
+	                        lat: {
+	                            deg: 0,
+	                            min: 0,
+	                            sec: 0,
+	                            pos: "N"
+	                        },
+	                        lon: {
+	                            deg: 0,
+	                            min: 0,
+	                            sec: 0,
+	                            pos: "W"
+	                        }
+	                    };
+
+	                    if (lat < Math.abs(lat)) {
+	                        ret.lat.pos = "S";
+	                    } else {
+	                        ret.lat.pos = "N";
+	                    }
+
+	                    if (lon < Math.abs(lon)) {
+	                        ret.lon.pos = "W";
+	                    } else {
+	                        ret.lon.pos = "E";
+	                    }
+
+	                    lat = Math.abs(lat);
+	                    ret.lat.deg = Math.trunc(lat);
+	                    lat = lat - ret.lat.deg;
+	                    ret.lat.min = Math.trunc(lat * 60);
+	                    lat = lat - ret.lat.min / 60;
+	                    ret.lat.sec = Math.trunc(lat * 3600);
+
+	                    lon = Math.abs(lon);
+	                    ret.lon.deg = Math.trunc(lon);
+	                    lon = lon - ret.lon.deg;
+	                    ret.lon.min = Math.trunc(lon * 60);
+	                    lon = lon - ret.lon.min / 60;
+	                    ret.lon.sec = Math.trunc(lon * 3600);
+
+	                    return ret;
+	                };
 	            }]
 	        };
 	    }];
 	};
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-if=\"config.renderOptions.googleMapsKey\">\r\n    <div class=\"col-md-12\" map-lazy-load=\"https://maps.google.com/maps/api/js\"\r\n         map-lazy-load-params=\"https://maps.googleapis.com/maps/api/js?key={{config.renderOptions.googleMapsKey}}\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"config.renderOptions.googleMapsKey\">\r\n    <div class=\"col-md-12\" map-lazy-load=\"https://maps.google.com/maps/api/js\"\r\n         map-lazy-load-params=\"https://maps.googleapis.com/maps/api/js?key={{config.renderOptions.googleMapsKey}}\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.bindToAddress\">\r\n    <label class=\"col-md-2 control-label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <button ng-click=\"getCoordinatesFromAddressField()\" type=\"button\" class=\"btn btn-primary\"><i class=\"fa fa-globe\"></i>&nbsp;{{config.label.syncWithAddressButton || \"Sync with address\"}}\r\n        </button>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.pos\">\r\n                <option value=\"{{config.renderOptions.values.north || 'N'}}\">{{config.label.north || \"N\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.south || 'S'}}\">{{config.label.south || \"S\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.pos\">\r\n                <option value=\"{{config.renderOptions.values.west || 'W'}}\">{{config.label.west || \"W\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.east || 'E'}}\">{{config.label.east || \"E\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40355,7 +40786,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(28),
+	            template: __webpack_require__(31),
 	            scope: {
 	                config: "="
 	            }
@@ -40364,13 +40795,13 @@
 	};
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\">\r\n    <label class=\"col-md-2 control-label align-left\">\r\n        <b>{{config.label}}</b>\r\n    </label>\r\n</div>";
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40379,7 +40810,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(30),
+	            template: __webpack_require__(33),
 	            scope: {
 	                config: "="
 	            },
@@ -40389,13 +40820,13 @@
 	};
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\" ng-if=\"!config.renderOptions.unit\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 31 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40404,7 +40835,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(32),
+	            template: __webpack_require__(35),
 	            scope: {
 	                config: "="
 	            },
@@ -40414,13 +40845,13 @@
 	};
 
 /***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"(key, label) in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n                {{label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"(key, label) in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n            {{label}}\r\n        </label>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40431,7 +40862,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(34),
+	            template: __webpack_require__(37),
 	            scope: {
 	                config: "="
 	            },
@@ -40548,13 +40979,13 @@
 	};
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\">\r\n        <div class=\"image col-md-6\" ng-repeat=\"item in config.value\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload col-md-6\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40563,7 +40994,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(36),
+	            template: __webpack_require__(39),
 	            scope: {
 	                config: "="
 	            },
@@ -40573,13 +41004,13 @@
 	};
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40588,7 +41019,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(38),
+	            template: __webpack_require__(41),
 	            scope: {
 	                config: "="
 	            },
@@ -40598,13 +41029,13 @@
 	};
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40613,7 +41044,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(40),
+	            template: __webpack_require__(43),
 	            scope: {
 	                config: "="
 	            },
@@ -40623,13 +41054,13 @@
 	};
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40638,7 +41069,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(42),
+	            template: __webpack_require__(45),
 	            scope: {
 	                config: "="
 	            },
@@ -40648,13 +41079,13 @@
 	};
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n            <span class=\"input-group-addon\">{{config.renderOptions.perLabel || 'per'}}</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.amount\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control unit-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.unit\" ng-options=\"option as option for option in config.renderOptions.units\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40663,7 +41094,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(44),
+	            template: __webpack_require__(47),
 	            scope: {
 	                config: "="
 	            },
@@ -40702,13 +41133,13 @@
 	};
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"radio\" ng-repeat=\"option in options\">\r\n            <label>\r\n                <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"option.value\" ng-model=\"config.value\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40717,7 +41148,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(46),
+	            template: __webpack_require__(49),
 	            scope: {
 	                config: "="
 	            },
@@ -40727,13 +41158,13 @@
 	};
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40742,7 +41173,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(48),
+	            template: __webpack_require__(51),
 	            scope: {
 	                config: "=",
 	                value: "="
@@ -40784,13 +41215,13 @@
 	};
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"panel-body\">\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40799,7 +41230,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(50),
+	            template: __webpack_require__(53),
 	            scope: {
 	                config: "="
 	            },
@@ -40840,13 +41271,13 @@
 	};
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform ng-if=\"!collapsed\" config=\"item\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40855,7 +41286,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(52),
+	            template: __webpack_require__(55),
 	            scope: {
 	                config: "="
 	            },
@@ -40865,73 +41296,73 @@
 	};
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <textarea type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\"></textarea>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./Address": 15,
-		"./Address.html": 16,
-		"./Address.js": 15,
-		"./Booleanplus": 17,
-		"./Booleanplus.html": 18,
-		"./Booleanplus.js": 17,
-		"./Checkbox": 19,
-		"./Checkbox.html": 20,
-		"./Checkbox.js": 19,
-		"./Doubleselect": 21,
-		"./Doubleselect.html": 22,
-		"./Doubleselect.js": 21,
-		"./Email": 23,
-		"./Email.html": 24,
-		"./Email.js": 23,
-		"./Gps": 25,
-		"./Gps.html": 26,
-		"./Gps.js": 25,
-		"./Headline": 27,
-		"./Headline.html": 28,
-		"./Headline.js": 27,
-		"./Input": 29,
-		"./Input.html": 30,
-		"./Input.js": 29,
-		"./Multifieldselect": 31,
-		"./Multifieldselect.html": 32,
-		"./Multifieldselect.js": 31,
-		"./Multiimageupload": 33,
-		"./Multiimageupload.html": 34,
-		"./Multiimageupload.js": 33,
-		"./Multiselect": 35,
-		"./Multiselect.html": 36,
-		"./Multiselect.js": 35,
-		"./Password": 37,
-		"./Password.html": 38,
-		"./Password.js": 37,
-		"./Price": 39,
-		"./Price.html": 40,
-		"./Price.js": 39,
-		"./Priceperunit": 41,
-		"./Priceperunit.html": 42,
-		"./Priceperunit.js": 41,
-		"./Radio": 43,
-		"./Radio.html": 44,
-		"./Radio.js": 43,
-		"./Select": 45,
-		"./Select.html": 46,
-		"./Select.js": 45,
-		"./Subform": 47,
-		"./Subform.html": 48,
-		"./Subform.js": 47,
-		"./Subformarray": 49,
-		"./Subformarray.html": 50,
-		"./Subformarray.js": 49,
-		"./Textarea": 51,
-		"./Textarea.html": 52,
-		"./Textarea.js": 51
+		"./Address": 18,
+		"./Address.html": 19,
+		"./Address.js": 18,
+		"./Booleanplus": 20,
+		"./Booleanplus.html": 21,
+		"./Booleanplus.js": 20,
+		"./Checkbox": 22,
+		"./Checkbox.html": 23,
+		"./Checkbox.js": 22,
+		"./Doubleselect": 24,
+		"./Doubleselect.html": 25,
+		"./Doubleselect.js": 24,
+		"./Email": 26,
+		"./Email.html": 27,
+		"./Email.js": 26,
+		"./Gps": 28,
+		"./Gps.html": 29,
+		"./Gps.js": 28,
+		"./Headline": 30,
+		"./Headline.html": 31,
+		"./Headline.js": 30,
+		"./Input": 32,
+		"./Input.html": 33,
+		"./Input.js": 32,
+		"./Multifieldselect": 34,
+		"./Multifieldselect.html": 35,
+		"./Multifieldselect.js": 34,
+		"./Multiimageupload": 36,
+		"./Multiimageupload.html": 37,
+		"./Multiimageupload.js": 36,
+		"./Multiselect": 38,
+		"./Multiselect.html": 39,
+		"./Multiselect.js": 38,
+		"./Password": 40,
+		"./Password.html": 41,
+		"./Password.js": 40,
+		"./Price": 42,
+		"./Price.html": 43,
+		"./Price.js": 42,
+		"./Priceperunit": 44,
+		"./Priceperunit.html": 45,
+		"./Priceperunit.js": 44,
+		"./Radio": 46,
+		"./Radio.html": 47,
+		"./Radio.js": 46,
+		"./Select": 48,
+		"./Select.html": 49,
+		"./Select.js": 48,
+		"./Subform": 50,
+		"./Subform.html": 51,
+		"./Subform.js": 50,
+		"./Subformarray": 52,
+		"./Subformarray.html": 53,
+		"./Subformarray.js": 52,
+		"./Textarea": 54,
+		"./Textarea.html": 55,
+		"./Textarea.js": 54
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -40944,7 +41375,7 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 53;
+	webpackContext.id = 56;
 
 
 /***/ }
