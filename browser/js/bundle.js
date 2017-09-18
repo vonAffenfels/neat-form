@@ -40033,6 +40033,8 @@
 	    }]);
 
 	    neatFormModule.controller("neatFormCtrl", ["$scope", "$q", "$sce", "neatApi", function ($scope, $q, $sce, neatApi) {
+	        $scope.connectedId = $scope.id;
+
 	        $scope.reset = function () {
 	            if ($scope.loading) {
 	                return;
@@ -40041,7 +40043,7 @@
 	            $scope.loading = true;
 	            neatApi.form({
 	                form: $scope.form,
-	                _id: $scope.id
+	                _id: $scope.connectedId
 	            }, function (config) {
 	                $scope.loading = false;
 	                $scope.config = config;
@@ -40102,7 +40104,7 @@
 
 	                $scope.saveAllSubforms(toSave).then(function () {
 	                    neatApi.formSubmit({
-	                        _id: $scope.id,
+	                        _id: $scope.connectedId,
 	                        data: $scope.getValues($scope.config),
 	                        form: $scope.form
 	                    }, function (config) {
@@ -40111,7 +40113,7 @@
 
 	                        // set id after create in case we want to just keep the form open (html decides)
 	                        if ($scope.config.connectedId) {
-	                            $scope.id = $scope.config.connectedId;
+	                            $scope.connectedId = $scope.config.connectedId;
 	                        }
 
 	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -40177,7 +40179,7 @@
 /* 12 */
 /***/ function(module, exports) {
 
-	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields && !showSuccess\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm && !showSuccess\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false\">{{config.renderOptions.labels.save || \"Save\"}}</button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
+	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields && !showSuccess\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm && !showSuccess && !loading\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false  && !connectedId\">{{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.update !== false && connectedId\">{{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
 
 /***/ },
 /* 13 */

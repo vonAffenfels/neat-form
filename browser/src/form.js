@@ -23,6 +23,8 @@ module.exports = function (neatFormModule) {
         "$sce",
         "neatApi",
         function ($scope, $q, $sce, neatApi) {
+            $scope.connectedId = $scope.id;
+
             $scope.reset = function () {
                 if ($scope.loading) {
                     return;
@@ -31,7 +33,7 @@ module.exports = function (neatFormModule) {
                 $scope.loading = true;
                 neatApi.form({
                     form: $scope.form,
-                    _id: $scope.id
+                    _id: $scope.connectedId
                 }, (config) => {
                     $scope.loading = false;
                     $scope.config = config;
@@ -92,7 +94,7 @@ module.exports = function (neatFormModule) {
 
                     $scope.saveAllSubforms(toSave).then(() => {
                         neatApi.formSubmit({
-                            _id: $scope.id,
+                            _id: $scope.connectedId,
                             data: $scope.getValues($scope.config),
                             form: $scope.form
                         }, (config) => {
@@ -101,7 +103,7 @@ module.exports = function (neatFormModule) {
 
                             // set id after create in case we want to just keep the form open (html decides)
                             if ($scope.config.connectedId) {
-                                $scope.id = $scope.config.connectedId;
+                                $scope.connectedId = $scope.config.connectedId;
                             }
 
                             if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {

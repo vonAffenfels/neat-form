@@ -1436,6 +1436,8 @@
 
 .sr-only-focusable:active, .sr-only-focusable:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
 
+neat-form [ng\:cloak], neat-form [ng-cloak], neat-form [data-ng-cloak], neat-form [x-ng-cloak], neat-form .ng-cloak, neat-form .x-ng-cloak { display: none !important; }
+
 neat-form input[type=checkbox], neat-form input[type=radio] { display: block; opacity: 1; }
 
 neat-form * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }

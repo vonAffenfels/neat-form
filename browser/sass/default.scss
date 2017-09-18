@@ -5,6 +5,9 @@ $fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts" !default;
 @import "bootstrap/mixins";
 
 neat-form {
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+  }
 
   input[type=checkbox], input[type=radio] {
     display: block;
