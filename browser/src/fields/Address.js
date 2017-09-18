@@ -1,6 +1,6 @@
 "use strict";
 
-let googleLoaded = false;
+let googleLoaded = !!(window.google && window.google.maps);
 module.exports = function (neatFormModule) {
     return [
         function () {

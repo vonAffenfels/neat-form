@@ -1,5 +1,6 @@
 "use strict";
 
+let googleLoaded = !!(window.google && window.google.maps);
 module.exports = function (neatFormModule) {
     return [
         function () {
@@ -200,6 +201,16 @@ module.exports = function (neatFormModule) {
                             ret.lon.sec = Math.trunc(lon * 3600);
 
                             return ret;
+                        }
+
+                        if (($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey) || googleLoaded) {
+                            if (!googleLoaded) {
+                                googleLoaded = true;
+                                let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
+                                angularLoad.loadScript(googleScriptSource).then(() => {
+
+                                });
+                            }
                         }
                     }
                 ]
