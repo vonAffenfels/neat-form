@@ -40055,7 +40055,7 @@
 	                    googleLoaded = true;
 	                    var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
 	                    angularLoad.loadScript(googleScriptSource).then(function () {
-	                        $scope.googleReady = true;
+	                        $rootScope.googleReady = true;
 	                        $rootScope.$emit("googleLoaded");
 	                    });
 	                }
@@ -40507,7 +40507,7 @@
 	                });
 
 	                $scope.googlePlaces = {
-	                    ready: false,
+	                    ready: $rootScope.googleReady,
 	                    options: {
 	                        /*
 	                        types: $scope.types,
@@ -40858,6 +40858,7 @@
 	                    return ret;
 	                };
 
+	                $scope.googleReady = $rootScope.googleReady;
 	                $rootScope.$on("googleLoaded", function () {
 	                    $scope.googleReady = true;
 	                });

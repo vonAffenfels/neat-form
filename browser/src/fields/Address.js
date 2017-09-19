@@ -35,7 +35,7 @@ module.exports = function (neatFormModule) {
                         });
 
                         $scope.googlePlaces = {
-                            ready: false,
+                            ready: $rootScope.googleReady,
                             options: {
                                 /*
                               types: $scope.types,
