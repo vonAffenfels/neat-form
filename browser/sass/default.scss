@@ -27,10 +27,10 @@ neat-form {
     background-image: inherit;
   }
 
+  @import "sections";
+  @import "features/Navigation";
+  @import "fields/Price";
+  @import "fields/Multiimageupload";
+  @import "fields/Address";
+  @import "fields/Checkbox";
 }
-
-@import "sections";
-@import "fields/Price";
-@import "fields/Multiimageupload";
-@import "fields/Address";
-@import "fields/Checkbox";

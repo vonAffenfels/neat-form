@@ -33,4 +33,17 @@
             </div>
         </div>
     </div>
+    <div class="neat-form-navigation" ng-class="{'active': navigationOpen}" ng-if="config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups"
+         ng-init="navigationOpen = false;">
+        <a class="neat-form-navigation-btn" ng-click="navigationOpen = !navigationOpen">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="neat-form-navigation-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <a class="btn btn-primary" ng-click="scrollToGroup(group)" ng-repeat="group in config.groups" ng-if="group.label">{{group.label}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>

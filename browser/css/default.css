@@ -2348,11 +2348,11 @@ neat-form-field-price select { min-width: 60px; }
 
 neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
 
-neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: column; }
+neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: row; flex-wrap: wrap; margin: 0; }
 
 neat-form-field-multiimageupload .images .images-container .image { position: relative; margin-bottom: 20px; height: 230px; padding-left: 0; }
 
-neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; }
+neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; margin: 10px; }
 
 neat-form-field-multiimageupload .images .images-container .image .image-container { position: relative; height: 200px; width: 200px; }
 

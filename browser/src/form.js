@@ -24,9 +24,10 @@ module.exports = function (neatFormModule) {
         "$rootScope",
         "$q",
         "$sce",
+        "$anchorScroll",
         "neatApi",
         "angularLoad",
-        function ($scope, $rootScope, $q, $sce, neatApi, angularLoad) {
+        function ($scope, $rootScope, $q, $sce, $anchorScroll, neatApi, angularLoad) {
             $scope.connectedId = $scope.id;
 
             $scope.reset = function () {
@@ -52,6 +53,10 @@ module.exports = function (neatFormModule) {
                         });
                     }
                 });
+            }
+
+            $scope.scrollToGroup = function (group) {
+                $anchorScroll(group.id);
             }
 
             $scope.subforms = [];
