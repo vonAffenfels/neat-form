@@ -1,8 +1,11 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
-    <label class="col-md-2 control-label">{{config.label}}</label>
+    <label class="col-md-2 control-label">{{config.label}}
+        <span class="required" ng-if="config.renderOptions.required">*</span>
+    </label>
     <div class="col-md-10">
         <div class="input-group" ng-if="config.renderOptions.unit">
             <input type="text"
+                   ng-required="config.renderOptions.required"
                    placeholder="{{config.renderOptions.placeholder}}"
                    autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
                    ng-readonly="config.readonly"
@@ -11,6 +14,7 @@
             <span class="input-group-addon">{{config.renderOptions.unit}}</span>
         </div>
         <input type="text"
+               ng-required="config.renderOptions.required"
                autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
                ng-if="!config.renderOptions.unit"
                placeholder="{{config.renderOptions.placeholder}}"

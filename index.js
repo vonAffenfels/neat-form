@@ -98,7 +98,7 @@ module.exports = class FormModule extends Module {
         }
 
         if (validatorTypes[type]) {
-            return new validatorTypes[type](config, field, form);
+            return new validatorTypes[type](config, field, form, fieldPath);
         }
 
 

@@ -11,13 +11,17 @@
 <div class="form-group" ng-class="{
     'has-error': config.errors.zip || config.errors.city
 }">
-    <label class="col-md-2 control-label">{{config.label.zip}} / {{config.label.city}}</label>
+    <label class="col-md-2 control-label">{{config.label.zip}} / {{config.label.city}}
+        <span class="required" ng-if="config.renderOptions.required.city || config.renderOptions.required.zip">*</span>
+    </label>
     <div class="col-md-10">
         <div class="col-md-4" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.zip" class="form-control" autocomplete="shipping postal-code">
+            <input type="text" ng-readonly="config.readonly" ng-required="config.renderOptions.required.zip || config.renderOptions.required.city" ng-model="config.value.zip" class="form-control"
+                   autocomplete="shipping postal-code">
         </div>
         <div class="col-md-8" style="padding-right: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.city" class="form-control" autocomplete="shipping locality">
+            <input type="text" ng-readonly="config.readonly" ng-required="config.renderOptions.required.zip || config.renderOptions.required.city" ng-model="config.value.city" class="form-control"
+                   autocomplete="shipping locality">
         </div>
     </div>
 </div>
@@ -25,22 +29,30 @@
 <div class="form-group" ng-class="{
     'has-error': config.errors.district
 }">
-    <label class="col-md-2 control-label">{{config.label.district}}</label>
+    <label class="col-md-2 control-label">{{config.label.district}}
+        <span class="required" ng-if="config.renderOptions.required.district">*</span>
+    </label>
     <div class="col-md-10">
-        <input type="text" ng-readonly="config.readonly" ng-model="config.value.district" class="form-control">
+        <input type="text" ng-readonly="config.readonly" ng-required="config.renderOptions.required.district" ng-model="config.value.district" class="form-control">
     </div>
 </div>
 
 <div class="form-group" ng-class="{
     'has-error': config.errors.street || config.errors.streetnumber
 }">
-    <label class="col-md-2 control-label">{{config.label.street}} / {{config.label.streetnumber}}</label>
+    <label class="col-md-2 control-label">{{config.label.street}} / {{config.label.streetnumber}}
+        <span class="required" ng-if="config.renderOptions.required.streetnumber || config.renderOptions.required.street">*</span>
+    </label>
     <div class="col-md-10">
         <div class="col-md-10" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.street" class="form-control" autocomplete="shipping address-line1">
+            <input type="text" ng-readonly="config.readonly" ng-required="config.renderOptions.required.streetnumber || config.renderOptions.required.street" ng-model="config.value.street"
+                   class="form-control"
+                   autocomplete="shipping address-line1">
         </div>
         <div class="col-md-2" style="padding-right: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.streetnumber" class="form-control" autocomplete="shipping address-line2">
+            <input type="text" ng-readonly="config.readonly" ng-required="config.renderOptions.required.streetnumber || config.renderOptions.required.street" ng-model="config.value.streetnumber"
+                   class="form-control"
+                   autocomplete="shipping address-line2">
         </div>
     </div>
 </div>
