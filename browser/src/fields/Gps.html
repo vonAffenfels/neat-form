@@ -22,7 +22,7 @@
 </div>
 
 <div class="form-group" ng-class="{'has-error': config.errors.lat || config.errors.lon}">
-    <label class="col-md-2 control-label">{{config.label.lat}} / {{config.label.lon}}</label>
+    <label class="col-md-2 control-label">{{config.label.lat}} / {{config.label.lon}}<span class="required" ng-if="config.renderOptions.required.lat || config.renderOptions.required.lon">*</span></label>
     <div class="col-md-10">
         <div class="col-md-6" style="padding-left: 0;">
             <input type="text" ng-readonly="config.readonly" ng-change="onValueChanged()" ng-model="config.value.lat" class="form-control ">

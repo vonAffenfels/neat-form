@@ -1,5 +1,5 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
-    <label class="col-md-2 control-label">{{config.label}}</label>
+    <label class="col-md-2 control-label">{{config.label}}<span class="required" ng-if="config.renderOptions.required">*</span></label>
     <div class="col-md-10">
         <label class="radio-inline">
             <input type="radio" name="{{config._id}}" ng-value="null" ng-model="config.value">
