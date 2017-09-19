@@ -5,11 +5,23 @@ neat-form-field-multiimageupload {
       margin-left: 0;
       margin-right: 0;
 
+      &.inline-images {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin: 0;
+      }
+
       .image {
         position: relative;
         margin-bottom: 20px;
         height: 230px;
         padding-left: 0;
+
+        &.inline-image-upload {
+          display: block;
+          margin: 10px;
+        }
 
         .image-container {
           position: relative;

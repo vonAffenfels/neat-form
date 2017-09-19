@@ -1,6 +1,5 @@
 "use strict";
 
-let googleLoaded = !!(window.google && window.google.maps);
 module.exports = function (neatFormModule) {
     return [
         function () {
@@ -12,8 +11,8 @@ module.exports = function (neatFormModule) {
                 },
                 controller: [
                     "$scope",
-                    "angularLoad",
-                    function ($scope, angularLoad) {
+                    "$rootScope",
+                    function ($scope, $rootScope) {
 
                         let errors = $scope.config.errors || {};
 
@@ -23,7 +22,7 @@ module.exports = function (neatFormModule) {
                             value: $scope.config.value ? $scope.config.value.country : null,
                             label: $scope.config.label.country,
                             errors: errors.country,
-                            renderOptions: $scope.config.renderOptions,
+                            renderOptions: $scope.config.renderOptions.country,
                             options: $scope.config.renderOptions.countries
                         };
 
@@ -86,17 +85,9 @@ module.exports = function (neatFormModule) {
                             }
                         });
 
-                        if (($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey) || googleLoaded) {
-                            if (!googleLoaded) {
-                                googleLoaded = true;
-                                let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
-                                angularLoad.loadScript(googleScriptSource).then(() => {
-                                    $scope.googlePlaces.ready = true;
-                                });
-                            } else {
-                                $scope.googlePlaces.ready = true;
-                            }
-                        }
+                        $rootScope.$on("googleLoaded", function () {
+                            $scope.googlePlaces.ready = true;
+                        });
                     }
                 ]
             };

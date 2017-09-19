@@ -2348,7 +2348,11 @@ neat-form-field-price select { min-width: 60px; }
 
 neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
 
+neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: column; }
+
 neat-form-field-multiimageupload .images .images-container .image { position: relative; margin-bottom: 20px; height: 230px; padding-left: 0; }
+
+neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; }
 
 neat-form-field-multiimageupload .images .images-container .image .image-container { position: relative; height: 200px; width: 200px; }
 
@@ -2412,5 +2416,7 @@ neat-form-field-multiimageupload .images .images-container .image.upload .image-
 .pac-placeholder { color: gray; }
 
 .custom-prediction-label { font-style: italic; }
+
+neat-form-field-checkbox .control-label.control-label-right { text-align: left; padding-top: 16px; }
 
 /*# sourceMappingURL=default.css.map */

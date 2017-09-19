@@ -1,7 +1,7 @@
 <div class="form-group" ng-if="googlePlaces.ready">
     <label class="col-md-2 control-label">{{config.label.google || 'Search Address'}}</label>
     <div class="col-md-10">
-        <input type="text" g-places-autocomplete ng-model="googlePlaces.value" class="form-control" options="googlePlaces.options" forceSelection="true"
+        <input type="text" autocomplete="off" g-places-autocomplete ng-model="googlePlaces.value" class="form-control" options="googlePlaces.options" forceSelection="true"
                placeholder="{{(config.label.google || 'Search Address') + '...'}}">
     </div>
 </div>
@@ -14,10 +14,10 @@
     <label class="col-md-2 control-label">{{config.label.zip}} / {{config.label.city}}</label>
     <div class="col-md-10">
         <div class="col-md-4" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.zip" class="form-control">
+            <input type="text" ng-readonly="config.readonly" ng-model="config.value.zip" class="form-control" autocomplete="shipping postal-code">
         </div>
         <div class="col-md-8" style="padding-right: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.city" class="form-control">
+            <input type="text" ng-readonly="config.readonly" ng-model="config.value.city" class="form-control" autocomplete="shipping locality">
         </div>
     </div>
 </div>
@@ -37,10 +37,10 @@
     <label class="col-md-2 control-label">{{config.label.street}} / {{config.label.streetnumber}}</label>
     <div class="col-md-10">
         <div class="col-md-10" style="padding-left: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.street" class="form-control">
+            <input type="text" ng-readonly="config.readonly" ng-model="config.value.street" class="form-control" autocomplete="shipping address-line1">
         </div>
         <div class="col-md-2" style="padding-right: 0;">
-            <input type="text" ng-readonly="config.readonly" ng-model="config.value.streetnumber" class="form-control">
+            <input type="text" ng-readonly="config.readonly" ng-model="config.value.streetnumber" class="form-control" autocomplete="shipping address-line2">
         </div>
     </div>
 </div>

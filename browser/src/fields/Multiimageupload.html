@@ -1,6 +1,11 @@
 <div class="images">
-    <div class="images-container row clearfix">
-        <div class="image col-md-6" ng-repeat="item in config.value">
+    <div class="images-container row clearfix" ng-class="{
+            'inline-images': config.renderOptions.subforminvisible
+        }">
+        <div class="image" ng-repeat="item in config.value" ng-class="{
+            'col-md-6': !config.renderOptions.subforminvisible,
+            'inline-image-upload': config.renderOptions.subforminvisible
+        }">
             <div class="image-container">
                 <button ng-if="item._id" class="remove btn btn-sm btn-danger" type="button" ng-click="imageRemove($index)">
                     <i class="fa fa-trash"></i>
@@ -21,12 +26,15 @@
                 <canvas ng-show="item.uploading" ng-if="!item._id"></canvas>
                 <div ng-show="item.progress" ng-if="!item._id" class="progress" ng-style="{height: item.progress + '%'}"></div>
             </div>
-            <div class="data-container">
+            <div class="data-container" ng-show="!config.renderOptions.subforminvisible">
                 <neat-form form="config.renderOptions.subform" id="item._id" is-sub-form="true"></neat-form>
             </div>
         </div>
 
-        <div class="image upload col-md-6">
+        <div class="image upload" ng-class="{
+            'col-md-6': !config.renderOptions.subforminvisible,
+            'inline-image-upload': config.renderOptions.subforminvisible
+        }">
             <div class="image-container">
                 <div class="fileselect-button">
                     <input class="fileselect" type="file" nv-file-select="" uploader="uploader"/>

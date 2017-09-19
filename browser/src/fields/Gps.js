@@ -1,6 +1,5 @@
 "use strict";
 
-let googleLoaded = !!(window.google && window.google.maps);
 module.exports = function (neatFormModule) {
     return [
         function () {
@@ -13,10 +12,11 @@ module.exports = function (neatFormModule) {
                 },
                 controller: [
                     "$scope",
+                    "$rootScope",
                     "$timeout",
                     "NgMap",
                     "GeoCoder",
-                    function ($scope, $timeout, NgMap, GeoCoder) {
+                    function ($scope, $rootScope, $timeout, NgMap, GeoCoder) {
                         $scope.defaultPos = [
                             50.9953258,
                             11.4175722
@@ -47,6 +47,10 @@ module.exports = function (neatFormModule) {
                         });
 
                         $scope.markerDragged = function (e) {
+                            if (!e) {
+                                return;
+                            }
+
                             $scope.syncMapCoords({
                                 lat: e.latLng.lat(),
                                 lon: e.latLng.lng()
@@ -203,15 +207,9 @@ module.exports = function (neatFormModule) {
                             return ret;
                         }
 
-                        if (($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey) || googleLoaded) {
-                            if (!googleLoaded) {
-                                googleLoaded = true;
-                                let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
-                                angularLoad.loadScript(googleScriptSource).then(() => {
-
-                                });
-                            }
-                        }
+                        $rootScope.$on("googleLoaded", function () {
+                            $scope.googleReady = true;
+                        });
                     }
                 ]
             };

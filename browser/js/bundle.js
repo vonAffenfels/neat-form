@@ -40017,6 +40017,8 @@
 
 	"use strict";
 
+	var googleLoaded = !!window.google && !!window.google.maps;
+
 	module.exports = function (neatFormModule) {
 
 	    neatFormModule.directive("neatForm", [function () {
@@ -40032,7 +40034,7 @@
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormCtrl", ["$scope", "$q", "$sce", "neatApi", function ($scope, $q, $sce, neatApi) {
+	    neatFormModule.controller("neatFormCtrl", ["$scope", "$rootScope", "$q", "$sce", "neatApi", "angularLoad", function ($scope, $rootScope, $q, $sce, neatApi, angularLoad) {
 	        $scope.connectedId = $scope.id;
 
 	        $scope.reset = function () {
@@ -40048,6 +40050,15 @@
 	                $scope.loading = false;
 	                $scope.config = config;
 	                $scope.error = null;
+
+	                if (!googleLoaded) {
+	                    googleLoaded = true;
+	                    var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
+	                    angularLoad.loadScript(googleScriptSource).then(function () {
+	                        $scope.googleReady = true;
+	                        $rootScope.$emit("googleLoaded");
+	                    });
+	                }
 	            });
 	        };
 
@@ -40381,7 +40392,6 @@
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-	var googleLoaded = !!(window.google && window.google.maps);
 	module.exports = function (neatFormModule) {
 	    return [function () {
 	        return {
@@ -40390,7 +40400,7 @@
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", "angularLoad", function ($scope, angularLoad) {
+	            controller: ["$scope", "$rootScope", function ($scope, $rootScope) {
 
 	                var errors = $scope.config.errors || {};
 
@@ -40400,7 +40410,7 @@
 	                    value: $scope.config.value ? $scope.config.value.country : null,
 	                    label: $scope.config.label.country,
 	                    errors: errors.country,
-	                    renderOptions: $scope.config.renderOptions,
+	                    renderOptions: $scope.config.renderOptions.country,
 	                    options: $scope.config.renderOptions.countries
 	                };
 
@@ -40463,17 +40473,9 @@
 	                    }
 	                });
 
-	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey || googleLoaded) {
-	                    if (!googleLoaded) {
-	                        googleLoaded = true;
-	                        var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
-	                        angularLoad.loadScript(googleScriptSource).then(function () {
-	                            $scope.googlePlaces.ready = true;
-	                        });
-	                    } else {
-	                        $scope.googlePlaces.ready = true;
-	                    }
-	                }
+	                $rootScope.$on("googleLoaded", function () {
+	                    $scope.googlePlaces.ready = true;
+	                });
 	            }]
 	        };
 	    }];
@@ -40483,7 +40485,7 @@
 /* 19 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-if=\"googlePlaces.ready\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.google || 'Search Address'}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" g-places-autocomplete ng-model=\"googlePlaces.value\" class=\"form-control\" options=\"googlePlaces.options\" forceSelection=\"true\"\r\n               placeholder=\"{{(config.label.google || 'Search Address') + '...'}}\">\r\n    </div>\r\n</div>\r\n\r\n<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.district\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.district}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.district\" class=\"form-control\">\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"googlePlaces.ready\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.google || 'Search Address'}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" autocomplete=\"off\" g-places-autocomplete ng-model=\"googlePlaces.value\" class=\"form-control\" options=\"googlePlaces.options\" forceSelection=\"true\"\r\n               placeholder=\"{{(config.label.google || 'Search Address') + '...'}}\">\r\n    </div>\r\n</div>\r\n\r\n<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\" autocomplete=\"shipping postal-code\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\" autocomplete=\"shipping locality\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.district\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.district}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.district\" class=\"form-control\">\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control\" autocomplete=\"shipping address-line1\">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\" autocomplete=\"shipping address-line2\">\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 20 */
@@ -40537,7 +40539,7 @@
 /* 23 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline && !config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\" ng-bind-html=\"config.label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    <span ng-bind-html=\"config.label\"></span>\r\n</label>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </label>\r\n    <div class=\"col-md-10\" ng-bind-html=\"config.label\">\r\n    </div>\r\n</div>\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline && !config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\" ng-bind-html=\"config.label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    <span ng-bind-html=\"config.label\"></span>\r\n</label>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </label>\r\n    <div class=\"col-md-10 control-label control-label-right\" ng-bind-html=\"config.label\">\r\n    </div>\r\n</div>\r\n";
 
 /***/ },
 /* 24 */
@@ -40587,7 +40589,7 @@
 /* 27 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"email\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"email\" autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 28 */
@@ -40595,7 +40597,6 @@
 
 	"use strict";
 
-	var googleLoaded = !!(window.google && window.google.maps);
 	module.exports = function (neatFormModule) {
 	    return [function () {
 	        return {
@@ -40605,7 +40606,7 @@
 	                config: "=",
 	                form: "="
 	            },
-	            controller: ["$scope", "$timeout", "NgMap", "GeoCoder", function ($scope, $timeout, NgMap, GeoCoder) {
+	            controller: ["$scope", "$rootScope", "$timeout", "NgMap", "GeoCoder", function ($scope, $rootScope, $timeout, NgMap, GeoCoder) {
 	                $scope.defaultPos = [50.9953258, 11.4175722];
 	                $scope.degValue = {};
 
@@ -40627,6 +40628,10 @@
 	                });
 
 	                $scope.markerDragged = function (e) {
+	                    if (!e) {
+	                        return;
+	                    }
+
 	                    $scope.syncMapCoords({
 	                        lat: e.latLng.lat(),
 	                        lon: e.latLng.lng()
@@ -40769,13 +40774,9 @@
 	                    return ret;
 	                };
 
-	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey || googleLoaded) {
-	                    if (!googleLoaded) {
-	                        googleLoaded = true;
-	                        var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
-	                        angularLoad.loadScript(googleScriptSource).then(function () {});
-	                    }
-	                }
+	                $rootScope.$on("googleLoaded", function () {
+	                    $scope.googleReady = true;
+	                });
 	            }]
 	        };
 	    }];
@@ -40785,7 +40786,7 @@
 /* 29 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-if=\"config.renderOptions.googleMapsKey\">\r\n    <div class=\"col-md-12\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.bindToAddress\">\r\n    <label class=\"col-md-2 control-label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <button ng-click=\"getCoordinatesFromAddressField()\" type=\"button\" class=\"btn btn-primary\"><i class=\"fa fa-globe\"></i>&nbsp;{{config.label.syncWithAddressButton || \"Sync with address\"}}\r\n        </button>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.pos\">\r\n                <option value=\"{{config.renderOptions.values.north || 'N'}}\">{{config.label.north || \"N\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.south || 'S'}}\">{{config.label.south || \"S\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.pos\">\r\n                <option value=\"{{config.renderOptions.values.west || 'W'}}\">{{config.label.west || \"W\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.east || 'E'}}\">{{config.label.east || \"E\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"googleReady\">\r\n    <div class=\"col-md-12\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.bindToAddress\">\r\n    <label class=\"col-md-2 control-label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <button ng-click=\"getCoordinatesFromAddressField()\" type=\"button\" class=\"btn btn-primary\"><i class=\"fa fa-globe\"></i>&nbsp;{{config.label.syncWithAddressButton || \"Sync with address\"}}\r\n        </button>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.pos\">\r\n                <option value=\"{{config.renderOptions.values.north || 'N'}}\">{{config.label.north || \"N\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.south || 'S'}}\">{{config.label.south || \"S\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.pos\">\r\n                <option value=\"{{config.renderOptions.values.west || 'W'}}\">{{config.label.west || \"W\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.east || 'E'}}\">{{config.label.east || \"E\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 30 */
@@ -40834,7 +40835,7 @@
 /* 33 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\" ng-if=\"!config.renderOptions.unit\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readonly\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readonly\" ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 34 */
@@ -40993,7 +40994,7 @@
 /* 37 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\">\r\n        <div class=\"image col-md-6\" ng-repeat=\"item in config.value\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload col-md-6\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\" ng-class=\"{\r\n            'inline-images': config.renderOptions.subforminvisible\r\n        }\">\r\n        <div class=\"image\" ng-repeat=\"item in config.value\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\" ng-show=\"!config.renderOptions.subforminvisible\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 38 */
@@ -41043,7 +41044,7 @@
 /* 41 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-readonly=\"config.readonly\"\r\n               ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 42 */
@@ -41172,7 +41173,7 @@
 /* 49 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\" autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ },
 /* 50 */

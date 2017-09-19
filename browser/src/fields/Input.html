@@ -2,9 +2,19 @@
     <label class="col-md-2 control-label">{{config.label}}</label>
     <div class="col-md-10">
         <div class="input-group" ng-if="config.renderOptions.unit">
-            <input type="text" placeholder="{{config.renderOptions.placeholder}}" ng-readonly="config.readonly" ng-model="config.value" class="form-control">
+            <input type="text"
+                   placeholder="{{config.renderOptions.placeholder}}"
+                   autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
+                   ng-readonly="config.readonly"
+                   ng-model="config.value"
+                   class="form-control">
             <span class="input-group-addon">{{config.renderOptions.unit}}</span>
         </div>
-        <input type="text" ng-if="!config.renderOptions.unit" placeholder="{{config.renderOptions.placeholder}}" ng-readonly="config.readonly" ng-model="config.value" class="form-control">
+        <input type="text"
+               autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
+               ng-if="!config.renderOptions.unit"
+               placeholder="{{config.renderOptions.placeholder}}"
+               ng-readonly="config.readonly" ng-model="config.value"
+               class="form-control">
     </div>
 </div>

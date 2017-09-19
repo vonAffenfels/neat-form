@@ -1,5 +1,7 @@
 "use strict";
 
+let googleLoaded = !!window.google && !!window.google.maps;
+
 module.exports = function (neatFormModule) {
 
     neatFormModule.directive("neatForm", [
@@ -19,10 +21,12 @@ module.exports = function (neatFormModule) {
 
     neatFormModule.controller("neatFormCtrl", [
         "$scope",
+        "$rootScope",
         "$q",
         "$sce",
         "neatApi",
-        function ($scope, $q, $sce, neatApi) {
+        "angularLoad",
+        function ($scope, $rootScope, $q, $sce, neatApi, angularLoad) {
             $scope.connectedId = $scope.id;
 
             $scope.reset = function () {
@@ -38,6 +42,15 @@ module.exports = function (neatFormModule) {
                     $scope.loading = false;
                     $scope.config = config;
                     $scope.error = null;
+
+                    if (!googleLoaded) {
+                        googleLoaded = true;
+                        let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
+                        angularLoad.loadScript(googleScriptSource).then(() => {
+                            $scope.googleReady = true;
+                            $rootScope.$emit("googleLoaded");
+                        });
+                    }
                 });
             }
 

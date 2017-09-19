@@ -1,7 +1,7 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
     <label class="col-md-2 control-label">{{config.label}}</label>
     <div class="col-md-10">
-        <select class="form-control" ng-model="config.value" ng-options="key as label for (key, label) in config.options">
+        <select class="form-control" ng-model="config.value" ng-options="key as label for (key, label) in config.options" autocomplete="{{config.renderOptions.autocomplete || 'off'}}">
             <option value="" ng-if="config.renderOptions.emptySelectLabel !== false">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
     </div>
