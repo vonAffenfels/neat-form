@@ -10,6 +10,7 @@
         <h4 class="panel-title">{{config.label}}</h4>
     </div>
     <div class="panel-body neat-form-section-body">
+        <legend ng-if="config.legend">{{config.legend}}</legend>
         <div ng-repeat="conf in config.fields" ng-class="{
             'neat-7-col-form': config.columns === 7,
             'neat-6-col-form': config.columns === 6,
