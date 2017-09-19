@@ -40280,15 +40280,88 @@
 
 	                            for (var id in conditions) {
 	                                var val = conditions[id];
+	                                var isNotCondition = false;
+
+	                                if (id.indexOf("!") === 0) {
+	                                    isNotCondition = true;
+	                                    id = id.substr(1);
+	                                }
 
 	                                for (var i = 0; i < groupScope.config.fields.length; i++) {
 	                                    var field = groupScope.config.fields[i];
 
 	                                    if (id == field.id) {
-	                                        if (field.value == val) {
-	                                            show = true;
+	                                        if ((typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
+	                                            for (var fieldKey in val) {
+	                                                var fieldVal = val[fieldKey];
+	                                                if (fieldVal instanceof Array) {
+	                                                    // not condition
+	                                                    if (isNotCondition) {
+	                                                        if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
+	                                                            show = true;
+	                                                        } else {
+	                                                            show = false;
+	                                                        }
+	                                                    } else {
+	                                                        // if condition
+	                                                        if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
+	                                                            show = true;
+	                                                        } else {
+	                                                            show = false;
+	                                                        }
+	                                                    }
+	                                                } else {
+	                                                    // not condition
+	                                                    if (isNotCondition) {
+	                                                        if (field.value[fieldKey] != fieldVal) {
+	                                                            show = true;
+	                                                        } else {
+	                                                            show = false;
+	                                                        }
+	                                                    } else {
+	                                                        // if condition
+	                                                        if (field.value[fieldKey] == fieldVal) {
+	                                                            show = true;
+	                                                        } else {
+	                                                            show = false;
+	                                                        }
+	                                                    }
+	                                                }
+	                                            }
 	                                        } else {
-	                                            show = false;
+	                                            if (val instanceof Array) {
+	                                                // not condition
+	                                                if (isNotCondition) {
+	                                                    if (val.indexOf(field.value) === -1) {
+	                                                        show = true;
+	                                                    } else {
+	                                                        show = false;
+	                                                    }
+	                                                } else {
+	                                                    // if condition
+	                                                    if (val.indexOf(field.value) !== -1) {
+	                                                        show = true;
+	                                                    } else {
+	                                                        show = false;
+	                                                    }
+	                                                }
+	                                            } else {
+	                                                // not condition
+	                                                if (isNotCondition) {
+	                                                    if (field.value != val) {
+	                                                        show = true;
+	                                                    } else {
+	                                                        show = false;
+	                                                    }
+	                                                } else {
+	                                                    // if condition
+	                                                    if (field.value == val) {
+	                                                        show = true;
+	                                                    } else {
+	                                                        show = false;
+	                                                    }
+	                                                }
+	                                            }
 	                                        }
 	                                    }
 	                                }
