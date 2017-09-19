@@ -1,15 +1,20 @@
 <div class="panel panel-inverse" id="{{config.id}}">
     <div class="panel-heading" ng-if="config.label">
-        <!--
-        <div class="btn-group pull-right">
-            <button type="submit" class="btn btn-primary btn-xs">
-                <i class="fa fa-plus"></i>
+        <div class="btn-group pull-right" ng-if="options.collapsible">
+            <button type="button" class="btn btn-primary btn-xs">
+                <i class="fa fa-caret-down"
+                   ng-class="{
+                    'fa-caret-down': collapsed,
+                    'fa-caret-up': !collapsed
+                    }"
+                   ng-click="toggleCollapse()">
+
+                </i>
             </button>
         </div>
-        -->
         <h4 class="panel-title">{{config.label}}</h4>
     </div>
-    <div class="panel-body neat-form-section-body">
+    <div class="panel-body neat-form-section-body" ng-show="!collapsed">
         <div ng-repeat="conf in config.fields" ng-class="{
             'neat-7-col-form': config.columns === 7,
             'neat-6-col-form': config.columns === 6,

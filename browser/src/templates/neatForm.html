@@ -6,7 +6,7 @@
         <div class="row" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
         </div>
         <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess">
-            <neat-form-section config="conf" ng-if="conf.fields">
+            <neat-form-section config="conf" ng-if="conf.fields" options="config.renderOptions.groups">
             </neat-form-section>
         </div>
         <div class="row" ng-if="config.fields && !showSuccess">
