@@ -1,0 +1,51 @@
+.neat-form-navigation {
+  position: fixed;
+  z-index: 1020;
+  background: #fff;
+  padding: 15px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  -webkit-transition: right .2s linear;
+  -moz-transition: right .2s linear;
+  transition: right .2s linear;
+
+  width: 310px;
+  right: -311px;
+  top: 10%;
+
+  &.active {
+    right: 0;
+  }
+
+  .neat-form-navigation-content {
+    margin: -15px;
+    padding: 15px;
+    background: #fff;
+    position: relative;
+    z-index: 1020;
+
+    .btn {
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+
+  .neat-form-navigation-btn {
+    position: absolute;
+    left: -30px;
+    top: 30%;
+    margin-top: -15px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+    color: #333;
+    background: #fff;
+    border-radius: 4px 0 0 4px;
+    text-align: center;
+    box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4);
+  }
+}

@@ -1436,6 +1436,8 @@
 
 .sr-only-focusable:active, .sr-only-focusable:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
 
+neat-form [ng\:cloak], neat-form [ng-cloak], neat-form [data-ng-cloak], neat-form [x-ng-cloak], neat-form .ng-cloak, neat-form .x-ng-cloak { display: none !important; }
+
 neat-form input[type=checkbox], neat-form input[type=radio] { display: block; opacity: 1; }
 
 neat-form * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
@@ -2346,7 +2348,11 @@ neat-form-field-price select { min-width: 60px; }
 
 neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
 
+neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: row; flex-wrap: wrap; margin: 0; }
+
 neat-form-field-multiimageupload .images .images-container .image { position: relative; margin-bottom: 20px; height: 230px; padding-left: 0; }
+
+neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; margin: 10px; }
 
 neat-form-field-multiimageupload .images .images-container .image .image-container { position: relative; height: 200px; width: 200px; }
 
@@ -2410,5 +2416,7 @@ neat-form-field-multiimageupload .images .images-container .image.upload .image-
 .pac-placeholder { color: gray; }
 
 .custom-prediction-label { font-style: italic; }
+
+neat-form-field-checkbox .control-label.control-label-right { text-align: left; padding-top: 16px; }
 
 /*# sourceMappingURL=default.css.map */

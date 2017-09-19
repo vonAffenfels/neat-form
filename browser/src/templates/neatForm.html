@@ -6,24 +6,42 @@
         <div class="row" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
         </div>
         <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess">
-            <neat-form-section config="conf" ng-if="conf.fields">
+            <neat-form-section config="conf" ng-if="conf.fields" options="config.renderOptions.groups">
             </neat-form-section>
         </div>
         <div class="row" ng-if="config.fields && !showSuccess">
             <neat-form-section config="config">
             </neat-form-section>
         </div>
-        <div class="row" ng-if="!isSubForm && !showSuccess">
+        <div class="row" ng-if="!isSubForm && !showSuccess && !loading">
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="col-md-10" style="padding-left: 0">
-                        <button type="submit" class="btn btn-primary btn-block col-md-10" ng-if="config.renderOptions.labels.save !== false">{{config.renderOptions.labels.save || "Save"}}</button>
+                        <button type="submit" class="btn btn-primary btn-block col-md-10" ng-if="config.renderOptions.labels.save !== false  && !connectedId">{{config.renderOptions.labels.save ||
+                            "Save"}}
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-block col-md-10" ng-if="config.renderOptions.labels.update !== false && connectedId">{{config.renderOptions.labels.update ||
+                            "Save"}}
+                        </button>
                     </div>
                     <div class="col-md-2" style="padding-right: 0">
                         <button type="button" ng-click="reset()" class="btn btn-white btn-block col-md-2" ng-if="config.renderOptions.labels.reset !== false">{{config.renderOptions.labels.reset ||
                             "Reset"}}
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="neat-form-navigation" ng-class="{'active': navigationOpen}" ng-if="config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups"
+         ng-init="navigationOpen = false;">
+        <a class="neat-form-navigation-btn" ng-click="navigationOpen = !navigationOpen">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="neat-form-navigation-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <a class="btn btn-primary" ng-click="scrollToGroup(group)" ng-repeat="group in config.groups" ng-if="group.label">{{group.label}}</a>
                 </div>
             </div>
         </div>

@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -104,9 +104,9 @@
 	    });
 	})(window, window.angular);
 
-/***/ }),
+/***/ },
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	(function(root, factory) {
 	if (true) {
@@ -3558,20 +3558,20 @@
 	return 'ngMap';
 	}));
 
-/***/ }),
+/***/ },
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(3);
 	module.exports = angular;
 
 
-/***/ }),
+/***/ },
 /* 3 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	/**
-	 * @license AngularJS v1.6.6
+	 * @license AngularJS v1.6.5
 	 * (c) 2010-2017 Google, Inc. http://angularjs.org
 	 * License: MIT
 	 */
@@ -3678,7 +3678,7 @@
 	      return match;
 	    });
 
-	    message += '\nhttp://errors.angularjs.org/1.6.6/' +
+	    message += '\nhttp://errors.angularjs.org/1.6.5/' +
 	      (module ? module + '/' : '') + code;
 
 	    for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
@@ -6356,11 +6356,11 @@
 	var version = {
 	  // These placeholder strings will be replaced by grunt's `build` task.
 	  // They need to be double- or single-quoted.
-	  full: '1.6.6',
+	  full: '1.6.5',
 	  major: 1,
 	  minor: 6,
-	  dot: 6,
-	  codeName: 'interdimensional-cable'
+	  dot: 5,
+	  codeName: 'toffee-salinization'
 	};
 
 
@@ -6506,7 +6506,7 @@
 	      });
 	    }
 	  ])
-	  .info({ angularVersion: '1.6.6' });
+	  .info({ angularVersion: '1.6.5' });
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -12068,31 +12068,6 @@
 	    return preAssignBindingsEnabled;
 	  };
 
-	  /**
-	   * @ngdoc method
-	   * @name  $compileProvider#strictComponentBindingsEnabled
-	   *
-	   * @param {boolean=} enabled update the strictComponentBindingsEnabled state if provided, otherwise just return the
-	   * current strictComponentBindingsEnabled state
-	   * @returns {*} current value if used as getter or itself (chaining) if used as setter
-	   *
-	   * @kind function
-	   *
-	   * @description
-	   * Call this method to enable/disable strict component bindings check. If enabled, the compiler will enforce that
-	   * for all bindings of a component that are not set as optional with `?`, an attribute needs to be provided
-	   * on the component's HTML tag.
-	   *
-	   * The default value is false.
-	   */
-	  var strictComponentBindingsEnabled = false;
-	  this.strictComponentBindingsEnabled = function(enabled) {
-	    if (isDefined(enabled)) {
-	      strictComponentBindingsEnabled = enabled;
-	      return this;
-	    }
-	    return strictComponentBindingsEnabled;
-	  };
 
 	  var TTL = 10;
 	  /**
@@ -14120,20 +14095,12 @@
 	      }
 	    }
 
-	    function strictBindingsCheck(attrName, directiveName) {
-	      if (strictComponentBindingsEnabled) {
-	        throw $compileMinErr('missingattr',
-	          'Attribute \'{0}\' of \'{1}\' is non-optional and must be set!',
-	          attrName, directiveName);
-	      }
-	    }
 
 	    // Set up $watches for isolate scope and controller bindings.
 	    function initializeDirectiveBindings(scope, attrs, destination, bindings, directive) {
 	      var removeWatchCollection = [];
 	      var initialChanges = {};
 	      var changes;
-
 	      forEach(bindings, function initializeBinding(definition, scopeName) {
 	        var attrName = definition.attrName,
 	        optional = definition.optional,
@@ -14145,9 +14112,7 @@
 
 	          case '@':
 	            if (!optional && !hasOwnProperty.call(attrs, attrName)) {
-	              strictBindingsCheck(attrName, directive.name);
 	              destination[scopeName] = attrs[attrName] = undefined;
-
 	            }
 	            removeWatch = attrs.$observe(attrName, function(value) {
 	              if (isString(value) || isBoolean(value)) {
@@ -14174,7 +14139,6 @@
 	          case '=':
 	            if (!hasOwnProperty.call(attrs, attrName)) {
 	              if (optional) break;
-	              strictBindingsCheck(attrName, directive.name);
 	              attrs[attrName] = undefined;
 	            }
 	            if (optional && !attrs[attrName]) break;
@@ -14219,7 +14183,6 @@
 	          case '<':
 	            if (!hasOwnProperty.call(attrs, attrName)) {
 	              if (optional) break;
-	              strictBindingsCheck(attrName, directive.name);
 	              attrs[attrName] = undefined;
 	            }
 	            if (optional && !attrs[attrName]) break;
@@ -14245,9 +14208,6 @@
 	            break;
 
 	          case '&':
-	            if (!optional && !hasOwnProperty.call(attrs, attrName)) {
-	              strictBindingsCheck(attrName, directive.name);
-	            }
 	            // Don't assign Object.prototype method to scope
 	            parentGet = attrs.hasOwnProperty(attrName) ? $parse(attrs[attrName]) : noop;
 
@@ -14780,7 +14740,7 @@
 	      if (!params) return '';
 	      var parts = [];
 	      forEachSorted(params, function(value, key) {
-	        if (value === null || isUndefined(value) || isFunction(value)) return;
+	        if (value === null || isUndefined(value)) return;
 	        if (isArray(value)) {
 	          forEach(value, function(v) {
 	            parts.push(encodeUriQuery(key)  + '=' + encodeUriQuery(serializeValue(v)));
@@ -14876,15 +14836,10 @@
 
 	    if (tempData) {
 	      var contentType = headers('Content-Type');
-	      var hasJsonContentType = contentType && (contentType.indexOf(APPLICATION_JSON) === 0);
-
-	      if (hasJsonContentType || isJsonLike(tempData)) {
+	      if ((contentType && (contentType.indexOf(APPLICATION_JSON) === 0)) || isJsonLike(tempData)) {
 	        try {
 	          data = fromJson(tempData);
 	        } catch (e) {
-	          if (!hasJsonContentType) {
-	            return data;
-	          }
 	          throw $httpMinErr('baddata', 'Data must be a valid JSON object. Received: "{0}". ' +
 	          'Parse error: "{1}"', data, e);
 	        }
@@ -15197,7 +15152,6 @@
 	     *   - **headers** – `{function([headerName])}` – Header getter function.
 	     *   - **config** – `{Object}` – The configuration object that was used to generate the request.
 	     *   - **statusText** – `{string}` – HTTP status text of the response.
-	     *   - **xhrStatus** – `{string}` – Status of the XMLHttpRequest (`complete`, `error`, `timeout` or `abort`).
 	     *
 	     * A response status code between 200 and 299 is considered a success status and will result in
 	     * the success callback being called. Any response status code outside of that range is
@@ -16039,9 +15993,9 @@
 	          } else {
 	            // serving from cache
 	            if (isArray(cachedResp)) {
-	              resolvePromise(cachedResp[1], cachedResp[0], shallowCopy(cachedResp[2]), cachedResp[3], cachedResp[4]);
+	              resolvePromise(cachedResp[1], cachedResp[0], shallowCopy(cachedResp[2]), cachedResp[3]);
 	            } else {
-	              resolvePromise(cachedResp, 200, {}, 'OK', 'complete');
+	              resolvePromise(cachedResp, 200, {}, 'OK');
 	            }
 	          }
 	        } else {
@@ -16098,10 +16052,10 @@
 	       *  - resolves the raw $http promise
 	       *  - calls $apply
 	       */
-	      function done(status, response, headersString, statusText, xhrStatus) {
+	      function done(status, response, headersString, statusText) {
 	        if (cache) {
 	          if (isSuccess(status)) {
-	            cache.put(url, [status, response, parseHeaders(headersString), statusText, xhrStatus]);
+	            cache.put(url, [status, response, parseHeaders(headersString), statusText]);
 	          } else {
 	            // remove promise from the cache
 	            cache.remove(url);
@@ -16109,7 +16063,7 @@
 	        }
 
 	        function resolveHttpPromise() {
-	          resolvePromise(response, status, headersString, statusText, xhrStatus);
+	          resolvePromise(response, status, headersString, statusText);
 	        }
 
 	        if (useApplyAsync) {
@@ -16124,7 +16078,7 @@
 	      /**
 	       * Resolves the raw $http promise.
 	       */
-	      function resolvePromise(response, status, headers, statusText, xhrStatus) {
+	      function resolvePromise(response, status, headers, statusText) {
 	        //status: HTTP response status code, 0, -1 (aborted by timeout / promise)
 	        status = status >= -1 ? status : 0;
 
@@ -16133,13 +16087,12 @@
 	          status: status,
 	          headers: headersGetter(headers),
 	          config: config,
-	          statusText: statusText,
-	          xhrStatus: xhrStatus
+	          statusText: statusText
 	        });
 	      }
 
 	      function resolvePromiseWithResult(result) {
-	        resolvePromise(result.data, result.status, shallowCopy(result.headers()), result.statusText, result.xhrStatus);
+	        resolvePromise(result.data, result.status, shallowCopy(result.headers()), result.statusText);
 	      }
 
 	      function removePendingReq() {
@@ -16240,7 +16193,7 @@
 	      var jsonpDone = jsonpReq(url, callbackPath, function(status, text) {
 	        // jsonpReq only ever sets status to 200 (OK), 404 (ERROR) or -1 (WAITING)
 	        var response = (status === 200) && callbacks.getResponse(callbackPath);
-	        completeRequest(callback, status, response, '', text, 'complete');
+	        completeRequest(callback, status, response, '', text);
 	        callbacks.removeCallback(callbackPath);
 	      });
 	    } else {
@@ -16275,29 +16228,18 @@
 	            status,
 	            response,
 	            xhr.getAllResponseHeaders(),
-	            statusText,
-	            'complete');
+	            statusText);
 	      };
 
 	      var requestError = function() {
 	        // The response is always empty
 	        // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
-	        completeRequest(callback, -1, null, null, '', 'error');
-	      };
-
-	      var requestAborted = function() {
-	        completeRequest(callback, -1, null, null, '', 'abort');
-	      };
-
-	      var requestTimeout = function() {
-	        // The response is always empty
-	        // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
-	        completeRequest(callback, -1, null, null, '', 'timeout');
+	        completeRequest(callback, -1, null, null, '');
 	      };
 
 	      xhr.onerror = requestError;
-	      xhr.onabort = requestAborted;
-	      xhr.ontimeout = requestTimeout;
+	      xhr.onabort = requestError;
+	      xhr.ontimeout = requestError;
 
 	      forEach(eventHandlers, function(value, key) {
 	          xhr.addEventListener(key, value);
@@ -16347,14 +16289,14 @@
 	      }
 	    }
 
-	    function completeRequest(callback, status, response, headersString, statusText, xhrStatus) {
+	    function completeRequest(callback, status, response, headersString, statusText) {
 	      // cancel timeout and subsequent timeout promise resolution
 	      if (isDefined(timeoutId)) {
 	        $browserDefer.cancel(timeoutId);
 	      }
 	      jsonpDone = xhr = null;
 
-	      callback(status, response, headersString, statusText, xhrStatus);
+	      callback(status, response, headersString, statusText);
 	    }
 	  };
 
@@ -18980,7 +18922,7 @@
 	      findConstantAndWatchExpressions(ast.property, $filter, astIsPure);
 	    }
 	    ast.constant = ast.object.constant && (!ast.computed || ast.property.constant);
-	    ast.toWatch = ast.constant ? [] : [ast];
+	    ast.toWatch = [ast];
 	    break;
 	  case AST.CallExpression:
 	    isStatelessFilter = ast.filter ? isStateless($filter, ast.callee.name) : false;
@@ -18989,7 +18931,9 @@
 	    forEach(ast.arguments, function(expr) {
 	      findConstantAndWatchExpressions(expr, $filter, astIsPure);
 	      allConstants = allConstants && expr.constant;
-	      argsToWatch.push.apply(argsToWatch, expr.toWatch);
+	      if (!expr.constant) {
+	        argsToWatch.push.apply(argsToWatch, expr.toWatch);
+	      }
 	    });
 	    ast.constant = allConstants;
 	    ast.toWatch = isStatelessFilter ? argsToWatch : [ast];
@@ -19006,7 +18950,9 @@
 	    forEach(ast.elements, function(expr) {
 	      findConstantAndWatchExpressions(expr, $filter, astIsPure);
 	      allConstants = allConstants && expr.constant;
-	      argsToWatch.push.apply(argsToWatch, expr.toWatch);
+	      if (!expr.constant) {
+	        argsToWatch.push.apply(argsToWatch, expr.toWatch);
+	      }
 	    });
 	    ast.constant = allConstants;
 	    ast.toWatch = argsToWatch;
@@ -19016,14 +18962,17 @@
 	    argsToWatch = [];
 	    forEach(ast.properties, function(property) {
 	      findConstantAndWatchExpressions(property.value, $filter, astIsPure);
-	      allConstants = allConstants && property.value.constant;
-	      argsToWatch.push.apply(argsToWatch, property.value.toWatch);
-	      if (property.computed) {
-	        //`{[key]: value}` implicitly does `key.toString()` which may be non-pure
-	        findConstantAndWatchExpressions(property.key, $filter, /*parentIsPure=*/false);
-	        allConstants = allConstants && property.key.constant;
-	        argsToWatch.push.apply(argsToWatch, property.key.toWatch);
+	      allConstants = allConstants && property.value.constant && !property.computed;
+	      if (!property.value.constant) {
+	        argsToWatch.push.apply(argsToWatch, property.value.toWatch);
 	      }
+	      if (property.computed) {
+	        findConstantAndWatchExpressions(property.key, $filter, astIsPure);
+	        if (!property.key.constant) {
+	          argsToWatch.push.apply(argsToWatch, property.key.toWatch);
+	        }
+	      }
+
 	    });
 	    ast.constant = allConstants;
 	    ast.toWatch = argsToWatch;
@@ -26619,20 +26568,15 @@
 	 *
 	 * ## A note about browser compatibility
 	 *
-	 * Internet Explorer and Edge do not support the `details` element, it is
+	 * Edge, Firefox, and Internet Explorer do not support the `details` element, it is
 	 * recommended to use {@link ng.ngShow} and {@link ng.ngHide} instead.
 	 *
 	 * @example
 	     <example name="ng-open">
 	       <file name="index.html">
-	         <label>Toggle details: <input type="checkbox" ng-model="open"></label><br/>
+	         <label>Check me check multiple: <input type="checkbox" ng-model="open"></label><br/>
 	         <details id="details" ng-open="open">
-	            <summary>List</summary>
-	            <ul>
-	              <li>Apple</li>
-	              <li>Orange</li>
-	              <li>Durian</li>
-	            </ul>
+	            <summary>Show/Hide me</summary>
 	         </details>
 	       </file>
 	       <file name="protractor.js" type="protractor">
@@ -34740,9 +34684,7 @@
 	 *     more than one tracking expression value resolve to the same key. (This would mean that two distinct objects are
 	 *     mapped to the same DOM element, which is not possible.)
 	 *
-	 *     <div class="alert alert-warning">
-	 *       <strong>Note:</strong> the `track by` expression must come last - after any filters, and the alias expression.
-	 *     </div>
+	 *     Note that the tracking expression must come last, after any filters, and the alias expression.
 	 *
 	 *     For example: `item in items` is equivalent to `item in items track by $id(item)`. This implies that the DOM elements
 	 *     will be associated by item identity in the array.
@@ -37460,9 +37402,9 @@
 
 	!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 
-/***/ }),
+/***/ },
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
 	    if (true) {
@@ -37632,9 +37574,9 @@
 	}));
 
 
-/***/ }),
+/***/ },
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/*
 	 angular-file-upload v2.5.0
@@ -39726,22 +39668,22 @@
 	;
 	//# sourceMappingURL=angular-file-upload.js.map
 
-/***/ }),
+/***/ },
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(7);
 	module.exports = 'google.places';
 
-/***/ }),
+/***/ },
 /* 7 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";angular.module("google.places",[]).factory("googlePlacesApi",["$window",function(a){if(!a.google)throw"Global `google` var missing. Did you forget to include the places API script?";return a.google}]).directive("gPlacesAutocomplete",["$parse","$compile","$timeout","$document","googlePlacesApi",function(a,b,c,d,e){return{restrict:"A",require:"^ngModel",scope:{model:"=ngModel",options:"=?",forceSelection:"=?",customPlaces:"=?"},controller:["$scope",function(a){}],link:function(a,f,g,h){function i(){f.bind("keydown",l),f.bind("blur",m),f.bind("submit",m),a.$watch("selected",n)}function j(){var c,e=angular.element("<div g-places-autocomplete-drawer></div>"),f=angular.element(d[0].body);e.attr({input:"input",query:"query",predictions:"predictions",active:"active",selected:"selected"}),c=b(e)(a),f.append(c),a.$on("$destroy",function(){c.remove()})}function k(){h.$parsers.push(o),h.$formatters.push(p),h.$render=q}function l(b){0!==a.predictions.length&&-1!==w(A,b.which)&&(b.preventDefault(),b.which===z.down?(a.active=(a.active+1)%a.predictions.length,a.$digest()):b.which===z.up?(a.active=(a.active?a.active:a.predictions.length)-1,a.$digest()):13===b.which||9===b.which?(a.forceSelection&&(a.active=-1===a.active?0:a.active),a.$apply(function(){a.selected=a.active,-1===a.selected&&r()})):27===b.which&&a.$apply(function(){b.stopPropagation(),r()}))}function m(b){0!==a.predictions.length&&(a.forceSelection&&(a.selected=-1===a.selected?0:a.selected),a.$digest(),a.$apply(function(){-1===a.selected&&r()}))}function n(){var b;b=a.predictions[a.selected],b&&(b.is_custom?a.$apply(function(){a.model=b.place,a.$emit("g-places-autocomplete:select",b.place),c(function(){h.$viewChangeListeners.forEach(function(a){a()})})}):C.getDetails({placeId:b.place_id},function(b,d){d==e.maps.places.PlacesServiceStatus.OK&&a.$apply(function(){a.model=b,a.$emit("g-places-autocomplete:select",b),c(function(){h.$viewChangeListeners.forEach(function(a){a()})})})}),r())}function o(b){var c;return b&&u(b)?(a.query=b,c=angular.extend({input:b},a.options),B.getPlacePredictions(c,function(b,c){a.$apply(function(){var d;r(),a.customPlaces&&(d=s(a.query),a.predictions.push.apply(a.predictions,d)),c==e.maps.places.PlacesServiceStatus.OK&&a.predictions.push.apply(a.predictions,b),a.predictions.length>5&&(a.predictions.length=5)})}),a.forceSelection?h.$modelValue:b):b}function p(a){var b="";return u(a)?b=a:v(a)&&(b=a.formatted_address),b}function q(){return f.val(h.$viewValue)}function r(){a.active=-1,a.selected=-1,a.predictions=[]}function s(b){var c,d,e,f=[];for(e=0;e<a.customPlaces.length;e++)c=a.customPlaces[e],d=t(b,c),d.matched_substrings.length>0&&f.push({is_custom:!0,custom_prediction_label:c.custom_prediction_label||"(Custom Non-Google Result)",description:c.formatted_address,place:c,matched_substrings:d.matched_substrings,terms:d.terms});return f}function t(a,b){var c,d,e,f=a+"",g=[],h=[];for(d=b.formatted_address.split(","),e=0;e<d.length;e++)c=d[e].trim(),f.length>0&&(c.length>=f.length?(x(c,f)&&h.push({length:f.length,offset:e}),f=""):x(f,c)?(h.push({length:c.length,offset:e}),f=f.replace(c,"").trim()):f=""),g.push({value:c,offset:b.formatted_address.indexOf(c)});return{matched_substrings:h,terms:g}}function u(a){return"[object String]"==Object.prototype.toString.call(a)}function v(a){return"[object Object]"==Object.prototype.toString.call(a)}function w(a,b){var c,d;if(null==a)return-1;for(d=a.length,c=0;d>c;c++)if(a[c]===b)return c;return-1}function x(a,b){return 0===y(a).lastIndexOf(y(b),0)}function y(a){return null==a?"":a.toLowerCase()}var z={tab:9,enter:13,esc:27,up:38,down:40},A=[z.tab,z.enter,z.esc,z.up,z.down],B=new e.maps.places.AutocompleteService,C=new e.maps.places.PlacesService(f[0]);!function(){a.query="",a.predictions=[],a.input=f,a.options=a.options||{},j(),i(),k()}()}}}]).directive("gPlacesAutocompleteDrawer",["$window","$document",function(a,b){var c=['<div class="pac-container" ng-if="isOpen()" ng-style="{top: position.top+\'px\', left: position.left+\'px\', width: position.width+\'px\'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">','  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"','       ng-repeat="prediction in predictions track by $index" ng-class="{\'pac-item-selected\': isActive($index) }"','       ng-mouseenter="selectActive($index)" ng-click="selectPrediction($index)" role="option" id="{{prediction.id}}">',"  </div>","</div>"];return{restrict:"A",scope:{input:"=",query:"=",predictions:"=",active:"=",selected:"="},template:c.join(""),link:function(c,d){function e(c){var d=c[0],e=d.getBoundingClientRect(),f=b[0].documentElement,g=b[0].body,h=a.pageYOffset||f.scrollTop||g.scrollTop,i=a.pageXOffset||f.scrollLeft||g.scrollLeft;return{width:e.width,height:e.height,top:e.top+e.height+h,left:e.left+i}}d.bind("mousedown",function(a){a.preventDefault()}),a.onresize=function(){c.$apply(function(){c.position=e(c.input)})},c.isOpen=function(){return c.predictions.length>0},c.isActive=function(a){return c.active===a},c.selectActive=function(a){c.active=a},c.selectPrediction=function(a){c.selected=a},c.$watch("predictions",function(){c.position=e(c.input)},!0)}}}]).directive("gPlacesAutocompletePrediction",[function(){var a=['<span class="pac-icon pac-icon-marker"></span>','<span class="pac-item-query" ng-bind-html="prediction | highlightMatched"></span>','<span ng-repeat="term in prediction.terms | unmatchedTermsOnly:prediction">{{term.value | trailingComma:!$last}}&nbsp;</span>','<span class="custom-prediction-label" ng-if="prediction.is_custom">&nbsp;{{prediction.custom_prediction_label}}</span>'];return{restrict:"A",scope:{index:"=",prediction:"=",query:"="},template:a.join("")}}]).filter("highlightMatched",["$sce",function(a){return function(b){var c,d="",e="";return b.matched_substrings.length>0&&b.terms.length>0&&(c=b.matched_substrings[0],d=b.terms[0].value.substr(c.offset,c.length),e=b.terms[0].value.substr(c.offset+c.length)),a.trustAsHtml('<span class="pac-matched">'+d+"</span>"+e)}}]).filter("unmatchedTermsOnly",[function(){return function(a,b){var c,d,e=[];for(c=0;c<a.length;c++)d=a[c],b.matched_substrings.length>0&&d.offset>b.matched_substrings[0].length&&e.push(d);return e}}]).filter("trailingComma",[function(){return function(a,b){return b?a+",":a}}]);
 
-/***/ }),
+/***/ },
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	(function webpackUniversalModuleDefinition(root, factory) {
 		if(true)
@@ -39930,17 +39872,152 @@
 	/******/ ]);
 	});
 
-/***/ }),
+/***/ },
 /* 9 */
-/***/ (function(module, exports) {
-
-	!function(e){function r(a){if(t[a])return t[a].exports;var o=t[a]={exports:{},id:a,loaded:!1};return e[a].call(o.exports,o,o.exports,r),o.loaded=!0,o.exports}var t={};r.m=e,r.c=t,r.p="/neat-form/js/",r(0)}([function(e,r,t){"use strict";!function(e,r){t(1);r.module("neat-api",["ngResource"]).service("neatApi",["$resource","$location",function(r,t){var a="//"+t.host()+":"+t.port();return e.NEAT_API_ROOT_URL&&(a=e.NEAT_API_ROOT_URL),r(a,{},{login:{url:a+"/auth/login",method:"POST",isArray:!1,params:{}},logout:{url:a+"/auth/logout",method:"POST",isArray:!1,params:{}},resendActivation:{url:a+"/auth/resend-activation",method:"POST",isArray:!1,params:{}},activate:{url:a+"/auth/activate-account",method:"POST",isArray:!1,params:{}},resetPassword:{url:a+"/auth/do-reset-password",method:"POST",isArray:!1,params:{}},requestResetPassword:{url:a+"/auth/reset-password",method:"POST",isArray:!1,params:{}},find:{url:a+"/api/:model/find",method:"POST",isArray:!0,params:{model:"@model"}},findOne:{url:a+"/api/:model/findOne",method:"POST",params:{model:"@model"}},versions:{url:a+"/api/:model/versions",method:"POST",isArray:!0,params:{model:"@model"}},save:{url:a+"/api/:model/save",method:"POST",params:{model:"@model"}},update:{url:a+"/api/:model/update",method:"POST",params:{model:"@model"}},remove:{url:a+"/api/:model/remove",method:"POST",params:{model:"@model"}},count:{url:a+"/api/:model/count",method:"POST",params:{model:"@model"}},pagination:{url:a+"/api/:model/pagination",method:"POST",params:{model:"@model"}},schema:{url:a+"/api/:model/schema",method:"POST",params:{model:"@model"}},dropdownoptions:{url:a+"/api/:model/dropdownoptions",method:"POST",isArray:!0,params:{model:"@model"}},form:{url:a+"/form-api/:form/:_id",method:"GET",params:{form:"@form",_id:"@_id"}},formSubmit:{url:a+"/form-api/:form",method:"POST",params:{form:"@form"}}})}])}(window,window.angular)},function(e,r,t){t(2),e.exports="ngResource"},function(e,r){!function(e,r){"use strict";function t(e){return null!=e&&""!==e&&"hasOwnProperty"!==e&&s.test("."+e)}function a(e,a){if(!t(a))throw n("badmember",'Dotted member path "@{0}" is invalid.',a);for(var o=a.split("."),s=0,i=o.length;s<i&&r.isDefined(e);s++){var u=o[s];e=null!==e?e[u]:void 0}return e}function o(e,t){t=t||{},r.forEach(t,function(e,r){delete t[r]});for(var a in e)!e.hasOwnProperty(a)||"$"===a.charAt(0)&&"$"===a.charAt(1)||(t[a]=e[a]);return t}var n=r.$$minErr("$resource"),s=/^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;r.module("ngResource",["ng"]).info({angularVersion:"1.6.6"}).provider("$resource",function(){var e=/^https?:\/\/\[[^\]]*][^/]*/,t=this;this.defaults={stripTrailingSlashes:!0,cancellable:!1,actions:{get:{method:"GET"},save:{method:"POST"},query:{method:"GET",isArray:!0},remove:{method:"DELETE"},delete:{method:"DELETE"}}},this.$get=["$http","$log","$q","$timeout",function(s,i,u,l){function c(e,r){this.template=e,this.defaults=f({},t.defaults,r),this.urlParams={}}function d(e,r,P,w){function O(e,t){var o={};return t=f({},r,t),p(t,function(r,t){$(r)&&(r=r(e)),o[t]=r&&r.charAt&&"@"===r.charAt(0)?a(e,r.substr(1)):r}),o}function T(e){return e.resource}function A(e){o(e||{},this)}var b=new c(e,w);return P=f({},t.defaults.actions,P),A.prototype.toJSON=function(){var e=f({},this);return delete e.$promise,delete e.$resolved,delete e.$cancelRequest,e},p(P,function(e,r){var t=!0===e.hasBody||!1!==e.hasBody&&/^(POST|PUT|PATCH)$/i.test(e.method),a=e.timeout,c=g(e.cancellable)?e.cancellable:b.defaults.cancellable;a&&!y(a)&&(i.debug("ngResource:\n  Only numeric values are allowed as `timeout`.\n  Promises are not supported in $resource, because the same value would be used for multiple requests. If you are looking for a way to cancel requests, you should use the `cancellable` option."),delete e.timeout,a=null),A[r]=function(i,d,g,y){var P,w,S,E={};switch(arguments.length){case 4:S=y,w=g;case 3:case 2:if(!$(d)){E=i,P=d,w=g;break}if($(i)){w=i,S=d;break}w=d,S=g;case 1:$(i)?w=i:t?P=i:E=i;break;case 0:break;default:throw n("badargs","Expected up to 4 arguments [params, data, success, error], got {0} arguments",arguments.length)}var R,x,_=this instanceof A,q=_?P:e.isArray?[]:new A(P),j={},U=e.interceptor&&e.interceptor.response||T,k=e.interceptor&&e.interceptor.responseError||void 0,D=!!S,W=!!k;p(e,function(e,r){switch(r){default:j[r]=h(e);break;case"params":case"isArray":case"interceptor":case"cancellable":}}),!_&&c&&(R=u.defer(),j.timeout=R.promise,a&&(x=l(R.resolve,a))),t&&(j.data=P),b.setUrlParams(j,f({},O(P,e.params||{}),E),e.url);var L=s(j).then(function(t){var a=t.data;if(a){if(v(a)!==!!e.isArray)throw n("badcfg","Error in resource configuration for action `{0}`. Expected response to contain an {1} but got an {2} (Request: {3} {4})",r,e.isArray?"array":"object",v(a)?"array":"object",j.method,j.url);if(e.isArray)q.length=0,p(a,function(e){"object"==typeof e?q.push(new A(e)):q.push(e)});else{var s=q.$promise;o(a,q),q.$promise=s}}return t.resource=q,t},function(e){return e.resource=q,u.reject(e)});return L=L.finally(function(){q.$resolved=!0,!_&&c&&(q.$cancelRequest=m,l.cancel(x),R=x=j.timeout=null)}),L=L.then(function(e){var r=U(e);return(w||m)(r,e.headers,e.status,e.statusText),r},D||W?function(e){return D&&!W&&L.catch(m),D&&S(e),W?k(e):u.reject(e)}:void 0),_?L:(q.$promise=L,q.$resolved=!1,c&&(q.$cancelRequest=function(e){L.catch(m),null!==R&&R.resolve(e)}),q)},A.prototype["$"+r]=function(e,t,a){$(e)&&(a=t,t=e,e={});var o=A[r].call(this,e,this,t,a);return o.$promise||o}}),A.bind=function(t){var a=f({},r,t);return d(e,a,P,w)},A}var m=r.noop,p=r.forEach,f=r.extend,h=r.copy,v=r.isArray,g=r.isDefined,$=r.isFunction,y=r.isNumber,P=r.$$encodeUriQuery,w=r.$$encodeUriSegment;return c.prototype={setUrlParams:function(r,t,a){var o,s,i=this,u=a||i.template,l="",c=i.urlParams=Object.create(null);p(u.split(/\W/),function(e){if("hasOwnProperty"===e)throw n("badname","hasOwnProperty is not a valid parameter name.");!new RegExp("^\\d+$").test(e)&&e&&new RegExp("(^|[^\\\\]):"+e+"(\\W|$)").test(u)&&(c[e]={isQueryParamValue:new RegExp("\\?.*=:"+e+"(?:\\W|$)").test(u)})}),u=u.replace(/\\:/g,":"),u=u.replace(e,function(e){return l=e,""}),t=t||{},p(i.urlParams,function(e,r){o=t.hasOwnProperty(r)?t[r]:i.defaults[r],g(o)&&null!==o?(s=e.isQueryParamValue?P(o,!0):w(o),u=u.replace(new RegExp(":"+r+"(\\W|$)","g"),function(e,r){return s+r})):u=u.replace(new RegExp("(/?):"+r+"(\\W|$)","g"),function(e,r,t){return"/"===t.charAt(0)?t:r+t})}),i.defaults.stripTrailingSlashes&&(u=u.replace(/\/+$/,"")||"/"),u=u.replace(/\/\.(?=\w+($|\?))/,"."),r.url=l+u.replace(/\/(\\|%5C)\./,"/."),p(t,function(e,t){i.urlParams[t]||(r.params=r.params||{},r.params[t]=e)})}},d}]})}(window,window.angular)}]);
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict";
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	!function (e) {
+	  function r(a) {
+	    if (t[a]) return t[a].exports;var o = t[a] = { exports: {}, id: a, loaded: !1 };return e[a].call(o.exports, o, o.exports, r), o.loaded = !0, o.exports;
+	  }var t = {};r.m = e, r.c = t, r.p = "/neat-form/js/", r(0);
+	}([function (e, r, t) {
+	  "use strict";
+	  !function (e, r) {
+	    t(1);r.module("neat-api", ["ngResource"]).service("neatApi", ["$resource", "$location", function (r, t) {
+	      var a = "//" + t.host() + ":" + t.port();return e.NEAT_API_ROOT_URL && (a = e.NEAT_API_ROOT_URL), r(a, {}, { login: { url: a + "/auth/login", method: "POST", isArray: !1, params: {} }, logout: { url: a + "/auth/logout", method: "POST", isArray: !1, params: {} }, resendActivation: { url: a + "/auth/resend-activation", method: "POST", isArray: !1, params: {} }, activate: { url: a + "/auth/activate-account", method: "POST", isArray: !1, params: {} }, resetPassword: { url: a + "/auth/do-reset-password", method: "POST", isArray: !1, params: {} }, requestResetPassword: { url: a + "/auth/reset-password", method: "POST", isArray: !1, params: {} }, find: { url: a + "/api/:model/find", method: "POST", isArray: !0, params: { model: "@model" } }, findOne: { url: a + "/api/:model/findOne", method: "POST", params: { model: "@model" } }, versions: { url: a + "/api/:model/versions", method: "POST", isArray: !0, params: { model: "@model" } }, save: { url: a + "/api/:model/save", method: "POST", params: { model: "@model" } }, update: { url: a + "/api/:model/update", method: "POST", params: { model: "@model" } }, remove: { url: a + "/api/:model/remove", method: "POST", params: { model: "@model" } }, count: { url: a + "/api/:model/count", method: "POST", params: { model: "@model" } }, pagination: { url: a + "/api/:model/pagination", method: "POST", params: { model: "@model" } }, schema: { url: a + "/api/:model/schema", method: "POST", params: { model: "@model" } }, dropdownoptions: { url: a + "/api/:model/dropdownoptions", method: "POST", isArray: !0, params: { model: "@model" } }, form: { url: a + "/form-api/:form/:_id", method: "GET", params: { form: "@form", _id: "@_id" } }, formSubmit: { url: a + "/form-api/:form", method: "POST", params: { form: "@form" } } });
+	    }]);
+	  }(window, window.angular);
+	}, function (e, r, t) {
+	  t(2), e.exports = "ngResource";
+	}, function (e, r) {
+	  !function (e, r) {
+	    "use strict";
+	    function t(e) {
+	      return null != e && "" !== e && "hasOwnProperty" !== e && s.test("." + e);
+	    }function a(e, a) {
+	      if (!t(a)) throw n("badmember", 'Dotted member path "@{0}" is invalid.', a);for (var o = a.split("."), s = 0, i = o.length; s < i && r.isDefined(e); s++) {
+	        var u = o[s];e = null !== e ? e[u] : void 0;
+	      }return e;
+	    }function o(e, t) {
+	      t = t || {}, r.forEach(t, function (e, r) {
+	        delete t[r];
+	      });for (var a in e) {
+	        !e.hasOwnProperty(a) || "$" === a.charAt(0) && "$" === a.charAt(1) || (t[a] = e[a]);
+	      }return t;
+	    }var n = r.$$minErr("$resource"),
+	        s = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;r.module("ngResource", ["ng"]).info({ angularVersion: "1.6.6" }).provider("$resource", function () {
+	      var e = /^https?:\/\/\[[^\]]*][^/]*/,
+	          t = this;this.defaults = { stripTrailingSlashes: !0, cancellable: !1, actions: { get: { method: "GET" }, save: { method: "POST" }, query: { method: "GET", isArray: !0 }, remove: { method: "DELETE" }, delete: { method: "DELETE" } } }, this.$get = ["$http", "$log", "$q", "$timeout", function (s, i, u, l) {
+	        function c(e, r) {
+	          this.template = e, this.defaults = f({}, t.defaults, r), this.urlParams = {};
+	        }function d(e, r, P, w) {
+	          function O(e, t) {
+	            var o = {};return t = f({}, r, t), p(t, function (r, t) {
+	              $(r) && (r = r(e)), o[t] = r && r.charAt && "@" === r.charAt(0) ? a(e, r.substr(1)) : r;
+	            }), o;
+	          }function T(e) {
+	            return e.resource;
+	          }function A(e) {
+	            o(e || {}, this);
+	          }var b = new c(e, w);return P = f({}, t.defaults.actions, P), A.prototype.toJSON = function () {
+	            var e = f({}, this);return delete e.$promise, delete e.$resolved, delete e.$cancelRequest, e;
+	          }, p(P, function (e, r) {
+	            var t = !0 === e.hasBody || !1 !== e.hasBody && /^(POST|PUT|PATCH)$/i.test(e.method),
+	                a = e.timeout,
+	                c = g(e.cancellable) ? e.cancellable : b.defaults.cancellable;a && !y(a) && (i.debug("ngResource:\n  Only numeric values are allowed as `timeout`.\n  Promises are not supported in $resource, because the same value would be used for multiple requests. If you are looking for a way to cancel requests, you should use the `cancellable` option."), delete e.timeout, a = null), A[r] = function (i, d, g, y) {
+	              var P,
+	                  w,
+	                  S,
+	                  E = {};switch (arguments.length) {case 4:
+	                  S = y, w = g;case 3:case 2:
+	                  if (!$(d)) {
+	                    E = i, P = d, w = g;break;
+	                  }if ($(i)) {
+	                    w = i, S = d;break;
+	                  }w = d, S = g;case 1:
+	                  $(i) ? w = i : t ? P = i : E = i;break;case 0:
+	                  break;default:
+	                  throw n("badargs", "Expected up to 4 arguments [params, data, success, error], got {0} arguments", arguments.length);}var R,
+	                  x,
+	                  _ = this instanceof A,
+	                  q = _ ? P : e.isArray ? [] : new A(P),
+	                  j = {},
+	                  U = e.interceptor && e.interceptor.response || T,
+	                  k = e.interceptor && e.interceptor.responseError || void 0,
+	                  D = !!S,
+	                  W = !!k;p(e, function (e, r) {
+	                switch (r) {default:
+	                    j[r] = h(e);break;case "params":case "isArray":case "interceptor":case "cancellable":}
+	              }), !_ && c && (R = u.defer(), j.timeout = R.promise, a && (x = l(R.resolve, a))), t && (j.data = P), b.setUrlParams(j, f({}, O(P, e.params || {}), E), e.url);var L = s(j).then(function (t) {
+	                var a = t.data;if (a) {
+	                  if (v(a) !== !!e.isArray) throw n("badcfg", "Error in resource configuration for action `{0}`. Expected response to contain an {1} but got an {2} (Request: {3} {4})", r, e.isArray ? "array" : "object", v(a) ? "array" : "object", j.method, j.url);if (e.isArray) q.length = 0, p(a, function (e) {
+	                    "object" == (typeof e === "undefined" ? "undefined" : _typeof(e)) ? q.push(new A(e)) : q.push(e);
+	                  });else {
+	                    var s = q.$promise;o(a, q), q.$promise = s;
+	                  }
+	                }return t.resource = q, t;
+	              }, function (e) {
+	                return e.resource = q, u.reject(e);
+	              });return L = L.finally(function () {
+	                q.$resolved = !0, !_ && c && (q.$cancelRequest = m, l.cancel(x), R = x = j.timeout = null);
+	              }), L = L.then(function (e) {
+	                var r = U(e);return (w || m)(r, e.headers, e.status, e.statusText), r;
+	              }, D || W ? function (e) {
+	                return D && !W && L.catch(m), D && S(e), W ? k(e) : u.reject(e);
+	              } : void 0), _ ? L : (q.$promise = L, q.$resolved = !1, c && (q.$cancelRequest = function (e) {
+	                L.catch(m), null !== R && R.resolve(e);
+	              }), q);
+	            }, A.prototype["$" + r] = function (e, t, a) {
+	              $(e) && (a = t, t = e, e = {});var o = A[r].call(this, e, this, t, a);return o.$promise || o;
+	            };
+	          }), A.bind = function (t) {
+	            var a = f({}, r, t);return d(e, a, P, w);
+	          }, A;
+	        }var m = r.noop,
+	            p = r.forEach,
+	            f = r.extend,
+	            h = r.copy,
+	            v = r.isArray,
+	            g = r.isDefined,
+	            $ = r.isFunction,
+	            y = r.isNumber,
+	            P = r.$$encodeUriQuery,
+	            w = r.$$encodeUriSegment;return c.prototype = { setUrlParams: function setUrlParams(r, t, a) {
+	            var o,
+	                s,
+	                i = this,
+	                u = a || i.template,
+	                l = "",
+	                c = i.urlParams = Object.create(null);p(u.split(/\W/), function (e) {
+	              if ("hasOwnProperty" === e) throw n("badname", "hasOwnProperty is not a valid parameter name.");!new RegExp("^\\d+$").test(e) && e && new RegExp("(^|[^\\\\]):" + e + "(\\W|$)").test(u) && (c[e] = { isQueryParamValue: new RegExp("\\?.*=:" + e + "(?:\\W|$)").test(u) });
+	            }), u = u.replace(/\\:/g, ":"), u = u.replace(e, function (e) {
+	              return l = e, "";
+	            }), t = t || {}, p(i.urlParams, function (e, r) {
+	              o = t.hasOwnProperty(r) ? t[r] : i.defaults[r], g(o) && null !== o ? (s = e.isQueryParamValue ? P(o, !0) : w(o), u = u.replace(new RegExp(":" + r + "(\\W|$)", "g"), function (e, r) {
+	                return s + r;
+	              })) : u = u.replace(new RegExp("(/?):" + r + "(\\W|$)", "g"), function (e, r, t) {
+	                return "/" === t.charAt(0) ? t : r + t;
+	              });
+	            }), i.defaults.stripTrailingSlashes && (u = u.replace(/\/+$/, "") || "/"), u = u.replace(/\/\.(?=\w+($|\?))/, "."), r.url = l + u.replace(/\/(\\|%5C)\./, "/."), p(t, function (e, t) {
+	              i.urlParams[t] || (r.params = r.params || {}, r.params[t] = e);
+	            });
+	          } }, d;
+	      }];
+	    });
+	  }(window, window.angular);
+	}]);
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var googleLoaded = !!window.google && !!window.google.maps;
 
 	module.exports = function (neatFormModule) {
 
@@ -39957,7 +40034,9 @@
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormCtrl", ["$scope", "$q", "$sce", "neatApi", function ($scope, $q, $sce, neatApi) {
+	    neatFormModule.controller("neatFormCtrl", ["$scope", "$rootScope", "$q", "$sce", "$anchorScroll", "neatApi", "angularLoad", function ($scope, $rootScope, $q, $sce, $anchorScroll, neatApi, angularLoad) {
+	        $scope.connectedId = $scope.id;
+
 	        $scope.reset = function () {
 	            if ($scope.loading) {
 	                return;
@@ -39966,12 +40045,25 @@
 	            $scope.loading = true;
 	            neatApi.form({
 	                form: $scope.form,
-	                _id: $scope.id
+	                _id: $scope.connectedId
 	            }, function (config) {
 	                $scope.loading = false;
 	                $scope.config = config;
 	                $scope.error = null;
+
+	                if (!googleLoaded) {
+	                    googleLoaded = true;
+	                    var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
+	                    angularLoad.loadScript(googleScriptSource).then(function () {
+	                        $scope.googleReady = true;
+	                        $rootScope.$emit("googleLoaded");
+	                    });
+	                }
 	            });
+	        };
+
+	        $scope.scrollToGroup = function (group) {
+	            $anchorScroll(group.id);
 	        };
 
 	        $scope.subforms = [];
@@ -40027,7 +40119,7 @@
 
 	                $scope.saveAllSubforms(toSave).then(function () {
 	                    neatApi.formSubmit({
-	                        _id: $scope.id,
+	                        _id: $scope.connectedId,
 	                        data: $scope.getValues($scope.config),
 	                        form: $scope.form
 	                    }, function (config) {
@@ -40036,7 +40128,7 @@
 
 	                        // set id after create in case we want to just keep the form open (html decides)
 	                        if ($scope.config.connectedId) {
-	                            $scope.id = $scope.config.connectedId;
+	                            $scope.connectedId = $scope.config.connectedId;
 	                        }
 
 	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -40077,9 +40169,9 @@
 	    }]);
 	};
 
-/***/ }),
+/***/ },
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./templates/neatForm.html": 12
@@ -40098,15 +40190,15 @@
 	webpackContext.id = 11;
 
 
-/***/ }),
+/***/ },
 /* 12 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields && !showSuccess\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm && !showSuccess\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false\">{{config.renderOptions.labels.save || \"Save\"}}</button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
+	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"config.renderOptions.groups\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.fields && !showSuccess\">\r\n            <neat-form-section config=\"config\">\r\n            </neat-form-section>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"!isSubForm && !showSuccess && !loading\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-10\" style=\"padding-left: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.save !== false  && !connectedId\">{{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-primary btn-block col-md-10\" ng-if=\"config.renderOptions.labels.update !== false && connectedId\">{{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"col-md-2\" style=\"padding-right: 0\">\r\n                        <button type=\"button\" ng-click=\"reset()\" class=\"btn btn-white btn-block col-md-2\" ng-if=\"config.renderOptions.labels.reset !== false\">{{config.renderOptions.labels.reset ||\r\n                            \"Reset\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\" ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups\"\r\n         ng-init=\"navigationOpen = false;\">\r\n        <a class=\"neat-form-navigation-btn\" ng-click=\"navigationOpen = !navigationOpen\">\r\n            <i class=\"fa fa-navicon\"></i>\r\n        </a>\r\n        <div class=\"neat-form-navigation-content\">\r\n            <div class=\"row\">\r\n                <div class=\"col-md-12\">\r\n                    <a class=\"btn btn-primary\" ng-click=\"scrollToGroup(group)\" ng-repeat=\"group in config.groups\" ng-if=\"group.label\">{{group.label}}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
 
-/***/ }),
+/***/ },
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40117,18 +40209,25 @@
 	            restrict: "E",
 	            template: __webpack_require__(14)(neatFormModule.templateRoot + "neatFormSection.html"),
 	            scope: {
-	                config: "="
+	                config: "=",
+	                options: "="
 	            },
 	            controller: "neatFormSectionCtrl"
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {}]);
+	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {
+	        $scope.collapsed = $scope.options ? $scope.options.initiallyCollapsed || false : false;
+
+	        $scope.toggleCollapse = function () {
+	            $scope.collapsed = !$scope.collapsed;
+	        };
+	    }]);
 	};
 
-/***/ }),
+/***/ },
 /* 14 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./templates/neatFormSection.html": 15
@@ -40147,15 +40246,15 @@
 	webpackContext.id = 14;
 
 
-/***/ }),
+/***/ },
 /* 15 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"panel panel-inverse\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <!--\r\n        <div class=\"btn-group pull-right\">\r\n            <button type=\"submit\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-plus\"></i>\r\n            </button>\r\n        </div>\r\n        -->\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\">\r\n        <legend ng-if=\"config.legend\">{{config.legend}}</legend>\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"panel panel-inverse\" id=\"{{config.id}}\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <div class=\"btn-group pull-right\" ng-if=\"options.collapsible\">\r\n            <button type=\"button\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-caret-down\"\r\n                   ng-class=\"{\r\n                    'fa-caret-down': collapsed,\r\n                    'fa-caret-up': !collapsed\r\n                    }\"\r\n                   ng-click=\"toggleCollapse()\">\r\n\r\n                </i>\r\n            </button>\r\n        </div>\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\" ng-show=\"!collapsed\">\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 16 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 
@@ -40257,9 +40356,9 @@
 	    }]);
 	};
 
-/***/ }),
+/***/ },
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./Address.js": 18,
@@ -40296,15 +40395,14 @@
 	webpackContext.id = 17;
 
 
-/***/ }),
+/***/ },
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-	var googleLoaded = false;
 	module.exports = function (neatFormModule) {
 	    return [function () {
 	        return {
@@ -40313,7 +40411,7 @@
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", "angularLoad", function ($scope, angularLoad) {
+	            controller: ["$scope", "$rootScope", function ($scope, $rootScope) {
 
 	                var errors = $scope.config.errors || {};
 
@@ -40323,7 +40421,7 @@
 	                    value: $scope.config.value ? $scope.config.value.country : null,
 	                    label: $scope.config.label.country,
 	                    errors: errors.country,
-	                    renderOptions: $scope.config.renderOptions,
+	                    renderOptions: $scope.config.renderOptions.country,
 	                    options: $scope.config.renderOptions.countries
 	                };
 
@@ -40386,31 +40484,23 @@
 	                    }
 	                });
 
-	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey || googleLoaded) {
-	                    if (!googleLoaded) {
-	                        googleLoaded = true;
-	                        var googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places&key=" + $scope.config.renderOptions.googleMapsKey;
-	                        angularLoad.loadScript(googleScriptSource).then(function () {
-	                            $scope.googlePlaces.ready = true;
-	                        });
-	                    } else {
-	                        $scope.googlePlaces.ready = true;
-	                    }
-	                }
+	                $rootScope.$on("googleLoaded", function () {
+	                    $scope.googlePlaces.ready = true;
+	                });
 	            }]
 	        };
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 19 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-if=\"googlePlaces.ready\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.google || 'Search Address'}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" g-places-autocomplete ng-model=\"googlePlaces.value\" class=\"form-control\" options=\"googlePlaces.options\" forceSelection=\"true\"\r\n               placeholder=\"{{(config.label.google || 'Search Address') + '...'}}\">\r\n    </div>\r\n</div>\r\n\r\n<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.district\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.district}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.district\" class=\"form-control\">\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control\">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"googlePlaces.ready\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.google || 'Search Address'}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" autocomplete=\"off\" g-places-autocomplete ng-model=\"googlePlaces.value\" class=\"form-control\" options=\"googlePlaces.options\" forceSelection=\"true\"\r\n               placeholder=\"{{(config.label.google || 'Search Address') + '...'}}\">\r\n    </div>\r\n</div>\r\n\r\n<neat-form-field config=\"countryConfig\">\r\n</neat-form-field>\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.zip || config.errors.city\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.zip}} / {{config.label.city}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-4\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.zip\" class=\"form-control\" autocomplete=\"shipping postal-code\">\r\n        </div>\r\n        <div class=\"col-md-8\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.city\" class=\"form-control\" autocomplete=\"shipping locality\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.district\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.district}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.district\" class=\"form-control\">\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{\r\n    'has-error': config.errors.street || config.errors.streetnumber\r\n}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.street}} / {{config.label.streetnumber}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-10\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.street\" class=\"form-control\" autocomplete=\"shipping address-line1\">\r\n        </div>\r\n        <div class=\"col-md-2\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value.streetnumber\" class=\"form-control\" autocomplete=\"shipping address-line2\">\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40427,15 +40517,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 21 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"null\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.null || config.renderOptions.emptySelectLabel || \"Unknown\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"true\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.true || \"Yes\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"false\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.false || \"No\"}}\r\n        </label>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40456,15 +40546,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 23 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline && !config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\" ng-bind-html=\"config.label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    <span ng-bind-html=\"config.label\"></span>\r\n</label>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </label>\r\n    <div class=\"col-md-10\" ng-bind-html=\"config.label\">\r\n    </div>\r\n</div>\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"!config.renderOptions.inline && !config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\" ng-bind-html=\"config.label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<label class=\"checkbox-inline\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inline\">\r\n    <input type=\"checkbox\" ng-model=\"config.value\">\r\n    <span ng-bind-html=\"config.label\"></span>\r\n</label>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" ng-if=\"config.renderOptions.inlineLabel\">\r\n    <label class=\"col-md-2 control-label\">\r\n        <div class=\"checkbox\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value\">\r\n            </label>\r\n        </div>\r\n    </label>\r\n    <div class=\"col-md-10 control-label control-label-right\" ng-bind-html=\"config.label\">\r\n    </div>\r\n</div>\r\n";
 
-/***/ }),
+/***/ },
 /* 24 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40481,15 +40571,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 25 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div ng-class=\"'col-md-' + (config.renderOptions.value1Width || (config.renderOptions.seperatorLabel ? 4 : 5))\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value1\" ng-options=\"key as label for (key, label) in config.options.value1\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n    <label class=\"col-md-2 control-label\" ng-class=\"'col-md-' + (config.renderOptions.seperatorLabelWidth || 2)\" ng-if=\"config.renderOptions.seperatorLabel\">{{config.renderOptions.seperatorLabel}}\r\n    </label>\r\n    <div ng-class=\"'col-md-' + (config.renderOptions.value2Width || (config.renderOptions.seperatorLabel ? 4 : 5))\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value2\" ng-options=\"key as label for (key, label) in config.options.value2\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
-/***/ }),
+/***/ },
 /* 26 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40506,15 +40596,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 27 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"email\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"email\" autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 28 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40527,7 +40617,7 @@
 	                config: "=",
 	                form: "="
 	            },
-	            controller: ["$scope", "$timeout", "NgMap", "GeoCoder", function ($scope, $timeout, NgMap, GeoCoder) {
+	            controller: ["$scope", "$rootScope", "$timeout", "NgMap", "GeoCoder", function ($scope, $rootScope, $timeout, NgMap, GeoCoder) {
 	                $scope.defaultPos = [50.9953258, 11.4175722];
 	                $scope.degValue = {};
 
@@ -40549,6 +40639,10 @@
 	                });
 
 	                $scope.markerDragged = function (e) {
+	                    if (!e) {
+	                        return;
+	                    }
+
 	                    $scope.syncMapCoords({
 	                        lat: e.latLng.lat(),
 	                        lon: e.latLng.lng()
@@ -40690,20 +40784,24 @@
 
 	                    return ret;
 	                };
+
+	                $rootScope.$on("googleLoaded", function () {
+	                    $scope.googleReady = true;
+	                });
 	            }]
 	        };
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 29 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-if=\"config.renderOptions.googleMapsKey\">\r\n    <div class=\"col-md-12\" map-lazy-load=\"https://maps.google.com/maps/api/js\"\r\n         map-lazy-load-params=\"https://maps.googleapis.com/maps/api/js?key={{config.renderOptions.googleMapsKey}}\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.bindToAddress\">\r\n    <label class=\"col-md-2 control-label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <button ng-click=\"getCoordinatesFromAddressField()\" type=\"button\" class=\"btn btn-primary\"><i class=\"fa fa-globe\"></i>&nbsp;{{config.label.syncWithAddressButton || \"Sync with address\"}}\r\n        </button>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.pos\">\r\n                <option value=\"{{config.renderOptions.values.north || 'N'}}\">{{config.label.north || \"N\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.south || 'S'}}\">{{config.label.south || \"S\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.pos\">\r\n                <option value=\"{{config.renderOptions.values.west || 'W'}}\">{{config.label.west || \"W\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.east || 'E'}}\">{{config.label.east || \"E\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-if=\"googleReady\">\r\n    <div class=\"col-md-12\">\r\n        <div class=\"map-panel panel panel-inverse\">\r\n            <div class=\"panel-body\">\r\n                <map default-style=\"false\" center=\"{{mapConfig.center}}\" zoom=\"{{mapConfig.zoom}}\"\r\n                     street-view-control=\"false\" map-type-control=\"true\"\r\n                     map-type-control-options='{position:\"top_right\", style:\"dropdown_menu\", mapTypeIds:[\"HYBRID\",\"ROADMAP\",\"SATELLITE\",\"TERRAIN\"]}'\r\n                     map-type-id=\"HYBRID\">\r\n                    <marker id=\"dragMarker\" position=\"{{markerConfig.pos}}\" draggable=\"true\" on-dragend=\"markerDragged()\"></marker>\r\n                </map>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.bindToAddress\">\r\n    <label class=\"col-md-2 control-label\"></label>\r\n    <div class=\"col-md-10\">\r\n        <button ng-click=\"getCoordinatesFromAddressField()\" type=\"button\" class=\"btn btn-primary\"><i class=\"fa fa-globe\"></i>&nbsp;{{config.label.syncWithAddressButton || \"Sync with address\"}}\r\n        </button>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-class=\"{'has-error': config.errors.lat || config.errors.lon}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}} / {{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"col-md-6\" style=\"padding-left: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lat\" class=\"form-control \">\r\n        </div>\r\n        <div class=\"col-md-6\" style=\"padding-right: 0;\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onValueChanged()\" ng-model=\"config.value.lon\" class=\"form-control\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lat}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lat.pos\">\r\n                <option value=\"{{config.renderOptions.values.north || 'N'}}\">{{config.label.north || \"N\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.south || 'S'}}\">{{config.label.south || \"S\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<div class=\"form-group\" ng-if=\"config.renderOptions.showDegreeFields\">\r\n    <label class=\"col-md-2 control-label\">{{config.label.lon}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.deg\">\r\n            <span class=\"input-group-addon\">°</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.min\">\r\n            <span class=\"input-group-addon\">'</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.sec\">\r\n            <span class=\"input-group-addon\">\"</span>\r\n            <select ng-readonly=\"config.readonly\" ng-change=\"onDegValueChanged()\" class=\"form-control\" ng-model=\"degValue.lon.pos\">\r\n                <option value=\"{{config.renderOptions.values.west || 'W'}}\">{{config.label.west || \"W\"}}</option>\r\n                <option value=\"{{config.renderOptions.values.east || 'E'}}\">{{config.label.east || \"E\"}}</option>\r\n            </select>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 30 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40719,15 +40817,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 31 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\">\r\n    <label class=\"col-md-2 control-label align-left\">\r\n        <b>{{config.label}}</b>\r\n    </label>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 32 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40744,15 +40842,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 33 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\" ng-if=\"!config.renderOptions.unit\" placeholder=\"{{config.renderOptions.placeholder}}\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readonly\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readonly\" ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 34 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40769,15 +40867,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 35 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"(key, label) in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n                {{label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"(key, label) in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n            {{label}}\r\n        </label>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 36 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40903,15 +41001,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 37 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\">\r\n        <div class=\"image col-md-6\" ng-repeat=\"item in config.value\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload col-md-6\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\" ng-class=\"{\r\n            'inline-images': config.renderOptions.subforminvisible\r\n        }\">\r\n        <div class=\"image\" ng-repeat=\"item in config.value\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\" ng-show=\"!config.renderOptions.subforminvisible\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 38 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40928,15 +41026,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 39 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
-/***/ }),
+/***/ },
 /* 40 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40953,15 +41051,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 41 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-readonly=\"config.readonly\"\r\n               ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 42 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -40978,15 +41076,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 43 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 44 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41003,15 +41101,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 45 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n            <span class=\"input-group-addon\">{{config.renderOptions.perLabel || 'per'}}</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.amount\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control unit-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.unit\" ng-options=\"option as option for option in config.renderOptions.units\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 46 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41057,15 +41155,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 47 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"radio\" ng-repeat=\"option in options\">\r\n            <label>\r\n                <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"option.value\" ng-model=\"config.value\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 48 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41082,15 +41180,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 49 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\" autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
-/***/ }),
+/***/ },
 /* 50 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41139,15 +41237,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 51 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"panel-body\">\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 52 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41195,15 +41293,15 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 53 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform ng-if=\"!collapsed\" config=\"item\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
-/***/ }),
+/***/ },
 /* 54 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -41220,22 +41318,22 @@
 	    }];
 	};
 
-/***/ }),
+/***/ },
 /* 55 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <textarea type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\"></textarea>\r\n    </div>\r\n</div>\r\n\r\n";
 
-/***/ }),
+/***/ },
 /* 56 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./Address": 18,
 		"./Address.html": 19,
 		"./Address.js": 18,
-		"./BooleanPlus.html": 57,
 		"./Booleanplus": 20,
+		"./Booleanplus.html": 21,
 		"./Booleanplus.js": 20,
 		"./Checkbox": 22,
 		"./Checkbox.html": 23,
@@ -41303,11 +41401,5 @@
 	webpackContext.id = 56;
 
 
-/***/ }),
-/* 57 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"null\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.null || config.renderOptions.emptySelectLabel || \"Unknown\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"true\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.true || \"Yes\"}}\r\n        </label>\r\n        <label class=\"radio-inline\">\r\n            <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"false\" ng-model=\"config.value\">\r\n            {{config.renderOptions.labels.false || \"No\"}}\r\n        </label>\r\n    </div>\r\n</div>";
-
-/***/ })
+/***/ }
 /******/ ]);
