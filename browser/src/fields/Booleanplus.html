@@ -1,7 +1,7 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
     <label class="col-md-2 control-label">{{config.label}}</label>
     <div class="col-md-10">
-        <label class="radio-inline">
+        <label class="radio-inline" ng-if="config.renderOptions.labels.null">
             <input type="radio" name="{{config._id}}" ng-value="null" ng-model="config.value">
             {{config.renderOptions.labels.null || config.renderOptions.emptySelectLabel || "Unknown"}}
         </label>
