@@ -1436,6 +1436,8 @@
 
 .sr-only-focusable:active, .sr-only-focusable:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
 
+neat-form { /* These are the default styles applied to the stock Google Places Autocomplete component. Importantly they preserve the required "powered by Google" logo. */ }
+
 neat-form [ng\:cloak], neat-form [ng-cloak], neat-form [data-ng-cloak], neat-form [x-ng-cloak], neat-form .ng-cloak, neat-form .x-ng-cloak { display: none !important; }
 
 neat-form input[type=checkbox], neat-form input[type=radio] { display: block; opacity: 1; }
@@ -2328,95 +2330,104 @@ neat-form input[type="submit"].btn-block, neat-form input[type="reset"].btn-bloc
 
 neat-form .form-control { background-image: inherit; }
 
-neat-form .neat-form-section-body { display: flex; flex-wrap: wrap; }
+neat-form neat-form .neat-form-section-body { display: flex; flex-wrap: wrap; }
 
-neat-form .neat-7-col-form { width: 14.28571428571429%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-7-col-form { width: 14.28571428571429%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-6-col-form { width: 16.66666667%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-6-col-form { width: 16.66666667%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-5-col-form { width: 20%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-5-col-form { width: 20%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-4-col-form { width: 25%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-4-col-form { width: 25%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-3-col-form { width: 33%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-3-col-form { width: 33%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-2-col-form { width: 50%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-2-col-form { width: 50%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form .neat-1-col-form { width: 100%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form neat-form .neat-1-col-form { width: 100%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form-field-price select { min-width: 60px; }
+neat-form .neat-form-navigation { position: fixed; z-index: 1020; background: #fff; padding: 15px; box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -webkit-transition: right .2s linear; -moz-transition: right .2s linear; transition: right .2s linear; width: 310px; right: -311px; top: 10%; }
 
-neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
+neat-form .neat-form-navigation.active { right: 0; }
 
-neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: row; flex-wrap: wrap; margin: 0; }
+neat-form .neat-form-navigation .neat-form-navigation-content { margin: -15px; padding: 15px; background: #fff; position: relative; z-index: 1020; }
 
-neat-form-field-multiimageupload .images .images-container .image { position: relative; margin-bottom: 20px; height: 230px; padding-left: 0; }
+neat-form .neat-form-navigation .neat-form-navigation-content .btn { display: block; margin-bottom: 5px; }
 
-neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; margin: 10px; }
+neat-form .neat-form-navigation .neat-form-navigation-btn { position: absolute; left: -30px; top: 30%; margin-top: -15px; width: 30px; height: 30px; line-height: 30px; font-size: 18px; color: #333; background: #fff; border-radius: 4px 0 0 4px; text-align: center; box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); -webkit-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); -moz-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container { position: relative; height: 200px; width: 200px; }
+neat-form neat-form-field-price select { min-width: 60px; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container button.remove { position: absolute; z-index: 100; top: 5px; left: 5px; }
+neat-form neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container button.move-left { position: absolute; z-index: 100; bottom: 5px; left: 5px; }
+neat-form neat-form-field-multiimageupload .images .images-container.inline-images { display: flex; flex-direction: row; flex-wrap: wrap; margin: 0; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container button.move-right { position: absolute; z-index: 100; bottom: 5px; right: 5px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image { position: relative; margin-bottom: 20px; height: 230px; padding-left: 0; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container canvas { position: absolute; z-index: 50; top: 0px; left: 0px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image.inline-image-upload { display: block; margin: 10px; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container img { position: absolute; z-index: 40; top: 0px; left: 0px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container { position: relative; height: 200px; width: 200px; }
 
-neat-form-field-multiimageupload .images .images-container .image .image-container .progress { position: absolute; z-index: 90; top: 0px; left: 0px; height: 100%; width: 100%; background: white; opacity: 0.6; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container button.remove { position: absolute; z-index: 100; top: 5px; left: 5px; }
 
-neat-form-field-multiimageupload .images .images-container .image .data-container { margin-left: 215px; margin-right: 15px; position: absolute; top: 0; right: 0; left: 0; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container button.move-left { position: absolute; z-index: 100; bottom: 5px; left: 5px; }
 
-neat-form-field-multiimageupload .images .images-container .image .data-container .data-field { margin-bottom: 10px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container button.move-right { position: absolute; z-index: 100; bottom: 5px; right: 5px; }
 
-neat-form-field-multiimageupload .images .images-container .image .data-container .data-field .control-label { padding-top: 0; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container canvas { position: absolute; z-index: 50; top: 0px; left: 0px; }
 
-neat-form-field-multiimageupload .images .images-container .image.upload .image-container { border: 2px dashed lightgray; padding: 0; overflow: hidden; opacity: 0.5; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container img { position: absolute; z-index: 40; top: 0px; left: 0px; }
 
-neat-form-field-multiimageupload .images .images-container .image.upload .image-container:hover { opacity: 1; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .image-container .progress { position: absolute; z-index: 90; top: 0px; left: 0px; height: 100%; width: 100%; background: white; opacity: 0.6; }
 
-neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button { position: relative; width: 200px; height: 200px; background-color: transparent; border: none; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .data-container { margin-left: 215px; margin-right: 15px; position: absolute; top: 0; right: 0; left: 0; }
 
-neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button .fa { position: absolute; top: 65px; left: 70px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .data-container .data-field { margin-bottom: 10px; }
 
-neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button .fileselect { cursor: pointer; opacity: 0; position: absolute; z-index: 100; font-size: 50px; top: 0; left: 0; width: 100%; height: 100%; }
+neat-form neat-form-field-multiimageupload .images .images-container .image .data-container .data-field .control-label { padding-top: 0; }
 
-/* These are the default styles applied to the stock Google Places Autocomplete component. Importantly they preserve the required "powered by Google" logo. */
-.pac-container { background-color: #fff; position: absolute !important; z-index: 1000; border-radius: 2px; border-top: 1px solid #d9d9d9; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; overflow: hidden; }
+neat-form neat-form-field-multiimageupload .images .images-container .image.upload .image-container { border: 2px dashed lightgray; padding: 0; overflow: hidden; opacity: 0.5; }
 
-.pac-container:after { content: ""; padding: 1px 1px 1px 0; height: 16px; text-align: right; display: block; background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2.png); background-position: right; background-repeat: no-repeat; background-size: 104px 16px; }
+neat-form neat-form-field-multiimageupload .images .images-container .image.upload .image-container:hover { opacity: 1; }
 
-.hdpi.pac-container:after { background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2_hdpi.png); }
+neat-form neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button { position: relative; width: 200px; height: 200px; background-color: transparent; border: none; }
 
-.pac-item { cursor: default; padding: 0 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; line-height: 30px; text-align: left; border-top: 1px solid #e6e6e6; font-size: 11px; color: #999; }
+neat-form neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button .fa { position: absolute; top: 65px; left: 70px; }
 
-.pac-item:hover { background-color: #fafafa; }
+neat-form neat-form-field-multiimageupload .images .images-container .image.upload .image-container .fileselect-button .fileselect { cursor: pointer; opacity: 0; position: absolute; z-index: 100; font-size: 50px; top: 0; left: 0; width: 100%; height: 100%; }
 
-.pac-item-selected, .pac-item-selected:hover { background-color: #ebf2fe; }
+neat-form .pac-container { background-color: #fff; position: absolute !important; z-index: 1000; border-radius: 2px; border-top: 1px solid #d9d9d9; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; overflow: hidden; }
 
-.pac-matched { font-weight: 700; }
+neat-form .pac-container:after { content: ""; padding: 1px 1px 1px 0; height: 16px; text-align: right; display: block; background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2.png); background-position: right; background-repeat: no-repeat; background-size: 104px 16px; }
 
-.pac-item-query { font-size: 13px; padding-right: 3px; color: #000; }
+neat-form .hdpi.pac-container:after { background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2_hdpi.png); }
 
-.pac-icon { width: 15px; height: 20px; margin-right: 7px; margin-top: 6px; display: inline-block; vertical-align: top; background-image: url(//maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons.png); background-size: 34px; }
+neat-form .pac-item { cursor: default; padding: 0 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; line-height: 30px; text-align: left; border-top: 1px solid #e6e6e6; font-size: 11px; color: #999; }
 
-.hdpi .pac-icon { background-image: url(//maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png); }
+neat-form .pac-item:hover { background-color: #fafafa; }
 
-.pac-icon-search { background-position: -1px -1px; }
+neat-form .pac-item-selected, neat-form .pac-item-selected:hover { background-color: #ebf2fe; }
 
-.pac-item-selected .pac-icon-search { background-position: -18px -1px; }
+neat-form .pac-matched { font-weight: 700; }
 
-.pac-icon-marker { background-position: -1px -161px; }
+neat-form .pac-item-query { font-size: 13px; padding-right: 3px; color: #000; }
 
-.pac-item-selected .pac-icon-marker { background-position: -18px -161px; }
+neat-form .pac-icon { width: 15px; height: 20px; margin-right: 7px; margin-top: 6px; display: inline-block; vertical-align: top; background-image: url(//maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons.png); background-size: 34px; }
 
-.pac-placeholder { color: gray; }
+neat-form .hdpi .pac-icon { background-image: url(//maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png); }
 
-.custom-prediction-label { font-style: italic; }
+neat-form .pac-icon-search { background-position: -1px -1px; }
 
-neat-form-field-checkbox .control-label.control-label-right { text-align: left; padding-top: 16px; }
+neat-form .pac-item-selected .pac-icon-search { background-position: -18px -1px; }
+
+neat-form .pac-icon-marker { background-position: -1px -161px; }
+
+neat-form .pac-item-selected .pac-icon-marker { background-position: -18px -161px; }
+
+neat-form .pac-placeholder { color: gray; }
+
+neat-form .custom-prediction-label { font-style: italic; }
+
+neat-form neat-form-field-checkbox .control-label.control-label-right { text-align: left; padding-top: 16px; }
 
 /*# sourceMappingURL=default.css.map */
