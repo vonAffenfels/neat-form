@@ -8,7 +8,13 @@ module.exports = function (neatFormModule) {
                 template: require("./Headline.html"),
                 scope: {
                     config: "="
-                }
+                },
+                controller: [
+                    "$scope",
+                    function ($scope) {
+                        
+                    }
+                ]
             };
         }
     ];

@@ -16,4 +16,15 @@ module.exports = class Headline extends Field {
     getId() {
         return crypto.createHash('md5').update(this.label).digest("hex");
     }
+
+    loadSchema(defaultSchema) {
+        if (!defaultSchema.renderOptions) {
+            defaultSchema.renderOptions = {};
+        }
+
+        // set this so groups hide when only headlines are left!
+        defaultSchema.renderOptions.ignoreVisibility = true;
+
+        return defaultSchema;
+    }
 }

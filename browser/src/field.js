@@ -17,7 +17,7 @@ module.exports = function (neatFormModule) {
 
                         if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.if) {
                             try {
-                                let groupScope = $scope.$parent.$parent.$parent;
+                                let formScope = $scope.neatFormScope;
                                 let conditions = $scope.config.renderOptions.if;
 
                                 for (let id in conditions) {
@@ -29,10 +29,10 @@ module.exports = function (neatFormModule) {
                                         id = id.substr(1);
                                     }
 
-                                    for (let i = 0; i < groupScope.config.fields.length; i++) {
-                                        let field = groupScope.config.fields[i];
+                                    for (let fieldId in formScope.fields) {
+                                        let field = formScope.fields[fieldId].config;
 
-                                        if (id == field.id) {
+                                        if (id == fieldId) {
                                             if (typeof val === "object") {
                                                 for (let fieldKey in val) {
                                                     let fieldVal = val[fieldKey];
@@ -115,16 +115,16 @@ module.exports = function (neatFormModule) {
 
                         if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.unless) {
                             try {
-                                let groupScope = $scope.$parent.$parent.$parent;
+                                let formScope = $scope.neatFormScope;
                                 let conditions = $scope.config.renderOptions.unless;
 
                                 for (let id in conditions) {
                                     let val = conditions[id];
 
-                                    for (let i = 0; i < groupScope.config.fields.length; i++) {
-                                        let field = groupScope.config.fields[i];
+                                    for (let fieldId in formScope.fields) {
+                                        let field = formScope.fields[fieldId].config;
 
-                                        if (id == field.id) {
+                                        if (id == fieldId) {
                                             if (field.value == val) {
                                                 show = false;
                                             } else {
@@ -141,6 +141,8 @@ module.exports = function (neatFormModule) {
                         if (!show) {
                             $scope.resetValue();// if invisible reset all values!
                         }
+
+                        $scope.$emit("field_visibility_changed", show, $scope.config.id);
 
                         return show;
                     }

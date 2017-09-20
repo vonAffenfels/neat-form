@@ -22,9 +22,14 @@ module.exports = function (neatFormModule) {
                             11.4175722
                         ];
                         $scope.degValue = {};
+                        $scope.zoomAfterLocate = 18;
 
                         if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.defaultPosition) {
                             $scope.defaultPos = $scope.config.renderOptions.defaultPosition;
+                        }
+
+                        if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.zoomAfterLocate) {
+                            $scope.zoomAfterLocate = $scope.config.renderOptions.zoomAfterLocate;
                         }
 
                         $scope.markerConfig = {
@@ -130,6 +135,7 @@ module.exports = function (neatFormModule) {
                                 $scope.config.value.lat = result.geometry.location.lat();
                                 $scope.config.value.lon = result.geometry.location.lng();
                                 $scope.onValueChanged();
+                                $scope.mapConfig.zoom = $scope.zoomAfterLocate;
                             }, (status) => {
                             });
                         }
@@ -211,6 +217,8 @@ module.exports = function (neatFormModule) {
                         $rootScope.$on("googleLoaded", function () {
                             $scope.googleReady = true;
                         });
+
+                        $scope.onValueChanged();
                     }
                 ]
             };

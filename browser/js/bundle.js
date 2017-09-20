@@ -40217,7 +40217,32 @@
 	    }]);
 
 	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {
+	        $scope.fields = {};
+	        $scope.fieldsStatus = {};
+	        $scope.visible = true;
 	        $scope.collapsed = $scope.options ? $scope.options.initiallyCollapsed || false : false;
+
+	        $scope.$on("field_visibility_changed", function (e, visibility, id) {
+	            $scope.fieldsStatus[id] = visibility;
+	            $scope.checkVisibility();
+	        });
+
+	        $scope.checkVisibility = function () {
+	            var visible = false;
+
+	            for (var id in $scope.fieldsStatus) {
+	                if ($scope.fieldsStatus[id] && !($scope.fields[id].config.renderOptions && $scope.fields[id].config.renderOptions.ignoreVisibility)) {
+	                    visible = true;
+	                }
+	            }
+
+	            $scope.visible = visible;
+	        };
+
+	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+	            $scope.fields[id] = fieldscope;
+	            $scope.fieldsStatus[id] = true;
+	        });
 
 	        $scope.toggleCollapse = function () {
 	            $scope.collapsed = !$scope.collapsed;
@@ -40250,7 +40275,7 @@
 /* 15 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"panel panel-inverse\" id=\"{{config.id}}\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <div class=\"btn-group pull-right\" ng-if=\"options.collapsible\">\r\n            <button type=\"button\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-caret-down\"\r\n                   ng-class=\"{\r\n                    'fa-caret-down': collapsed,\r\n                    'fa-caret-up': !collapsed\r\n                    }\"\r\n                   ng-click=\"toggleCollapse()\">\r\n\r\n                </i>\r\n            </button>\r\n        </div>\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\" ng-show=\"!collapsed\">\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"panel panel-inverse\" id=\"{{config.id}}\" ng-show=\"visible\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <div class=\"btn-group pull-right\" ng-if=\"options.collapsible\">\r\n            <button type=\"button\" class=\"btn btn-primary btn-xs\">\r\n                <i class=\"fa fa-caret-down\"\r\n                   ng-class=\"{\r\n                    'fa-caret-down': collapsed,\r\n                    'fa-caret-up': !collapsed\r\n                    }\"\r\n                   ng-click=\"toggleCollapse()\">\r\n\r\n                </i>\r\n            </button>\r\n        </div>\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\" ng-show=\"!collapsed\">\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 16 */
@@ -40275,7 +40300,7 @@
 
 	                    if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.if) {
 	                        try {
-	                            var groupScope = $scope.$parent.$parent.$parent;
+	                            var formScope = $scope.neatFormScope;
 	                            var conditions = $scope.config.renderOptions.if;
 
 	                            for (var id in conditions) {
@@ -40287,10 +40312,10 @@
 	                                    id = id.substr(1);
 	                                }
 
-	                                for (var i = 0; i < groupScope.config.fields.length; i++) {
-	                                    var field = groupScope.config.fields[i];
+	                                for (var fieldId in formScope.fields) {
+	                                    var field = formScope.fields[fieldId].config;
 
-	                                    if (id == field.id) {
+	                                    if (id == fieldId) {
 	                                        if ((typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
 	                                            for (var fieldKey in val) {
 	                                                var fieldVal = val[fieldKey];
@@ -40373,16 +40398,16 @@
 
 	                    if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.unless) {
 	                        try {
-	                            var _groupScope = $scope.$parent.$parent.$parent;
+	                            var _formScope = $scope.neatFormScope;
 	                            var _conditions = $scope.config.renderOptions.unless;
 
 	                            for (var _id in _conditions) {
 	                                var _val = _conditions[_id];
 
-	                                for (var _i = 0; _i < _groupScope.config.fields.length; _i++) {
-	                                    var _field = _groupScope.config.fields[_i];
+	                                for (var _fieldId in _formScope.fields) {
+	                                    var _field = _formScope.fields[_fieldId].config;
 
-	                                    if (_id == _field.id) {
+	                                    if (_id == _fieldId) {
 	                                        if (_field.value == _val) {
 	                                            show = false;
 	                                        } else {
@@ -40399,6 +40424,8 @@
 	                    if (!show) {
 	                        $scope.resetValue(); // if invisible reset all values!
 	                    }
+
+	                    $scope.$emit("field_visibility_changed", show, $scope.config.id);
 
 	                    return show;
 	                };
@@ -40693,9 +40720,14 @@
 	            controller: ["$scope", "$rootScope", "$timeout", "NgMap", "GeoCoder", function ($scope, $rootScope, $timeout, NgMap, GeoCoder) {
 	                $scope.defaultPos = [50.9953258, 11.4175722];
 	                $scope.degValue = {};
+	                $scope.zoomAfterLocate = 18;
 
 	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.defaultPosition) {
 	                    $scope.defaultPos = $scope.config.renderOptions.defaultPosition;
+	                }
+
+	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.zoomAfterLocate) {
+	                    $scope.zoomAfterLocate = $scope.config.renderOptions.zoomAfterLocate;
 	                }
 
 	                $scope.markerConfig = {
@@ -40782,6 +40814,7 @@
 	                        $scope.config.value.lat = result.geometry.location.lat();
 	                        $scope.config.value.lon = result.geometry.location.lng();
 	                        $scope.onValueChanged();
+	                        $scope.mapConfig.zoom = $scope.zoomAfterLocate;
 	                    }, function (status) {});
 	                };
 
@@ -40862,6 +40895,8 @@
 	                $rootScope.$on("googleLoaded", function () {
 	                    $scope.googleReady = true;
 	                });
+
+	                $scope.onValueChanged();
 	            }]
 	        };
 	    }];
@@ -40886,7 +40921,8 @@
 	            template: __webpack_require__(31),
 	            scope: {
 	                config: "="
-	            }
+	            },
+	            controller: ["$scope", function ($scope) {}]
 	        };
 	    }];
 	};
