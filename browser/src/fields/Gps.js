@@ -207,6 +207,7 @@ module.exports = function (neatFormModule) {
                             return ret;
                         }
 
+                        $scope.googleReady = $rootScope.googleReady;
                         $rootScope.$on("googleLoaded", function () {
                             $scope.googleReady = true;
                         });

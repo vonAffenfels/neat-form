@@ -1,5 +1,5 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
-    <label class="col-md-2 control-label">{{config.label}}</label>
+    <label class="col-md-2 control-label">{{config.label}}<span class="required" ng-if="config.renderOptions.required">*</span></label>
     <div class="col-md-10">
         <div class="checkbox" ng-repeat="(key, label) in config.options" ng-if="!config.renderOptions.inline">
             <label>
