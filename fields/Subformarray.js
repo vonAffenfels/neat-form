@@ -40,7 +40,7 @@ module.exports = class Subformarray extends Field {
     getDocumentValue() {
         return Promise.map(this.value || [], (val) => {
             let subform = Application.modules.form.getForm(this.config.subform);
-            return subform.loadData(val).then(() => {
+            return subform.loadDataFromDocument(val).then(() => {
                 return subform.getDocumentValues();
             }).then((value) => {
                 return value;
