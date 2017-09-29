@@ -1,4 +1,4 @@
-<div class="form-group" ng-if="googlePlaces.ready">
+<div class="form-group" ng-if="googleReady">
     <label class="col-md-2 control-label">{{config.label.google || 'Search Address'}}</label>
     <div class="col-md-10">
         <input type="text" autocomplete="off" g-places-autocomplete ng-model="googlePlaces.value" class="form-control" options="googlePlaces.options" forceSelection="true"

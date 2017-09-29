@@ -3,6 +3,7 @@ $fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts" !default;
 @import "font-awesome";
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
+@import "features/GoogleAutocomplete";
 
 neat-form {
   [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
