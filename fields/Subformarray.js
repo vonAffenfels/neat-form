@@ -58,6 +58,7 @@ module.exports = class Subformarray extends Field {
                 let subform = Application.modules.form.getForm(this.config.subform);
                 return subform.loadDataFromDocument(val).then(() => {
                     if (defaultSchema.validated) {
+                        
                         return subform.validate().then(() => {
                             return subform.getSchema();
                         });

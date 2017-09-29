@@ -39,32 +39,24 @@ module.exports = function (neatFormModule) {
                                                     if (fieldVal instanceof Array) {
                                                         // not condition
                                                         if (isNotCondition) {
-                                                            if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
-                                                                show = true;
-                                                            } else {
+                                                            if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
                                                                 show = false;
                                                             }
                                                         } else {
                                                             // if condition
-                                                            if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
-                                                                show = true;
-                                                            } else {
+                                                            if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
                                                                 show = false;
                                                             }
                                                         }
                                                     } else {
                                                         // not condition
                                                         if (isNotCondition) {
-                                                            if (field.value[fieldKey] != fieldVal) {
-                                                                show = true;
-                                                            } else {
+                                                            if (field.value[fieldKey] == fieldVal) {
                                                                 show = false;
                                                             }
                                                         } else {
                                                             // if condition
-                                                            if (field.value[fieldKey] == fieldVal) {
-                                                                show = true;
-                                                            } else {
+                                                            if (field.value[fieldKey] != fieldVal) {
                                                                 show = false;
                                                             }
                                                         }
@@ -74,32 +66,24 @@ module.exports = function (neatFormModule) {
                                                 if (val instanceof Array) {
                                                     // not condition
                                                     if (isNotCondition) {
-                                                        if (val.indexOf(field.value) === -1) {
-                                                            show = true;
-                                                        } else {
+                                                        if (val.indexOf(field.value) !== -1) {
                                                             show = false;
                                                         }
                                                     } else {
                                                         // if condition
-                                                        if (val.indexOf(field.value) !== -1) {
-                                                            show = true;
-                                                        } else {
+                                                        if (val.indexOf(field.value) === -1) {
                                                             show = false;
                                                         }
                                                     }
                                                 } else {
                                                     // not condition
                                                     if (isNotCondition) {
-                                                        if (field.value != val) {
-                                                            show = true;
-                                                        } else {
+                                                        if (field.value == val) {
                                                             show = false;
                                                         }
                                                     } else {
                                                         // if condition
-                                                        if (field.value == val) {
-                                                            show = true;
-                                                        } else {
+                                                        if (field.value != val) {
                                                             show = false;
                                                         }
                                                     }
@@ -125,10 +109,8 @@ module.exports = function (neatFormModule) {
                                         let field = formScope.fields[fieldId].config;
 
                                         if (id == fieldId) {
-                                            if (field.value == val) {
+                                            if (field.value != val) {
                                                 show = false;
-                                            } else {
-                                                show = true;
                                             }
                                         }
                                     }
