@@ -9,7 +9,8 @@ module.exports = function (neatFormModule) {
                 template: require(neatFormModule.templateRoot + "neatFormSection.html"),
                 scope: {
                     config: "=",
-                    options: "="
+                    options: "=",
+                    labels: "="
                 },
                 controller: "neatFormSectionCtrl"
             };

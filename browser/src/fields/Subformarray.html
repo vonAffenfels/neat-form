@@ -21,7 +21,7 @@
                     </div>
                     <h4 class="panel-title">#{{$index}} {{config.renderOptions.positionLabel}}</h4>
                 </div>
-                <neat-form-field-subform ng-if="!collapsed" config="item" value="config.value[$index]"></neat-form-field-subform>
+                <neat-form-field-subform array="true" ng-if="!collapsed" config="item" value="config.value[$index]"></neat-form-field-subform>
             </div>
 
             <div class="row">

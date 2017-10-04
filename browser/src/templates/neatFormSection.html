@@ -1,7 +1,11 @@
 <div class="panel panel-inverse" id="{{config.id}}" ng-show="visible">
     <div class="panel-heading" ng-if="config.label">
-        <div class="btn-group pull-right" ng-if="options.collapsible">
-            <button type="button" class="btn btn-primary btn-xs">
+        <div class="btn-group pull-right" ng-if="options.saveButtons || options.collapsible">
+            <button type="submit" ng-if="options.saveButtons" class="btn btn-primary btn-xs">
+                {{labels.save}}
+            </button>
+
+            <button type="button" class="btn btn-primary btn-xs m-l-10" ng-if="options.collapsible">
                 <i class="fa fa-caret-down"
                    ng-class="{
                     'fa-caret-down': collapsed,
@@ -25,9 +29,9 @@
             'neat-2-col-form': config.columns === 2,
             'neat-1-col-form': config.columns === 1 || !config.columns
         }">
-            <neat-form-section config="conf" ng-if="conf.fields">
+            <neat-form-section config="conf" options="options" labels="labels" ng-if="conf.fields">
             </neat-form-section>
-            <neat-form-field config="conf" ng-if="!conf.fields">
+            <neat-form-field config="conf" options="options" labels="labels" ng-if="!conf.fields">
             </neat-form-field>
         </div>
     </div>

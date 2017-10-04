@@ -6,11 +6,11 @@
         <div class="row" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
         </div>
         <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess">
-            <neat-form-section config="conf" ng-if="conf.fields" options="config.renderOptions.groups">
+            <neat-form-section config="conf" ng-if="conf.fields" options="config.renderOptions.groups" labels="config.renderOptions.labels">
             </neat-form-section>
         </div>
         <div class="row" ng-if="config.fields && !showSuccess">
-            <neat-form-section config="config">
+            <neat-form-section config="config" options="config.renderOptions.groups" labels="config.renderOptions.labels">
             </neat-form-section>
         </div>
         <div class="row" ng-if="!isSubForm && !showSuccess && !loading">

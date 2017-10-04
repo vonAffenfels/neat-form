@@ -7,6 +7,8 @@ const Tools = require("neat-base").Tools;
 const Promise = require("bluebird");
 const path = require("path");
 const fs = require("fs");
+const _ = require("underscore");
+const underscoreDeepExtend = require("underscore-deep-extend");
 
 let validatorTypes = {};
 
@@ -23,6 +25,8 @@ module.exports = class FormModule extends Module {
     }
 
     init() {
+        _.mixin({deepExtend: underscoreDeepExtend(_)});
+
         this.log.debug("Initializing...");
 
         Application.modules[this.config.dbModuleName].registerModel("neat-form-plain", require("./models/neat-form-plain.js"));

@@ -8,13 +8,27 @@ module.exports = function (neatFormModule) {
                 template: require("./Subform.html"),
                 scope: {
                     config: "=",
-                    value: "="
+                    value: "=",
+                    options: "=",
+                    labels: "=",
+                    array: "="
                 },
                 controller: [
                     "$scope",
                     function ($scope) {
+
+                        if (!$scope.array) {
+                            $scope.config = $scope.config.value;
+                        }
+
                         $scope.getValues = function (sectionsOrFields, values) {
                             values = values || {};
+
+                            //subform
+
+                            if (!sectionsOrFields) {
+                                return values;
+                            }
 
                             if (sectionsOrFields instanceof Array) {
                                 for (let i = 0; i < sectionsOrFields.length; i++) {
@@ -36,13 +50,15 @@ module.exports = function (neatFormModule) {
                             }
 
                             return values;
-                        }
+                        };
 
-                        $scope.$watch(function () {
-                            return JSON.stringify($scope.config);
-                        }, function () {
-                            $scope.value = $scope.getValues($scope.config);
-                        });
+                        if ($scope.array) {
+                            $scope.$watch(function () {
+                                return JSON.stringify($scope.config);
+                            }, function () {
+                                $scope.value = $scope.getValues($scope.config);
+                            });
+                        }
                     }
                 ]
             };

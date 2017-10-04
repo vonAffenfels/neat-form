@@ -44,7 +44,7 @@ module.exports = function (neatFormModule) {
                     $scope.config = config;
                     $scope.error = null;
 
-                    if (!googleLoaded) {
+                    if ($scope.config.renderOptions.googleMapsKey && !googleLoaded) {
                         googleLoaded = true;
                         let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
                         angularLoad.loadScript(googleScriptSource).then(() => {
@@ -53,11 +53,11 @@ module.exports = function (neatFormModule) {
                         });
                     }
                 });
-            }
+            };
 
             $scope.scrollToGroup = function (group) {
                 $anchorScroll(group.id);
-            }
+            };
 
             $scope.subforms = [];
             $scope.$emit("neat-form-register", $scope);
@@ -75,7 +75,9 @@ module.exports = function (neatFormModule) {
             $scope.getValues = function (sectionsOrFields, values) {
                 values = values || {};
 
-                if (sectionsOrFields instanceof Array) {
+                if (sectionsOrFields.type === "Subform") {
+                    values[sectionsOrFields.id] = $scope.getValues(sectionsOrFields.value);
+                } else if (sectionsOrFields instanceof Array) {
                     for (let i = 0; i < sectionsOrFields.length; i++) {
                         let field = sectionsOrFields[i];
                         $scope.getValues(field, values);
@@ -95,7 +97,7 @@ module.exports = function (neatFormModule) {
                 }
 
                 return values;
-            }
+            };
 
             $scope.submit = function () {
                 if ($scope.loading) {
@@ -110,10 +112,13 @@ module.exports = function (neatFormModule) {
                         }
                     }
 
-                    $scope.saveAllSubforms(toSave).then(() => {
-                        neatApi.formSubmit({
+                    return $scope.saveAllSubforms(toSave).then(() => {
+
+                        let values = $scope.getValues($scope.config);
+
+                        return neatApi.formSubmit({
                             _id: $scope.connectedId,
-                            data: $scope.getValues($scope.config),
+                            data: values,
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
@@ -132,6 +137,7 @@ module.exports = function (neatFormModule) {
                                 $scope.showSuccess = true;
                             }
 
+
                             resolve();
                         }, (err) => {
                             $scope.config = err.data;
@@ -141,20 +147,26 @@ module.exports = function (neatFormModule) {
                     }, (err) => {
                         $scope.loading = false;
                         reject(err);
+                    }).catch((err) => {
+                        $scope.loading = false;
+                        reject(err);
                     });
                 });
 
                 $scope.loading = true;
                 return $scope.submitProm;
-            }
+            };
 
             $scope.saveAllSubforms = function (subforms) {
                 return $q((resolve, reject) => {
+
                     if (!subforms || !subforms.length) {
                         return resolve();
                     }
 
-                    return subforms.shift().submit().then(() => {
+                    let subform = subforms.shift();
+
+                    return subform.submit().then(() => {
                         return $scope.saveAllSubforms(subforms).then(resolve, reject);
                     }, reject);
                 });
