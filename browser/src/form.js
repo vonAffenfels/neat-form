@@ -44,9 +44,16 @@ module.exports = function (neatFormModule) {
                     $scope.config = config;
                     $scope.error = null;
 
-                    if ($scope.config.renderOptions.googleMapsKey && !googleLoaded) {
+
+                    if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.infoMessage) {
+                        if (typeof $scope.config.renderOptions.infoMessage === "string") {
+                            $scope.config.renderOptions.infoMessage = $sce.trustAsHtml($scope.config.renderOptions.infoMessage);
+                        }
+                    }
+
+                    if (!$scope.config.renderOptions.googleMapsKey && !googleLoaded) {
                         googleLoaded = true;
-                        let googleScriptSource = "https://maps.googleapis.com/maps/api/js?libraries=places,maps&key=" + $scope.config.renderOptions.googleMapsKey;
+                        let googleScriptSource = "https://maps.googleapis.com/maps/api/js?key=" + $scope.config.renderOptions.googleMapsKey + "&libraries=places,maps";
                         angularLoad.loadScript(googleScriptSource).then(() => {
                             $rootScope.googleReady = true;
                             $rootScope.$emit("googleLoaded");

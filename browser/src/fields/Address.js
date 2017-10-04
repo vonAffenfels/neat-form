@@ -35,7 +35,6 @@ module.exports = function (neatFormModule) {
                         });
 
                         $scope.googlePlaces = {
-                            ready: $rootScope.googleReady,
                             options: {
                                 /*
                               types: $scope.types,
@@ -85,8 +84,9 @@ module.exports = function (neatFormModule) {
                             }
                         });
 
+                        $scope.googleReady = $rootScope.googleReady;
                         $rootScope.$on("googleLoaded", function () {
-                            $scope.googlePlaces.ready = true;
+                            $scope.googleReady = true;
                         });
                     }
                 ]
