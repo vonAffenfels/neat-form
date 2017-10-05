@@ -8,7 +8,7 @@
                    ng-required="config.renderOptions.required"
                    placeholder="{{config.renderOptions.placeholder}}"
                    autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
-                   ng-readonly="config.readonly"
+                   ng-readonly="config.readOnly"
                    ng-model="config.value"
                    class="form-control">
             <span class="input-group-addon">{{config.renderOptions.unit}}</span>
@@ -18,7 +18,7 @@
                autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
                ng-if="!config.renderOptions.unit"
                placeholder="{{config.renderOptions.placeholder}}"
-               ng-readonly="config.readonly" ng-model="config.value"
+               ng-readonly="config.readOnly" ng-model="config.value"
                class="form-control">
     </div>
 </div>
