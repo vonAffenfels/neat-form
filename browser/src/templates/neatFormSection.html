@@ -1,6 +1,6 @@
 <div class="panel panel-inverse" id="{{config.id}}" ng-show="visible">
     <div class="panel-heading" ng-if="config.label">
-        <div class="btn-group pull-right" ng-if="options.saveButtons || options.collapsible">
+        <div class="pull-right" ng-if="options.saveButtons || options.collapsible">
             <button type="submit" ng-if="options.saveButtons" class="btn btn-primary btn-xs">
                 {{labels.save}}
             </button>
@@ -16,7 +16,7 @@
                 </i>
             </button>
         </div>
-        <h4 class="panel-title">{{config.label}}</h4>
+        <h4 class="panel-title" style=" cursor: pointer; " ng-click="toggleCollapse()">{{config.label}}</h4>
     </div>
     <div class="panel-body neat-form-section-body" ng-show="!collapsed">
         <legend ng-if="config.legend">{{config.legend}}</legend>
