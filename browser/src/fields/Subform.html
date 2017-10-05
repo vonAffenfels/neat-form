@@ -1,4 +1,19 @@
 <div class="panel-body">
+    <div class="neat-form-navigation" ng-class="{'active': navigationOpen}"
+         ng-if="config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups" >
+
+        <div class="dropdown m-b-10">
+            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                {{config.renderOptions.navigationLabel || "Groups"}}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li ng-repeat="group in config.groups" ng-if="group.label"><a ng-click="scrollToGroup(group)" >{{group.label}}</a></li>
+            </ul>
+        </div>
+
+    </div>
+
     <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups">
         <neat-form-section config="conf" ng-if="conf.fields" options="options" labels="labels">
         </neat-form-section>

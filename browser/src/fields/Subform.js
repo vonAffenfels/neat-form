@@ -15,11 +15,16 @@ module.exports = function (neatFormModule) {
                 },
                 controller: [
                     "$scope",
-                    function ($scope) {
+                    "$anchorScroll",
+                    function ($scope, $anchorScroll) {
 
                         if (!$scope.array) {
                             $scope.config = $scope.config.value;
                         }
+
+                        $scope.scrollToGroup = function (group) {
+                            $anchorScroll(group.id);
+                        };
 
                         $scope.getValues = function (sectionsOrFields, values) {
                             values = values || {};

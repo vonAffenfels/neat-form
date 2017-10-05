@@ -40218,7 +40218,7 @@
 /* 15 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"panel panel-inverse\" id=\"{{config.id}}\" ng-show=\"visible\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <div class=\"btn-group pull-right\" ng-if=\"options.saveButtons || options.collapsible\">\r\n            <button type=\"submit\" ng-if=\"options.saveButtons\" class=\"btn btn-primary btn-xs\">\r\n                {{labels.save}}\r\n            </button>\r\n\r\n            <button type=\"button\" class=\"btn btn-primary btn-xs m-l-10\" ng-if=\"options.collapsible\">\r\n                <i class=\"fa fa-caret-down\"\r\n                   ng-class=\"{\r\n                    'fa-caret-down': collapsed,\r\n                    'fa-caret-up': !collapsed\r\n                    }\"\r\n                   ng-click=\"toggleCollapse()\">\r\n\r\n                </i>\r\n            </button>\r\n        </div>\r\n        <h4 class=\"panel-title\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\" ng-show=\"!collapsed\">\r\n        <legend ng-if=\"config.legend\">{{config.legend}}</legend>\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" options=\"options\" labels=\"labels\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" options=\"options\" labels=\"labels\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"panel panel-inverse\" id=\"{{config.id}}\" ng-show=\"visible\">\r\n    <div class=\"panel-heading\" ng-if=\"config.label\">\r\n        <div class=\"pull-right\" ng-if=\"options.saveButtons || options.collapsible\">\r\n            <button type=\"submit\" ng-if=\"options.saveButtons\" class=\"btn btn-primary btn-xs\">\r\n                {{labels.save}}\r\n            </button>\r\n\r\n            <button type=\"button\" class=\"btn btn-primary btn-xs m-l-10\" ng-if=\"options.collapsible\" ng-click=\"toggleCollapse()\">\r\n                <i class=\"fa fa-caret-down\"\r\n                   ng-class=\"{\r\n                    'fa-caret-down': collapsed,\r\n                    'fa-caret-up': !collapsed\r\n                    }\"\r\n                   >\r\n\r\n                </i>\r\n            </button>\r\n        </div>\r\n        <h4 class=\"panel-title\" style=\" cursor: pointer; \" ng-click=\"toggleCollapse()\">{{config.label}}</h4>\r\n    </div>\r\n    <div class=\"panel-body neat-form-section-body\" ng-show=\"!collapsed\">\r\n        <legend ng-if=\"config.legend\">{{config.legend}}</legend>\r\n        <div ng-repeat=\"conf in config.fields\" ng-class=\"{\r\n            'neat-7-col-form': config.columns === 7,\r\n            'neat-6-col-form': config.columns === 6,\r\n            'neat-5-col-form': config.columns === 5,\r\n            'neat-4-col-form': config.columns === 4,\r\n            'neat-3-col-form': config.columns === 3,\r\n            'neat-2-col-form': config.columns === 2,\r\n            'neat-1-col-form': config.columns === 1 || !config.columns\r\n        }\">\r\n            <neat-form-section config=\"conf\" options=\"options\" labels=\"labels\" ng-if=\"conf.fields\">\r\n            </neat-form-section>\r\n            <neat-form-field config=\"conf\" options=\"options\" labels=\"labels\" ng-if=\"!conf.fields\">\r\n            </neat-form-field>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 16 */
@@ -40240,6 +40240,101 @@
 	            },
 	            link: function link($scope, element) {
 
+	                $scope.checkCondition = function (fields, conditions) {
+	                    var show = true;
+
+	                    for (var id in conditions) {
+	                        var val = conditions[id];
+	                        var isNotCondition = false;
+
+	                        if (id.indexOf("!") === 0) {
+	                            isNotCondition = true;
+	                            id = id.substr(1);
+	                        }
+
+	                        for (var fieldId in fields) {
+	                            var field = fields[fieldId].config;
+
+	                            if (id == fieldId) {
+	                                if (val && (typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
+	                                    for (var fieldKey in val) {
+	                                        var fieldVal = val[fieldKey];
+	                                        if (fieldVal instanceof Array) {
+	                                            // not condition
+	                                            if (isNotCondition) {
+	                                                if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
+	                                                    show = false;
+	                                                }
+	                                            } else {
+	                                                // if condition
+	                                                if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
+	                                                    show = false;
+	                                                }
+	                                            }
+	                                        } else {
+	                                            // not condition
+	                                            if (isNotCondition) {
+	                                                if (field.value[fieldKey] == fieldVal) {
+	                                                    show = false;
+	                                                }
+	                                            } else {
+	                                                // if condition
+	                                                if (field.value[fieldKey] != fieldVal) {
+	                                                    show = false;
+	                                                }
+	                                            }
+	                                        }
+	                                    }
+	                                } else {
+	                                    if (val && val instanceof Array) {
+	                                        // not condition
+	                                        if (isNotCondition) {
+	                                            if (val.indexOf(field.value) !== -1) {
+	                                                show = false;
+	                                            }
+	                                        } else {
+	                                            // if condition
+	                                            if (val.indexOf(field.value) === -1) {
+	                                                show = false;
+	                                            }
+	                                        }
+	                                    } else {
+	                                        // not condition
+	                                        if (isNotCondition) {
+	                                            if (field.value == val) {
+	                                                show = false;
+	                                            }
+	                                        } else {
+	                                            // if condition
+	                                            if (field.value != val) {
+	                                                show = false;
+	                                            }
+	                                        }
+	                                    }
+	                                }
+	                            }
+	                        }
+	                    }
+
+	                    return show;
+	                };
+
+	                $scope.isDisabled = function () {
+	                    var show = true;
+
+	                    if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.disabled) {
+	                        try {
+	                            var formScope = $scope.neatFormScope;
+	                            var conditions = $scope.config.renderOptions.disabled;
+	                            show = $scope.checkCondition(formScope.fields, conditions);
+	                        } catch (e) {
+	                            console.error(e);
+	                        }
+
+	                        $scope.config.disabled = !show;
+	                    }
+	                };
+
 	                $scope.isVisible = function () {
 	                    var show = true;
 
@@ -40247,79 +40342,7 @@
 	                        try {
 	                            var formScope = $scope.neatFormScope;
 	                            var conditions = $scope.config.renderOptions.if;
-
-	                            for (var id in conditions) {
-	                                var val = conditions[id];
-	                                var isNotCondition = false;
-
-	                                if (id.indexOf("!") === 0) {
-	                                    isNotCondition = true;
-	                                    id = id.substr(1);
-	                                }
-
-	                                for (var fieldId in formScope.fields) {
-	                                    var field = formScope.fields[fieldId].config;
-
-	                                    if (id == fieldId) {
-	                                        if ((typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
-	                                            for (var fieldKey in val) {
-	                                                var fieldVal = val[fieldKey];
-	                                                if (fieldVal instanceof Array) {
-	                                                    // not condition
-	                                                    if (isNotCondition) {
-	                                                        if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
-	                                                            show = false;
-	                                                        }
-	                                                    } else {
-	                                                        // if condition
-	                                                        if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
-	                                                            show = false;
-	                                                        }
-	                                                    }
-	                                                } else {
-	                                                    // not condition
-	                                                    if (isNotCondition) {
-	                                                        if (field.value[fieldKey] == fieldVal) {
-	                                                            show = false;
-	                                                        }
-	                                                    } else {
-	                                                        // if condition
-	                                                        if (field.value[fieldKey] != fieldVal) {
-	                                                            show = false;
-	                                                        }
-	                                                    }
-	                                                }
-	                                            }
-	                                        } else {
-	                                            if (val instanceof Array) {
-	                                                // not condition
-	                                                if (isNotCondition) {
-	                                                    if (val.indexOf(field.value) !== -1) {
-	                                                        show = false;
-	                                                    }
-	                                                } else {
-	                                                    // if condition
-	                                                    if (val.indexOf(field.value) === -1) {
-	                                                        show = false;
-	                                                    }
-	                                                }
-	                                            } else {
-	                                                // not condition
-	                                                if (isNotCondition) {
-	                                                    if (field.value == val) {
-	                                                        show = false;
-	                                                    }
-	                                                } else {
-	                                                    // if condition
-	                                                    if (field.value != val) {
-	                                                        show = false;
-	                                                    }
-	                                                }
-	                                            }
-	                                        }
-	                                    }
-	                                }
-	                            }
+	                            show = $scope.checkCondition(formScope.fields, conditions);
 	                        } catch (e) {
 	                            console.error(e);
 	                        }
@@ -40330,14 +40353,14 @@
 	                            var _formScope = $scope.neatFormScope;
 	                            var _conditions = $scope.config.renderOptions.unless;
 
-	                            for (var _id in _conditions) {
-	                                var _val = _conditions[_id];
+	                            for (var id in _conditions) {
+	                                var val = _conditions[id];
 
-	                                for (var _fieldId in _formScope.fields) {
-	                                    var _field = _formScope.fields[_fieldId].config;
+	                                for (var fieldId in _formScope.fields) {
+	                                    var field = _formScope.fields[fieldId].config;
 
-	                                    if (_id == _fieldId) {
-	                                        if (_field.value != _val) {
+	                                    if (id == fieldId) {
+	                                        if (field.value != val) {
 	                                            show = false;
 	                                        }
 	                                    }
@@ -40367,6 +40390,7 @@
 
 	                $scope.setFormScope = function (formScope) {
 	                    $scope.neatFormScope = formScope;
+	                    $scope.isDisabled();
 	                };
 
 	                try {
@@ -40883,7 +40907,7 @@
 /* 33 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   ng-required=\"config.renderOptions.required\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readOnly\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               ng-required=\"config.renderOptions.required\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readOnly\" ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   ng-required=\"config.renderOptions.required\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readOnly\"\r\n                    ng-disabled=\"config.disabled\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               ng-required=\"config.renderOptions.required\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readOnly\" ng-model=\"config.value\"\r\n               ng-disabled=\"config.disabled\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 34 */
@@ -41241,11 +41265,15 @@
 	                labels: "=",
 	                array: "="
 	            },
-	            controller: ["$scope", function ($scope) {
+	            controller: ["$scope", "$anchorScroll", function ($scope, $anchorScroll) {
 
 	                if (!$scope.array) {
 	                    $scope.config = $scope.config.value;
 	                }
+
+	                $scope.scrollToGroup = function (group) {
+	                    $anchorScroll(group.id);
+	                };
 
 	                $scope.getValues = function (sectionsOrFields, values) {
 	                    values = values || {};
@@ -41294,7 +41322,7 @@
 /* 51 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"panel-body\">\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"panel-body\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups\" >\r\n\r\n        <div class=\"dropdown m-b-10\">\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 52 */
