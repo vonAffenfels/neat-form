@@ -5,13 +5,13 @@
                 {{labels.save}}
             </button>
 
-            <button type="button" class="btn btn-primary btn-xs m-l-10" ng-if="options.collapsible">
+            <button type="button" class="btn btn-primary btn-xs m-l-10" ng-if="options.collapsible" ng-click="toggleCollapse()">
                 <i class="fa fa-caret-down"
                    ng-class="{
                     'fa-caret-down': collapsed,
                     'fa-caret-up': !collapsed
                     }"
-                   ng-click="toggleCollapse()">
+                   >
 
                 </i>
             </button>
