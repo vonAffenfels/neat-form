@@ -9,6 +9,7 @@
                    placeholder="{{config.renderOptions.placeholder}}"
                    autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
                    ng-readonly="config.readOnly"
+                    ng-disabled="config.disabled"
                    ng-model="config.value"
                    class="form-control">
             <span class="input-group-addon">{{config.renderOptions.unit}}</span>
@@ -19,6 +20,7 @@
                ng-if="!config.renderOptions.unit"
                placeholder="{{config.renderOptions.placeholder}}"
                ng-readonly="config.readOnly" ng-model="config.value"
+               ng-disabled="config.disabled"
                class="form-control">
     </div>
 </div>

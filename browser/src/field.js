@@ -14,6 +14,102 @@ module.exports = function (neatFormModule) {
                 },
                 link: function ($scope, element) {
 
+                    $scope.checkCondition = function (fields, conditions) {
+                        let show = true;
+
+                        for (let id in conditions) {
+                            let val = conditions[id];
+                            let isNotCondition = false;
+
+                            if (id.indexOf("!") === 0) {
+                                isNotCondition = true;
+                                id = id.substr(1);
+                            }
+
+                            for (let fieldId in fields) {
+                                let field = fields[fieldId].config;
+
+                                if (id == fieldId) {
+                                    if (val && typeof val === "object") {
+                                        for (let fieldKey in val) {
+                                            let fieldVal = val[fieldKey];
+                                            if (fieldVal instanceof Array) {
+                                                // not condition
+                                                if (isNotCondition) {
+                                                    if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
+                                                        show = false;
+                                                    }
+                                                } else {
+                                                    // if condition
+                                                    if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
+                                                        show = false;
+                                                    }
+                                                }
+                                            } else {
+                                                // not condition
+                                                if (isNotCondition) {
+                                                    if (field.value[fieldKey] == fieldVal) {
+                                                        show = false;
+                                                    }
+                                                } else {
+                                                    // if condition
+                                                    if (field.value[fieldKey] != fieldVal) {
+                                                        show = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if (val && val instanceof Array) {
+                                            // not condition
+                                            if (isNotCondition) {
+                                                if (val.indexOf(field.value) !== -1) {
+                                                    show = false;
+                                                }
+                                            } else {
+                                                // if condition
+                                                if (val.indexOf(field.value) === -1) {
+                                                    show = false;
+                                                }
+                                            }
+                                        } else {
+                                            // not condition
+                                            if (isNotCondition) {
+                                                if (field.value == val) {
+                                                    show = false;
+                                                }
+                                            } else {
+                                                // if condition
+                                                if (field.value != val) {
+                                                    show = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        return show;
+                    }
+
+                    $scope.isDisabled = function () {
+                        let show = true;
+
+                        if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.disabled) {
+                            try {
+                                let formScope = $scope.neatFormScope;
+                                let conditions = $scope.config.renderOptions.disabled;
+                                show = $scope.checkCondition(formScope.fields, conditions);
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                            $scope.config.disabled = !show;
+                        }
+
+                    };
+
                     $scope.isVisible = function () {
                         let show = true;
 
@@ -21,79 +117,7 @@ module.exports = function (neatFormModule) {
                             try {
                                 let formScope = $scope.neatFormScope;
                                 let conditions = $scope.config.renderOptions.if;
-
-                                for (let id in conditions) {
-                                    let val = conditions[id];
-                                    let isNotCondition = false;
-
-                                    if (id.indexOf("!") === 0) {
-                                        isNotCondition = true;
-                                        id = id.substr(1);
-                                    }
-
-                                    for (let fieldId in formScope.fields) {
-                                        let field = formScope.fields[fieldId].config;
-
-                                        if (id == fieldId) {
-                                            if (typeof val === "object") {
-                                                for (let fieldKey in val) {
-                                                    let fieldVal = val[fieldKey];
-                                                    if (fieldVal instanceof Array) {
-                                                        // not condition
-                                                        if (isNotCondition) {
-                                                            if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
-                                                                show = false;
-                                                            }
-                                                        } else {
-                                                            // if condition
-                                                            if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
-                                                                show = false;
-                                                            }
-                                                        }
-                                                    } else {
-                                                        // not condition
-                                                        if (isNotCondition) {
-                                                            if (field.value[fieldKey] == fieldVal) {
-                                                                show = false;
-                                                            }
-                                                        } else {
-                                                            // if condition
-                                                            if (field.value[fieldKey] != fieldVal) {
-                                                                show = false;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                if (val instanceof Array) {
-                                                    // not condition
-                                                    if (isNotCondition) {
-                                                        if (val.indexOf(field.value) !== -1) {
-                                                            show = false;
-                                                        }
-                                                    } else {
-                                                        // if condition
-                                                        if (val.indexOf(field.value) === -1) {
-                                                            show = false;
-                                                        }
-                                                    }
-                                                } else {
-                                                    // not condition
-                                                    if (isNotCondition) {
-                                                        if (field.value == val) {
-                                                            show = false;
-                                                        }
-                                                    } else {
-                                                        // if condition
-                                                        if (field.value != val) {
-                                                            show = false;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                show = $scope.checkCondition(formScope.fields, conditions);
                             } catch (e) {
                                 console.error(e);
                             }
@@ -141,7 +165,9 @@ module.exports = function (neatFormModule) {
 
                     $scope.setFormScope = function (formScope) {
                         $scope.neatFormScope = formScope;
+                        $scope.isDisabled();
                     }
+
 
                     try {
                         $compile('<neat-form-field-' + $scope.config.type + ' config="config" options="options" labels="labels" form="neatFormScope" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
