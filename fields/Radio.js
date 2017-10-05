@@ -26,9 +26,35 @@ module.exports = class Radio extends Field {
         }
     }
 
+    hasLazyOptions() {
+        return typeof this.options.then == 'function';
+    }
+
     loadSchema(defaultSchema) {
-        defaultSchema.options = this.options;
-        return defaultSchema;
+        return new Promise((resolve, reject) => {
+            if(this.hasLazyOptions()){
+                this.options.then((result)=> {
+                    let options = {};
+
+                    if (result instanceof Array) {
+                        for (let i = 0; i < result.length; i++) {
+                            let val = result[i];
+                            options[val] = val;
+                        }
+                    }
+                    else {
+                        options = result;
+                    }
+
+                    defaultSchema.options = options;
+                    return resolve(defaultSchema);
+                });
+            }
+            else {
+                defaultSchema.options = this.options;
+                return resolve(defaultSchema);
+            }
+        });
     }
 
     /**
