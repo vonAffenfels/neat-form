@@ -41236,7 +41236,52 @@
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", function ($scope) {}]
+	            controller: ["$scope", function ($scope) {
+	                // make this a string because of object options we cant have numbers as keys (values)
+	                $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
+
+	                $scope.$watch("value", function () {
+	                    if ($scope.config && $scope.value) {
+	                        $scope.config.value = $scope.value.value;
+	                    }
+	                });
+
+	                // $scope.$watch("config.options", () => {
+	                var arr = [];
+
+	                // convert object to array for sorting reasons
+	                if ($scope.config.options instanceof Object) {
+	                    for (var value in $scope.config.options) {
+	                        var label = $scope.config.options[value];
+	                        arr.push({
+	                            value: value,
+	                            label: label
+	                        });
+	                    }
+	                }
+
+	                // Sort default option to the top
+	                arr = arr.sort(function (a, b) {
+	                    if (a.value === null || a.value === "null") {
+	                        return -1;
+	                    } else if (b.value === null || b.value === "null") {
+	                        return 1;
+	                    } else if (a.label < b.label) {
+	                        return -1;
+	                    } else if (b.label < a.label) {
+	                        return 1;
+	                    }
+
+	                    return 0;
+	                });
+
+	                $scope.options = arr;
+
+	                $scope.value = arr.find(function (item) {
+	                    return item.value === $scope.config.value;
+	                });
+	                // });
+	            }]
 	        };
 	    }];
 	};
@@ -41245,7 +41290,7 @@
 /* 49 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
 /* 50 */
@@ -41263,6 +41308,7 @@
 	                value: "=",
 	                options: "=",
 	                labels: "=",
+	                collapsed: "=",
 	                array: "="
 	            },
 	            controller: ["$scope", "$anchorScroll", function ($scope, $anchorScroll) {
@@ -41279,6 +41325,11 @@
 	                    values = values || {};
 
 	                    //subform
+
+	                    if ($scope.array && sectionsOrFields.type === "Subform") {
+	                        values[sectionsOrFields.id] = $scope.getValues(sectionsOrFields.value);
+	                        return values;
+	                    }
 
 	                    if (!sectionsOrFields) {
 	                        return values;
@@ -41306,13 +41357,11 @@
 	                    return values;
 	                };
 
-	                if ($scope.array) {
-	                    $scope.$watch(function () {
-	                        return JSON.stringify($scope.config);
-	                    }, function () {
-	                        $scope.value = $scope.getValues($scope.config);
-	                    });
-	                }
+	                $scope.$watch(function () {
+	                    return JSON.stringify($scope.config);
+	                }, function () {
+	                    $scope.value = $scope.getValues($scope.config);
+	                });
 	            }]
 	        };
 	    }];
@@ -41322,7 +41371,7 @@
 /* 51 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"panel-body\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups\" >\r\n\r\n        <div class=\"dropdown m-b-10\">\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"panel-body\" ng-if=\"!collapsed\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups && config.groups.length\" >\r\n\r\n        <div class=\"dropdown m-b-10\" >\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 52 */
@@ -41378,7 +41427,7 @@
 /* 53 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\" ng-if=\"config.label\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform array=\"true\" ng-if=\"!collapsed\" config=\"item\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\" ng-if=\"config.label\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform array=\"true\" collapsed=\"collapsed\" config=\"item\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 54 */

@@ -3,7 +3,7 @@
         <span class="required" ng-if="config.renderOptions.required">*</span>
     </label>
     <div class="col-md-10">
-        <select class="form-control" ng-required="config.renderOptions.required" ng-model="config.value" ng-options="key as label for (key, label) in config.options"
+        <select class="form-control" ng-required="config.renderOptions.required" ng-model="value" ng-options="option.label for option in options"
                 autocomplete="{{config.renderOptions.autocomplete || 'off'}}">
             <option value="" ng-if="config.renderOptions.emptySelectLabel !== false">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>

@@ -11,6 +11,7 @@ module.exports = function (neatFormModule) {
                     value: "=",
                     options: "=",
                     labels: "=",
+                    collapsed: "=",
                     array: "="
                 },
                 controller: [
@@ -30,6 +31,11 @@ module.exports = function (neatFormModule) {
                             values = values || {};
 
                             //subform
+
+                            if($scope.array && sectionsOrFields.type === "Subform"){
+                                values[sectionsOrFields.id] = $scope.getValues(sectionsOrFields.value);
+                                return values;
+                            }
 
                             if (!sectionsOrFields) {
                                 return values;
@@ -57,13 +63,11 @@ module.exports = function (neatFormModule) {
                             return values;
                         };
 
-                        if ($scope.array) {
-                            $scope.$watch(function () {
-                                return JSON.stringify($scope.config);
-                            }, function () {
-                                $scope.value = $scope.getValues($scope.config);
-                            });
-                        }
+                        $scope.$watch(function () {
+                            return JSON.stringify($scope.config);
+                        }, function () {
+                            $scope.value = $scope.getValues($scope.config);
+                        });
                     }
                 ]
             };

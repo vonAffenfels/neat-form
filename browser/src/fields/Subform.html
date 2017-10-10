@@ -1,8 +1,8 @@
-<div class="panel-body">
+<div class="panel-body" ng-if="!collapsed">
     <div class="neat-form-navigation" ng-class="{'active': navigationOpen}"
-         ng-if="config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups" >
+         ng-if="config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups && config.groups.length" >
 
-        <div class="dropdown m-b-10">
+        <div class="dropdown m-b-10" >
             <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
                 {{config.renderOptions.navigationLabel || "Groups"}}
                 <span class="caret"></span>
