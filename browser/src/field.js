@@ -130,16 +130,12 @@ module.exports = function (neatFormModule) {
 
                                 for (let id in conditions) {
                                     let val = conditions[id];
+                                    let field = formScope.getFieldById(id);
 
-                                    for (let fieldId in formScope.fields) {
-                                        let field = formScope.fields[fieldId].config;
-
-                                        if (id == fieldId) {
-                                            if (field.value != val) {
-                                                show = false;
-                                            }
-                                        }
+                                    if (field && field.config && field.config.value != val) {
+                                        show = false;
                                     }
+
                                 }
                             } catch (e) {
                                 console.error(e);
@@ -166,7 +162,11 @@ module.exports = function (neatFormModule) {
                     $scope.setFormScope = function (formScope) {
                         $scope.neatFormScope = formScope;
                         $scope.isDisabled();
-                    }
+                    };
+
+                    $scope.$watch("config.value", (newValue, oldValue)=> {
+                       $scope.$emit("neat-form-field-valuechange-" + $scope.config.id, newValue, oldValue);
+                    });
 
 
                     try {

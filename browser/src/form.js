@@ -77,6 +77,10 @@ module.exports = function (neatFormModule) {
                 $scope.fields[id] = fieldscope;
             });
 
+            $scope.getFieldById = function (id) {
+                return $scope.fields[id] || null;
+            };
+
             $scope.reset();
 
             $scope.getValues = function (sectionsOrFields, values) {

@@ -4,7 +4,9 @@
     </label>
     <div class="col-md-10">
         <select class="form-control" ng-required="config.renderOptions.required" ng-model="value" ng-options="option.label for option in options"
-                autocomplete="{{config.renderOptions.autocomplete || 'off'}}">
+                autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
+                ng-disabled="loading"
+        >
             <option value="" ng-if="config.renderOptions.emptySelectLabel !== false">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
     </div>
