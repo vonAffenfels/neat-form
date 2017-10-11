@@ -19,7 +19,7 @@
                             <i class="fa fa-remove"></i> {{config.renderOptions.removeButtonLabel}}
                         </button>
                     </div>
-                    <h4 class="panel-title">#{{$index}} {{config.renderOptions.positionLabel}}</h4>
+                    <h4 class="panel-title">#{{$index+1}} {{config.renderOptions.positionLabel}}</h4>
                 </div>
                 <neat-form-field-subform array="true" collapsed="collapsed" config="item" value="config.value[$index]"></neat-form-field-subform>
             </div>

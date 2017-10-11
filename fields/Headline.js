@@ -14,7 +14,7 @@ module.exports = class Headline extends Field {
      * @returns {string}
      */
     getId() {
-        return crypto.createHash('md5').update(this.label).digest("hex");
+        return crypto.createHash('md5').update("headline-"+this.label).digest("hex");
     }
 
     loadSchema(defaultSchema) {
