@@ -110,6 +110,7 @@ module.exports = function (neatFormModule) {
 
                     };
 
+                    $scope.lastVisible = true;
                     $scope.isVisible = function () {
                         let show = true;
 
@@ -142,12 +143,12 @@ module.exports = function (neatFormModule) {
                             }
                         }
 
-                        if (!show) {
+                        if (!show && $scope.lastVisible !== show) {
                             $scope.resetValue();// if invisible reset all values!
+                            $scope.$emit("field_visibility_changed", show, $scope.config.id);
                         }
 
-                        $scope.$emit("field_visibility_changed", show, $scope.config.id);
-
+                        $scope.lastVisible = show;
                         return show;
                     }
 
@@ -164,10 +165,9 @@ module.exports = function (neatFormModule) {
                         $scope.isDisabled();
                     };
 
-                    $scope.$watch("config.value", (newValue, oldValue)=> {
-                       $scope.$emit("neat-form-field-valuechange-" + $scope.config.id, newValue, oldValue);
+                    $scope.$watch("config.value", (newValue, oldValue) => {
+                        $scope.$emit("neat-form-field-valuechange-" + $scope.config.id, newValue, oldValue);
                     });
-
 
                     try {
                         $compile('<neat-form-field-' + $scope.config.type + ' config="config" options="options" labels="labels" form="neatFormScope" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {

@@ -22,6 +22,7 @@ module.exports = function (neatFormModule) {
 
                         if ($scope.config.renderOptions && $scope.config.renderOptions.remoteFieldId) {
                             $scope.form.$on("neat-form-field-valuechange-" + $scope.config.renderOptions.remoteFieldId, (event, newValue, oldValue) => {
+                                alert("HERE");
 
                                 if (!$scope.options || newValue != oldValue) {
                                     $scope.loading = true;

@@ -1,14 +1,16 @@
 <div class="form-group" ng-class="{'has-error': config.errors}">
-    <label class="col-md-2 control-label">{{config.label}}<span class="required" ng-if="config.renderOptions.required.value1">*</span></label>
-    <div ng-class="'col-md-' + (config.renderOptions.value1Width || (config.renderOptions.seperatorLabel ? 4 : 5))">
+    <label class="control-label" ng-class="'col-md-' + config.renderOptions.seperatorLabelWidth">{{config.label}}
+        <span class="required" ng-if="config.renderOptions.required.value1">*</span>
+    </label>
+    <div ng-class="'col-md-' + config.renderOptions.value1Width">
         <select class="form-control" ng-model="config.value.value1" ng-options="key as label for (key, label) in config.options.value1">
             <option value="">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
     </div>
-    <label class="col-md-2 control-label" ng-class="'col-md-' + (config.renderOptions.seperatorLabelWidth || 2)" ng-if="config.renderOptions.seperatorLabel">{{config.renderOptions.seperatorLabel}}
+    <label class="control-label" ng-class="'col-md-' + config.renderOptions.seperatorLabelWidth" ng-if="config.renderOptions.seperatorLabel">{{config.renderOptions.seperatorLabel}}
         <span class="required" ng-if="config.renderOptions.required.value2">*</span>
     </label>
-    <div ng-class="'col-md-' + (config.renderOptions.value2Width || (config.renderOptions.seperatorLabel ? 4 : 5))">
+    <div ng-class="'col-md-' + config.renderOptions.value2Width">
         <select class="form-control" ng-model="config.value.value2" ng-options="key as label for (key, label) in config.options.value2">
             <option value="">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
