@@ -39924,7 +39924,7 @@
 	                    }
 	                }
 
-	                if (!$scope.config.renderOptions.googleMapsKey && !googleLoaded) {
+	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.googleMapsKey && !googleLoaded) {
 	                    googleLoaded = true;
 	                    var googleScriptSource = "https://maps.googleapis.com/maps/api/js?key=" + $scope.config.renderOptions.googleMapsKey + "&libraries=places,maps";
 	                    angularLoad.loadScript(googleScriptSource).then(function () {
