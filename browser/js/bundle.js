@@ -100,7 +100,7 @@
 	        var directiveName = "neatFormField" + firstPart;
 	        directiveName = directiveName.replace(/\.js$/i, "");
 	        directivePath = directivePath.replace(/^\.\//i, "");
-	        neatFormModule.directive(directiveName, __webpack_require__(56)("./" + directivePath)(neatFormModule));
+	        neatFormModule.directive(directiveName, __webpack_require__(58)("./" + directivePath)(neatFormModule));
 	    });
 	})(window, window.angular);
 
@@ -40430,11 +40430,11 @@
 		"./Price.js": 42,
 		"./Priceperunit.js": 44,
 		"./Radio.js": 46,
-		"./Remoteselect.js": 57,
-		"./Select.js": 48,
-		"./Subform.js": 50,
-		"./Subformarray.js": 52,
-		"./Textarea.js": 54
+		"./Remoteselect.js": 48,
+		"./Select.js": 50,
+		"./Subform.js": 52,
+		"./Subformarray.js": 54,
+		"./Textarea.js": 56
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -41233,322 +41233,10 @@
 	"use strict";
 
 	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(49),
-	            scope: {
-	                config: "="
-	            },
-	            controller: ["$scope", function ($scope) {
-	                // make this a string because of object options we cant have numbers as keys (values)
-	                $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
-
-	                $scope.$watch("value", function () {
-	                    if ($scope.config && $scope.value) {
-	                        $scope.config.value = $scope.value.value;
-	                    }
-	                });
-
-	                // $scope.$watch("config.options", () => {
-	                var arr = [];
-
-	                // convert object to array for sorting reasons
-	                if ($scope.config.options instanceof Object) {
-	                    for (var value in $scope.config.options) {
-	                        var label = $scope.config.options[value];
-	                        arr.push({
-	                            value: value,
-	                            label: label
-	                        });
-	                    }
-	                }
-
-	                // Sort default option to the top
-	                arr = arr.sort(function (a, b) {
-	                    if (a.value === null || a.value === "null") {
-	                        return -1;
-	                    } else if (b.value === null || b.value === "null") {
-	                        return 1;
-	                    } else if (a.label < b.label) {
-	                        return -1;
-	                    } else if (b.label < a.label) {
-	                        return 1;
-	                    }
-
-	                    return 0;
-	                });
-
-	                $scope.options = arr;
-
-	                $scope.value = arr.find(function (item) {
-	                    return item.value === $scope.config.value;
-	                });
-	                // });
-	            }]
-	        };
-	    }];
-	};
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" id=\"{{config.id}}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(51),
-	            scope: {
-	                config: "=",
-	                value: "=",
-	                options: "=",
-	                labels: "=",
-	                collapsed: "=",
-	                array: "="
-	            },
-	            controller: ["$scope", "$anchorScroll", function ($scope, $anchorScroll) {
-
-	                if (!$scope.array) {
-	                    $scope.config = $scope.config.value;
-	                }
-
-	                $scope.scrollToGroup = function (group) {
-	                    $anchorScroll(group.id);
-	                };
-
-	                $scope.getValues = function (sectionsOrFields, values) {
-	                    values = values || {};
-
-	                    //subform
-
-	                    if ($scope.array && sectionsOrFields.type === "Subform") {
-	                        values[sectionsOrFields.id] = $scope.getValues(sectionsOrFields.value);
-	                        return values;
-	                    }
-
-	                    if (!sectionsOrFields) {
-	                        return values;
-	                    }
-
-	                    if (sectionsOrFields instanceof Array) {
-	                        for (var i = 0; i < sectionsOrFields.length; i++) {
-	                            var field = sectionsOrFields[i];
-	                            $scope.getValues(field, values);
-	                        }
-	                    } else if (sectionsOrFields.fields) {
-	                        for (var _i = 0; _i < sectionsOrFields.fields.length; _i++) {
-	                            var _field = sectionsOrFields.fields[_i];
-	                            $scope.getValues(_field, values);
-	                        }
-	                    } else if (sectionsOrFields.groups) {
-	                        for (var _i2 = 0; _i2 < sectionsOrFields.groups.length; _i2++) {
-	                            var _field2 = sectionsOrFields.groups[_i2];
-	                            $scope.getValues(_field2, values);
-	                        }
-	                    } else {
-	                        values[sectionsOrFields.id] = sectionsOrFields.value;
-	                    }
-
-	                    return values;
-	                };
-
-	                $scope.$watch(function () {
-	                    return JSON.stringify($scope.config);
-	                }, function () {
-	                    $scope.value = $scope.getValues($scope.config);
-	                });
-	            }]
-	        };
-	    }];
-	};
-
-/***/ }),
-/* 51 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"panel-body\" ng-if=\"!collapsed\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups && config.groups.length\" >\r\n\r\n        <div class=\"dropdown m-b-10\" >\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(53),
-	            scope: {
-	                config: "="
-	            },
-	            controller: ["$scope", function ($scope) {
-	                if (!$scope.config.value) {
-	                    $scope.config.value = [];
-	                } else {
-	                    $scope.forms = JSON.parse(JSON.stringify($scope.config.value));
-	                }
-
-	                $scope.addItem = function ($event) {
-	                    $event.stopPropagation();
-
-	                    if (!$scope.forms) {
-	                        $scope.forms = [];
-	                    }
-
-	                    var newItem = JSON.parse(JSON.stringify($scope.config.subform));
-	                    newItem.__collapsed = false;
-	                    $scope.forms.push(newItem);
-	                };
-
-	                $scope.move = function ($event, index, targetIndex) {
-	                    $event.stopPropagation();
-	                    $scope.config.value.splice(targetIndex, 0, $scope.config.value.splice(index, 1)[0]);
-	                    $scope.forms.splice(targetIndex, 0, $scope.forms.splice(index, 1)[0]);
-	                };
-
-	                $scope.removeItem = function ($event, index) {
-	                    $event.stopPropagation();
-
-	                    $scope.forms.splice(index, 1);
-	                    $scope.config.value.splice(index, 1);
-	                };
-	            }]
-	        };
-	    }];
-	};
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\" ng-if=\"config.label\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index+1}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform array=\"true\" collapsed=\"collapsed\" config=\"item\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(55),
-	            scope: {
-	                config: "="
-	            },
-	            controller: ["$scope", function ($scope) {}]
-	        };
-	    }];
-	};
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <textarea type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\"></textarea>\r\n    </div>\r\n</div>\r\n\r\n";
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./Address": 18,
-		"./Address.html": 19,
-		"./Address.js": 18,
-		"./Booleanplus": 20,
-		"./Booleanplus.html": 21,
-		"./Booleanplus.js": 20,
-		"./Checkbox": 22,
-		"./Checkbox.html": 23,
-		"./Checkbox.js": 22,
-		"./Doubleselect": 24,
-		"./Doubleselect.html": 25,
-		"./Doubleselect.js": 24,
-		"./Email": 26,
-		"./Email.html": 27,
-		"./Email.js": 26,
-		"./Gps": 28,
-		"./Gps.html": 29,
-		"./Gps.js": 28,
-		"./Headline": 30,
-		"./Headline.html": 31,
-		"./Headline.js": 30,
-		"./Input": 32,
-		"./Input.html": 33,
-		"./Input.js": 32,
-		"./Multifieldselect": 34,
-		"./Multifieldselect.html": 35,
-		"./Multifieldselect.js": 34,
-		"./Multiimageupload": 36,
-		"./Multiimageupload.html": 37,
-		"./Multiimageupload.js": 36,
-		"./Multiselect": 38,
-		"./Multiselect.html": 39,
-		"./Multiselect.js": 38,
-		"./Password": 40,
-		"./Password.html": 41,
-		"./Password.js": 40,
-		"./Price": 42,
-		"./Price.html": 43,
-		"./Price.js": 42,
-		"./Priceperunit": 44,
-		"./Priceperunit.html": 45,
-		"./Priceperunit.js": 44,
-		"./Radio": 46,
-		"./Radio.html": 47,
-		"./Radio.js": 46,
-		"./Remoteselect": 57,
-		"./Remoteselect.html": 58,
-		"./Remoteselect.js": 57,
-		"./Select": 48,
-		"./Select.html": 49,
-		"./Select.js": 48,
-		"./Subform": 50,
-		"./Subform.html": 51,
-		"./Subform.js": 50,
-		"./Subformarray": 52,
-		"./Subformarray.html": 53,
-		"./Subformarray.js": 52,
-		"./Textarea": 54,
-		"./Textarea.html": 55,
-		"./Textarea.js": 54
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 56;
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
 	    return ["$timeout", "$http", function ($timeout, $http) {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(58),
+	            template: __webpack_require__(49),
 	            scope: {
 	                config: "=",
 	                form: "="
@@ -41630,10 +41318,324 @@
 	};
 
 /***/ }),
-/* 58 */
+/* 49 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" id=\"{{config.id}}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                ng-disabled=\"loading\"\r\n        >\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(51),
+	            scope: {
+	                config: "="
+	            },
+	            controller: ["$scope", function ($scope) {
+	                // make this a string because of object options we cant have numbers as keys (values)
+	                $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
+
+	                $scope.$watch("value", function () {
+	                    if ($scope.config && $scope.value) {
+	                        $scope.config.value = $scope.value.value;
+	                    }
+	                });
+
+	                // $scope.$watch("config.options", () => {
+	                var arr = [];
+
+	                // convert object to array for sorting reasons
+	                if ($scope.config.options instanceof Object) {
+	                    for (var value in $scope.config.options) {
+	                        var label = $scope.config.options[value];
+	                        arr.push({
+	                            value: value,
+	                            label: label
+	                        });
+	                    }
+	                }
+
+	                // Sort default option to the top
+	                arr = arr.sort(function (a, b) {
+	                    if (a.value === null || a.value === "null") {
+	                        return -1;
+	                    } else if (b.value === null || b.value === "null") {
+	                        return 1;
+	                    } else if (a.label < b.label) {
+	                        return -1;
+	                    } else if (b.label < a.label) {
+	                        return 1;
+	                    }
+
+	                    return 0;
+	                });
+
+	                $scope.options = arr;
+
+	                $scope.value = arr.find(function (item) {
+	                    return item.value === $scope.config.value;
+	                });
+	                // });
+	            }]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" id=\"{{config.id}}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(53),
+	            scope: {
+	                config: "=",
+	                value: "=",
+	                options: "=",
+	                labels: "=",
+	                collapsed: "=",
+	                array: "="
+	            },
+	            controller: ["$scope", "$anchorScroll", function ($scope, $anchorScroll) {
+
+	                if (!$scope.array) {
+	                    $scope.config = $scope.config.value;
+	                }
+
+	                $scope.scrollToGroup = function (group) {
+	                    $anchorScroll(group.id);
+	                };
+
+	                $scope.getValues = function (sectionsOrFields, values) {
+	                    values = values || {};
+
+	                    //subform
+
+	                    if ($scope.array && sectionsOrFields.type === "Subform") {
+	                        values[sectionsOrFields.id] = $scope.getValues(sectionsOrFields.value);
+	                        return values;
+	                    }
+
+	                    if (!sectionsOrFields) {
+	                        return values;
+	                    }
+
+	                    if (sectionsOrFields instanceof Array) {
+	                        for (var i = 0; i < sectionsOrFields.length; i++) {
+	                            var field = sectionsOrFields[i];
+	                            $scope.getValues(field, values);
+	                        }
+	                    } else if (sectionsOrFields.fields) {
+	                        for (var _i = 0; _i < sectionsOrFields.fields.length; _i++) {
+	                            var _field = sectionsOrFields.fields[_i];
+	                            $scope.getValues(_field, values);
+	                        }
+	                    } else if (sectionsOrFields.groups) {
+	                        for (var _i2 = 0; _i2 < sectionsOrFields.groups.length; _i2++) {
+	                            var _field2 = sectionsOrFields.groups[_i2];
+	                            $scope.getValues(_field2, values);
+	                        }
+	                    } else {
+	                        values[sectionsOrFields.id] = sectionsOrFields.value;
+	                    }
+
+	                    return values;
+	                };
+
+	                $scope.$watch(function () {
+	                    return JSON.stringify($scope.config);
+	                }, function () {
+	                    $scope.value = $scope.getValues($scope.config);
+	                });
+	            }]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"panel-body\" ng-if=\"!collapsed\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups && config.groups.length\" >\r\n\r\n        <div class=\"dropdown m-b-10\" >\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(55),
+	            scope: {
+	                config: "=",
+	                options: "=",
+	                labels: "="
+	            },
+	            controller: ["$scope", function ($scope) {
+	                if (!$scope.config.value) {
+	                    $scope.config.value = [];
+	                } else {
+	                    $scope.forms = JSON.parse(JSON.stringify($scope.config.value));
+	                }
+
+	                $scope.addItem = function ($event) {
+	                    $event.stopPropagation();
+
+	                    if (!$scope.forms) {
+	                        $scope.forms = [];
+	                    }
+
+	                    var newItem = JSON.parse(JSON.stringify($scope.config.subform));
+	                    newItem.__collapsed = false;
+	                    $scope.forms.push(newItem);
+	                };
+
+	                $scope.move = function ($event, index, targetIndex) {
+	                    $event.stopPropagation();
+	                    $scope.config.value.splice(targetIndex, 0, $scope.config.value.splice(index, 1)[0]);
+	                    $scope.forms.splice(targetIndex, 0, $scope.forms.splice(index, 1)[0]);
+	                };
+
+	                $scope.removeItem = function ($event, index) {
+	                    $event.stopPropagation();
+
+	                    $scope.forms.splice(index, 1);
+	                    $scope.config.value.splice(index, 1);
+	                };
+	            }]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\" ng-if=\"config.label\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index+1}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform array=\"true\" collapsed=\"collapsed\" config=\"item\" labels=\"labels\" options=\"options\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(57),
+	            scope: {
+	                config: "="
+	            },
+	            controller: ["$scope", function ($scope) {}]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <textarea type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\"></textarea>\r\n    </div>\r\n</div>\r\n\r\n";
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./Address": 18,
+		"./Address.html": 19,
+		"./Address.js": 18,
+		"./Booleanplus": 20,
+		"./Booleanplus.html": 21,
+		"./Booleanplus.js": 20,
+		"./Checkbox": 22,
+		"./Checkbox.html": 23,
+		"./Checkbox.js": 22,
+		"./Doubleselect": 24,
+		"./Doubleselect.html": 25,
+		"./Doubleselect.js": 24,
+		"./Email": 26,
+		"./Email.html": 27,
+		"./Email.js": 26,
+		"./Gps": 28,
+		"./Gps.html": 29,
+		"./Gps.js": 28,
+		"./Headline": 30,
+		"./Headline.html": 31,
+		"./Headline.js": 30,
+		"./Input": 32,
+		"./Input.html": 33,
+		"./Input.js": 32,
+		"./Multifieldselect": 34,
+		"./Multifieldselect.html": 35,
+		"./Multifieldselect.js": 34,
+		"./Multiimageupload": 36,
+		"./Multiimageupload.html": 37,
+		"./Multiimageupload.js": 36,
+		"./Multiselect": 38,
+		"./Multiselect.html": 39,
+		"./Multiselect.js": 38,
+		"./Password": 40,
+		"./Password.html": 41,
+		"./Password.js": 40,
+		"./Price": 42,
+		"./Price.html": 43,
+		"./Price.js": 42,
+		"./Priceperunit": 44,
+		"./Priceperunit.html": 45,
+		"./Priceperunit.js": 44,
+		"./Radio": 46,
+		"./Radio.html": 47,
+		"./Radio.js": 46,
+		"./Remoteselect": 48,
+		"./Remoteselect.html": 49,
+		"./Remoteselect.js": 48,
+		"./Select": 50,
+		"./Select.html": 51,
+		"./Select.js": 50,
+		"./Subform": 52,
+		"./Subform.html": 53,
+		"./Subform.js": 52,
+		"./Subformarray": 54,
+		"./Subformarray.html": 55,
+		"./Subformarray.js": 54,
+		"./Textarea": 56,
+		"./Textarea.html": 57,
+		"./Textarea.js": 56
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 58;
+
 
 /***/ })
 /******/ ]);

@@ -7,7 +7,9 @@ module.exports = function (neatFormModule) {
                 restrict: "E",
                 template: require("./Subformarray.html"),
                 scope: {
-                    config: "="
+                    config: "=",
+                    options: "=",
+                    labels: "="
                 },
                 controller: [
                     "$scope",
