@@ -16,6 +16,7 @@
   "peerDependencies": {
     "bluebird": "^3.4.6",
     "neat-base": "^1.x.x",
+    "underscore-deep-extend": "^1.1.5",
     "neat-database": "^1.x.x"
   },
   "devDependencies": {
@@ -40,7 +41,6 @@
     "neat-api": "^1.0.50",
     "ngmap": "^1.18.4",
     "underscore": "^1.8.3",
-    "underscore-deep-extend": "^1.1.5",
     "webpack": "^1.12.15"
   }
 }
