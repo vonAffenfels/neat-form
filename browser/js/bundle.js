@@ -40318,9 +40318,9 @@
 
 	                    if (!show && $scope.lastVisible !== show) {
 	                        $scope.resetValue(); // if invisible reset all values!
-	                        $scope.$emit("field_visibility_changed", show, $scope.config.id);
 	                    }
 
+	                    $scope.$emit("field_visibility_changed", show, $scope.config.id);
 	                    $scope.lastVisible = show;
 	                    return show;
 	                };
@@ -40343,7 +40343,7 @@
 	                });
 
 	                try {
-	                    $compile('<neat-form-field-' + $scope.config.type + ' config="config" options="options" labels="labels" form="neatFormScope" ng-if="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
+	                    $compile('<neat-form-field-' + $scope.config.type + ' config="config" options="options" labels="labels" form="neatFormScope" ng-show="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
 	                        $scope.$emit("neat-form-field-register", $scope.config.id, $scope);
 	                        element.append(el);
 	                    });
@@ -40639,6 +40639,7 @@
 	                $scope.defaultPos = [50.9953258, 11.4175722];
 	                $scope.degValue = {};
 	                $scope.zoomAfterLocate = 18;
+	                $scope.defaultZoom = 6;
 
 	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.defaultPosition) {
 	                    $scope.defaultPos = $scope.config.renderOptions.defaultPosition;
@@ -40648,13 +40649,17 @@
 	                    $scope.zoomAfterLocate = $scope.config.renderOptions.zoomAfterLocate;
 	                }
 
+	                if ($scope.config.value && $scope.config.value.lat && $scope.config.value.lon) {
+	                    $scope.defaultZoom = 18;
+	                }
+
 	                $scope.markerConfig = {
 	                    pos: $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos
 	                };
 
 	                $scope.mapConfig = {
 	                    center: $scope.config.value ? [$scope.config.value.lat || $scope.defaultPos[0], $scope.config.value.lon || $scope.defaultPos[1]] : $scope.defaultPos,
-	                    zoom: 6
+	                    zoom: $scope.defaultZoom
 	                };
 
 	                NgMap.getMap().then(function (evtMap) {

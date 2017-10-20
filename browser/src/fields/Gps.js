@@ -23,6 +23,7 @@ module.exports = function (neatFormModule) {
                         ];
                         $scope.degValue = {};
                         $scope.zoomAfterLocate = 18;
+                        $scope.defaultZoom = 6;
 
                         if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.defaultPosition) {
                             $scope.defaultPos = $scope.config.renderOptions.defaultPosition;
@@ -30,6 +31,10 @@ module.exports = function (neatFormModule) {
 
                         if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.zoomAfterLocate) {
                             $scope.zoomAfterLocate = $scope.config.renderOptions.zoomAfterLocate;
+                        }
+
+                        if ($scope.config.value && $scope.config.value.lat && $scope.config.value.lon) {
+                            $scope.defaultZoom = 18;
                         }
 
                         $scope.markerConfig = {
@@ -44,7 +49,7 @@ module.exports = function (neatFormModule) {
                                 $scope.config.value.lat || $scope.defaultPos[0],
                                 $scope.config.value.lon || $scope.defaultPos[1]
                             ] : $scope.defaultPos,
-                            zoom: 6
+                            zoom: $scope.defaultZoom
                         }
 
                         NgMap.getMap().then(function (evtMap) {
