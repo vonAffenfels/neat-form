@@ -13,6 +13,15 @@ module.exports = function (neatFormModule) {
                     "$scope",
                     function ($scope) {
 
+                        if ($scope.config.value) {
+                            if ($scope.config.value.value1 !== null) {
+                                $scope.config.value.value1 = String($scope.config.value.value1);
+                            }
+                            if ($scope.config.value.value2 !== null) {
+                                $scope.config.value.value2 = String($scope.config.value.value2);
+                            }
+                        }
+
                         if (!$scope.config.renderOptions) {
                             $scope.config.renderOptions = {};
                         }
