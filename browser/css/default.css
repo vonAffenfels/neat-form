@@ -2361,21 +2361,21 @@ neat-form input[type="submit"].btn-block, neat-form input[type="reset"].btn-bloc
 
 neat-form .form-control { background-image: inherit; }
 
-neat-form neat-form .neat-form-section-body { display: flex; flex-wrap: wrap; }
+neat-form .neat-form-section-body { display: flex; flex-wrap: wrap; }
 
-neat-form neat-form .neat-7-col-form { width: 14.28571428571429%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-7-col-form { width: 14.28571428571429%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-6-col-form { width: 16.66666667%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-6-col-form { width: 16.66666667%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-5-col-form { width: 20%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-5-col-form { width: 20%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-4-col-form { width: 25%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-4-col-form { width: 25%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-3-col-form { width: 33%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-3-col-form { width: 33%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-2-col-form { width: 50%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-2-col-form { width: 50%; padding: 0 0 0 15px; flex-flow: column; }
 
-neat-form neat-form .neat-1-col-form { width: 100%; padding: 0 0 0 15px; flex-flow: column; }
+neat-form .neat-1-col-form { width: 100%; padding: 0 0 0 15px; flex-flow: column; }
 
 neat-form .neat-form-navigation { position: fixed; z-index: 1020; background: #fff; padding: 15px; box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); -webkit-transition: right .2s linear; -moz-transition: right .2s linear; transition: right .2s linear; width: 310px; right: -311px; top: 10%; }
 
@@ -2387,7 +2387,17 @@ neat-form .neat-form-navigation .neat-form-navigation-content .btn { display: bl
 
 neat-form .neat-form-navigation .neat-form-navigation-btn { position: absolute; left: -30px; top: 30%; margin-top: -15px; width: 30px; height: 30px; line-height: 30px; font-size: 18px; color: #333; background: #fff; border-radius: 4px 0 0 4px; text-align: center; box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); -webkit-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); -moz-box-shadow: -1px 0px 3px -1px rgba(0, 0, 0, 0.4); }
 
-neat-form neat-form-field-price select { min-width: 60px; }
+neat-form neat-form-field-price .input-group { max-width: 210px; min-width: 180px; }
+
+neat-form neat-form-field-price input { max-width: 140px; min-width: 100px; }
+
+neat-form neat-form-field-price select { min-width: 70px; }
+
+neat-form neat-form-field-priceperunit .input-group { max-width: 240px; min-width: 200px; }
+
+neat-form neat-form-field-priceperunit input { max-width: 140px; min-width: 100px; }
+
+neat-form neat-form-field-priceperunit select { min-width: 100px; }
 
 neat-form neat-form-field-multiimageupload .images .images-container { margin-left: 0; margin-right: 0; }
 

@@ -42,5 +42,8 @@
     "ngmap": "^1.18.4",
     "underscore": "^1.8.3",
     "webpack": "^1.12.15"
+  },
+  "dependencies": {
+    "node-sass": "^4.5.3"
   }
 }

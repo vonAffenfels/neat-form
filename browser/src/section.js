@@ -47,7 +47,10 @@ module.exports = function (neatFormModule) {
                 $scope.fieldsStatus[id] = true;
             });
 
-            $scope.toggleCollapse = () => {
+            $scope.toggleCollapse = function () {
+                if (!$scope.options.collapsible) {
+                    return;
+                }
                 $scope.collapsed = !$scope.collapsed;
             }
         }

@@ -1,12 +1,12 @@
 <div class="form-group" ng-class="{'has-error': config.errors}" ng-if="!config.renderOptions.inline && !config.renderOptions.inlineLabel">
-    <label class="col-md-2 control-label">
+    <label class="col-md-2 control-label" ng-attr-for="{{config.id}}">
         <span ng-bind-html="config.label"></span>
         <span class="required" ng-if="config.renderOptions.required">*</span>
     </label>
     <div class="col-md-10">
         <div class="checkbox">
             <label>
-                <input type="checkbox" ng-model="config.value">
+                <input type="checkbox" ng-attr-id="{{config.id}}" ng-model="config.value">
             </label>
         </div>
     </div>
@@ -22,12 +22,12 @@
     <label class="col-md-2 control-label">
         <div class="checkbox">
             <label>
-                <input type="checkbox" ng-model="config.value">
+                <input type="checkbox" ng-attr-id="{{config.id}}" ng-model="config.value">
             </label>
         </div>
     </label>
     <div class="col-md-10 control-label control-label-right">
-        <span ng-bind-html="config.label"></span>
+        <label ng-attr-for="{{config.id}}" ng-bind-html="config.label"></label>
         <span class="required" ng-if="config.renderOptions.required">*</span>
     </div>
 </div>

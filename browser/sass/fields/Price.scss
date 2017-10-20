@@ -1,5 +1,13 @@
 neat-form-field-price {
+  .input-group {
+    max-width: 210px;
+    min-width: 180px;
+  }
+  input {
+    max-width: 140px;
+    min-width: 100px;
+  }
   select {
-    min-width: 60px;
+    min-width: 70px;
   }
 }
