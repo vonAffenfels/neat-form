@@ -16,7 +16,6 @@ module.exports = function (neatFormModule) {
                         $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
 
                         $scope.$watch("value", () => {
-                            console.log(3, $scope.value);
                             if ($scope.config && $scope.value) {
                                 $scope.config.value = $scope.value.value;
                             }

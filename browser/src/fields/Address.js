@@ -31,7 +31,6 @@ module.exports = function (neatFormModule) {
                                 $scope.config.value = {};
                             }
 
-                            console.log(2, val);
                             $scope.config.value.country = val;
                         });
 
