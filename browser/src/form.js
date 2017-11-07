@@ -146,6 +146,10 @@ module.exports = function (neatFormModule) {
 
                             if ($scope.config.submitted && !$scope.config.hasError && $scope.config.renderOptions.successMessage && $scope.config.renderOptions.successMessage) {
                                 $scope.showSuccess = true;
+                                $rootScope.neatFormSuccess = true;
+                            } else {
+                                $scope.showSuccess = false;
+                                $rootScope.neatFormSuccess = false;
                             }
 
 
