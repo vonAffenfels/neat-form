@@ -2,6 +2,17 @@
 
 let googleLoaded = !!window.google && !!window.google.maps;
 
+function getElementOffset(element) {
+    if (!element) {
+        return {y: 0, x: 0};
+    }
+    let de = document.documentElement;
+    let box = element.getBoundingClientRect();
+    let top = box.top + window.pageYOffset - de.clientTop;
+    let left = box.left + window.pageXOffset - de.clientLeft;
+    return {y: top, x: left};
+}
+
 module.exports = function (neatFormModule) {
 
     neatFormModule.directive("neatForm", [
@@ -25,9 +36,11 @@ module.exports = function (neatFormModule) {
         "$q",
         "$sce",
         "$anchorScroll",
+        "$document",
+        "$timeout",
         "neatApi",
         "angularLoad",
-        function ($scope, $rootScope, $q, $sce, $anchorScroll, neatApi, angularLoad) {
+        function ($scope, $rootScope, $q, $sce, $anchorScroll, $document, $timeout, neatApi, angularLoad) {
             $scope.connectedId = $scope.id;
 
             $scope.reset = function () {
@@ -64,6 +77,15 @@ module.exports = function (neatFormModule) {
 
             $scope.scrollToGroup = function (group) {
                 $anchorScroll(group.id);
+            };
+
+            $scope.scrollToFirstError = function () {
+                $scope.$applyAsync(() => {
+                    $timeout(() => {
+                        let pos = getElementOffset(document.querySelector(".has-error"));
+                        window.scrollTo(0, pos.y);
+                    }, 250);
+                });
             };
 
             $scope.subforms = [];
@@ -152,10 +174,18 @@ module.exports = function (neatFormModule) {
                                 $rootScope.neatFormSuccess = false;
                             }
 
+                            if ($scope.config.hasError) {
+                                $scope.scrollToFirstError();
+                            }
 
                             resolve();
                         }, (err) => {
                             $scope.config = err.data;
+
+                            if ($scope.config.hasError) {
+                                $scope.scrollToFirstError();
+                            }
+
                             $scope.loading = false;
                             reject(err);
                         });

@@ -39886,6 +39886,17 @@
 
 	var googleLoaded = !!window.google && !!window.google.maps;
 
+	function getElementOffset(element) {
+	    if (!element) {
+	        return { y: 0, x: 0 };
+	    }
+	    var de = document.documentElement;
+	    var box = element.getBoundingClientRect();
+	    var top = box.top + window.pageYOffset - de.clientTop;
+	    var left = box.left + window.pageXOffset - de.clientLeft;
+	    return { y: top, x: left };
+	}
+
 	module.exports = function (neatFormModule) {
 
 	    neatFormModule.directive("neatForm", [function () {
@@ -39901,7 +39912,7 @@
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormCtrl", ["$scope", "$rootScope", "$q", "$sce", "$anchorScroll", "neatApi", "angularLoad", function ($scope, $rootScope, $q, $sce, $anchorScroll, neatApi, angularLoad) {
+	    neatFormModule.controller("neatFormCtrl", ["$scope", "$rootScope", "$q", "$sce", "$anchorScroll", "$document", "$timeout", "neatApi", "angularLoad", function ($scope, $rootScope, $q, $sce, $anchorScroll, $document, $timeout, neatApi, angularLoad) {
 	        $scope.connectedId = $scope.id;
 
 	        $scope.reset = function () {
@@ -39937,6 +39948,15 @@
 
 	        $scope.scrollToGroup = function (group) {
 	            $anchorScroll(group.id);
+	        };
+
+	        $scope.scrollToFirstError = function () {
+	            $scope.$applyAsync(function () {
+	                $timeout(function () {
+	                    var pos = getElementOffset(document.querySelector(".has-error"));
+	                    window.scrollTo(0, pos.y);
+	                }, 250);
+	            });
 	        };
 
 	        $scope.subforms = [];
@@ -40025,9 +40045,18 @@
 	                            $rootScope.neatFormSuccess = false;
 	                        }
 
+	                        if ($scope.config.hasError) {
+	                            $scope.scrollToFirstError();
+	                        }
+
 	                        resolve();
 	                    }, function (err) {
 	                        $scope.config = err.data;
+
+	                        if ($scope.config.hasError) {
+	                            $scope.scrollToFirstError();
+	                        }
+
 	                        $scope.loading = false;
 	                        reject(err);
 	                    });
@@ -40435,7 +40464,6 @@
 	                        $scope.config.value = {};
 	                    }
 
-	                    console.log(2, val);
 	                    $scope.config.value.country = val;
 	                });
 
@@ -41324,7 +41352,6 @@
 	                $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
 
 	                $scope.$watch("value", function () {
-	                    console.log(3, $scope.value);
 	                    if ($scope.config && $scope.value) {
 	                        $scope.config.value = $scope.value.value;
 	                    }
