@@ -25,6 +25,7 @@ module.exports = function (neatFormModule) {
             $scope.fields = {};
             $scope.fieldsStatus = {};
             $scope.visible = true;
+            $scope.config.visible = true;
             $scope.collapsed = $scope.options ? $scope.options.initiallyCollapsed || false : false;
 
             $scope.$on("field_visibility_changed", function (e, visibility, id) {
@@ -39,6 +40,12 @@ module.exports = function (neatFormModule) {
                     if ($scope.fieldsStatus[id] && !($scope.fields[id].config.renderOptions && $scope.fields[id].config.renderOptions.ignoreVisibility)) {
                         visible = true;
                     }
+                }
+
+                $scope.config.visible = visible;
+
+                if ($scope.visible !== visible) {
+                    $scope.$emit("group_visibility_changed", this);
                 }
 
                 $scope.visible = visible;

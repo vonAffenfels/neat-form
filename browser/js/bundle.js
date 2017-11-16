@@ -41013,7 +41013,7 @@
 	                _id: $scope.connectedId
 	            }, function (config) {
 	                $scope.loading = false;
-	                $scope.config = config;
+	                $scope.config = $scope.processConfig(config);
 	                $scope.error = null;
 
 	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.infoMessage) {
@@ -41054,7 +41054,9 @@
 	        $scope.fields = {};
 	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
 	            fieldscope.setFormScope($scope);
-	            $scope.fields[id] = fieldscope;
+	            if (!$scope.fields[id]) {
+	                $scope.fields[id] = fieldscope;
+	            }
 	        });
 
 	        $scope.getFieldById = function (id) {
@@ -41113,7 +41115,7 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
-	                        $scope.config = config;
+	                        $scope.config = $scope.processConfig(config);
 
 	                        // set id after create in case we want to just keep the form open (html decides)
 	                        if ($scope.config.connectedId) {
@@ -41138,7 +41140,7 @@
 
 	                        resolve();
 	                    }, function (err) {
-	                        $scope.config = err.data;
+	                        $scope.config = $scope.processConfig(err.data);
 
 	                        if ($scope.config.hasError) {
 	                            $scope.scrollToFirstError();
@@ -41160,6 +41162,76 @@
 	            return $scope.submitProm;
 	        };
 
+	        $scope.validate = function () {
+	            if ($scope.loading) {
+	                return $scope.validateProm;
+	            }
+
+	            $scope.validateProm = $q(function (resolve, reject) {
+	                var toValidate = [];
+	                if ($scope.subforms && $scope.subforms.length) {
+	                    for (var i = 0; i < $scope.subforms.length; i++) {
+	                        toValidate.push($scope.subforms[i]);
+	                    }
+	                }
+
+	                return $scope.validateAllSubforms(toValidate).then(function () {
+
+	                    var values = $scope.getValues($scope.config);
+
+	                    return neatApi.formValidate({
+	                        _id: $scope.connectedId,
+	                        data: values,
+	                        form: $scope.form
+	                    }, function (config) {
+	                        $scope.loading = false;
+	                        $scope.config = $scope.processConfig(config);
+
+	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
+	                            $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
+	                        }
+
+	                        resolve();
+	                    }, function (err) {
+	                        $scope.config = $scope.processConfig(err.data);
+	                        $scope.loading = false;
+	                        reject(err);
+	                    });
+	                }, function (err) {
+	                    $scope.loading = false;
+	                    reject(err);
+	                }).catch(function (err) {
+	                    $scope.loading = false;
+	                    reject(err);
+	                });
+	            });
+
+	            $scope.loading = true;
+	            return $scope.validateProm;
+	        };
+
+	        $scope.processConfig = function (config, knownFields) {
+	            knownFields = knownFields || {};
+
+	            if (config.fields) {
+	                for (var i = 0; i < config.fields.length; i++) {
+	                    var field = config.fields[i];
+	                    if (knownFields[field.id]) {
+	                        config.fields[i] = knownFields[field.id];
+	                    } else {
+	                        knownFields[field.id] = field;
+	                    }
+	                }
+	            } else if (config.groups) {
+	                for (var _i3 = 0; _i3 < config.groups.length; _i3++) {
+	                    var group = config.groups[_i3];
+	                    config.groups[_i3] = $scope.processConfig(group, knownFields);
+	                }
+	            }
+
+	            return config;
+	        };
+
 	        $scope.saveAllSubforms = function (subforms) {
 	            return $q(function (resolve, reject) {
 
@@ -41171,6 +41243,21 @@
 
 	                return subform.submit().then(function () {
 	                    return $scope.saveAllSubforms(subforms).then(resolve, reject);
+	                }, reject);
+	            });
+	        };
+
+	        $scope.validateAllSubforms = function (subforms) {
+	            return $q(function (resolve, reject) {
+
+	                if (!subforms || !subforms.length) {
+	                    return resolve();
+	                }
+
+	                var subform = subforms.shift();
+
+	                return subform.validate().then(function () {
+	                    return $scope.validateAllSubforms(subforms).then(resolve, reject);
 	                }, reject);
 	            });
 	        };
@@ -41270,6 +41357,20 @@
 	            $scope.validate().then(handleResponseValidate, handleResponseValidate);
 	        };
 
+	        $scope.recalcGroupIndexes = function () {
+	            var wizardIndex = 0;
+	            if ($scope.config && $scope.config) {
+	                for (var i = 0; i < $scope.config.groups.length; i++) {
+	                    var group = $scope.config.groups[i];
+	                    if (group.label && i !== 0) {
+	                        wizardIndex++;
+	                    }
+	                    $scope.maximumTabIndex = wizardIndex;
+	                    group.groupWizardTabIndex = wizardIndex;
+	                }
+	            }
+	        };
+
 	        $scope.reset = function () {
 	            if ($scope.loading) {
 	                return;
@@ -41280,22 +41381,10 @@
 	                form: $scope.form,
 	                _id: $scope.connectedId
 	            }, function (config) {
-
-	                var wizardIndex = 0;
-	                if (config && config.groups) {
-	                    for (var i = 0; i < config.groups.length; i++) {
-	                        var group = config.groups[i];
-	                        if (group.label && i !== 0) {
-	                            wizardIndex++;
-	                        }
-	                        $scope.maximumTabIndex = wizardIndex;
-	                        group.groupWizardTabIndex = wizardIndex;
-	                    }
-	                }
-
 	                $scope.loading = false;
-	                $scope.config = config;
+	                $scope.config = $scope.processConfig(config);
 	                $scope.error = null;
+	                $scope.recalcGroupIndexes();
 
 	                if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.infoMessage) {
 	                    if (typeof $scope.config.renderOptions.infoMessage === "string") {
@@ -41322,7 +41411,10 @@
 	        $scope.fields = {};
 	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
 	            fieldscope.setFormScope($scope);
-	            $scope.fields[id] = fieldscope;
+	            // if it already exists, ignore its a duplicate, the first one counts!
+	            if (!$scope.fields[id]) {
+	                $scope.fields[id] = fieldscope;
+	            }
 	        });
 
 	        $scope.getFieldById = function (id) {
@@ -41352,6 +41444,9 @@
 	                    $scope.getValues(_field2, values);
 	                }
 	            } else {
+	                if (values[sectionsOrFields.id]) {
+	                    console.log(2, sectionsOrFields);
+	                }
 	                values[sectionsOrFields.id] = sectionsOrFields.value;
 	            }
 
@@ -41381,20 +41476,8 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
-
-	                        var wizardIndex = 0;
-	                        if (config && config.groups) {
-	                            for (var _i3 = 0; _i3 < config.groups.length; _i3++) {
-	                                var group = config.groups[_i3];
-	                                if (group.label && _i3 !== 0) {
-	                                    wizardIndex++;
-	                                }
-	                                $scope.maximumTabIndex = wizardIndex;
-	                                group.groupWizardTabIndex = wizardIndex;
-	                            }
-	                        }
-
-	                        $scope.config = config;
+	                        $scope.config = $scope.processConfig(config);
+	                        $scope.recalcGroupIndexes();
 
 	                        // set id after create in case we want to just keep the form open (html decides)
 	                        if ($scope.config.connectedId) {
@@ -41413,23 +41496,15 @@
 	                            $rootScope.neatFormSuccess = false;
 	                        }
 
+	                        var pos = getElementOffset(document.querySelector("neat-form-wizard"));
+	                        window.scrollTo(0, pos.y);
 	                        resolve();
 	                    }, function (err) {
-	                        var config = err.data;
-	                        var wizardIndex = 0;
-	                        if (config && config.groups) {
-	                            for (var _i4 = 0; _i4 < config.groups.length; _i4++) {
-	                                var group = config.groups[_i4];
-	                                if (group.label && _i4 !== 0) {
-	                                    wizardIndex++;
-	                                }
-	                                $scope.maximumTabIndex = wizardIndex;
-	                                group.groupWizardTabIndex = wizardIndex;
-	                            }
-	                        }
-
-	                        $scope.config = config;
+	                        $scope.config = $scope.processConfig(err.data);
+	                        $scope.recalcGroupIndexes();
 	                        $scope.loading = false;
+	                        var pos = getElementOffset(document.querySelector("neat-form-wizard"));
+	                        window.scrollTo(0, pos.y);
 	                        reject(err);
 	                    });
 	                }, function (err) {
@@ -41468,20 +41543,8 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
-
-	                        var wizardIndex = 0;
-	                        if (config && config.groups) {
-	                            for (var _i5 = 0; _i5 < config.groups.length; _i5++) {
-	                                var group = config.groups[_i5];
-	                                if (group.label && _i5 !== 0) {
-	                                    wizardIndex++;
-	                                }
-	                                $scope.maximumTabIndex = wizardIndex;
-	                                group.groupWizardTabIndex = wizardIndex;
-	                            }
-	                        }
-
-	                        $scope.config = config;
+	                        $scope.config = $scope.processConfig(config);
+	                        $scope.recalcGroupIndexes();
 
 	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
 	                            $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
@@ -41489,20 +41552,8 @@
 
 	                        resolve();
 	                    }, function (err) {
-	                        var config = err.data;
-	                        var wizardIndex = 0;
-	                        if (config && config.groups) {
-	                            for (var _i6 = 0; _i6 < config.groups.length; _i6++) {
-	                                var group = config.groups[_i6];
-	                                if (group.label && _i6 !== 0) {
-	                                    wizardIndex++;
-	                                }
-	                                $scope.maximumTabIndex = wizardIndex;
-	                                group.groupWizardTabIndex = wizardIndex;
-	                            }
-	                        }
-
-	                        $scope.config = config;
+	                        $scope.config = $scope.processConfig(err.data);
+	                        $scope.recalcGroupIndexes();
 	                        $scope.loading = false;
 	                        reject(err);
 	                    });
@@ -41517,6 +41568,28 @@
 
 	            $scope.loading = true;
 	            return $scope.validateProm;
+	        };
+
+	        $scope.processConfig = function (config, knownFields) {
+	            knownFields = knownFields || {};
+
+	            if (config.fields) {
+	                for (var i = 0; i < config.fields.length; i++) {
+	                    var field = config.fields[i];
+	                    if (knownFields[field.id]) {
+	                        config.fields[i] = knownFields[field.id];
+	                    } else {
+	                        knownFields[field.id] = field;
+	                    }
+	                }
+	            } else if (config.groups) {
+	                for (var _i3 = 0; _i3 < config.groups.length; _i3++) {
+	                    var group = config.groups[_i3];
+	                    config.groups[_i3] = $scope.processConfig(group, knownFields);
+	                }
+	            }
+
+	            return config;
 	        };
 
 	        $scope.saveAllSubforms = function (subforms) {
@@ -41576,7 +41649,7 @@
 /* 15 */
 /***/ (function(module, exports) {
 
-	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n\r\n        <div class=\"wizard-tabs row\" ng-if=\"!showSuccess\">\r\n            <div class=\"col-md-2\">\r\n                <span class=\"fromDashTo\">\r\n                    {{activeTab + 1}} / {{maximumTabIndex + 1}}\r\n                </span>\r\n            </div>\r\n            <div class=\"col-md-10\">\r\n                <ul class=\"nav nav-tabs\">\r\n                    <li ng-class=\"{'active': conf.groupWizardTabIndex === activeTab, 'has-error': conf.hasError}\" ng-repeat=\"conf in config.groups\" ng-if=\"conf.label\"><a\r\n                            ng-click=\"goToTab(conf.groupWizardTabIndex)\" ng-attr-title=\"{{conf.groupWizardTabIndex + 1}}. {{conf.label}}\">{{conf.groupWizardTabIndex + 1}}\r\n                        <span class=\"tab-label\">. {{conf.label}}</span>\r\n                    </a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"row success-message\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\" ng-show=\"conf.groupWizardTabIndex == activeTab\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\" show-label=\"false\" options=\"config.renderOptions.groups\" labels=\"config.renderOptions.labels\">\r\n            </neat-form-section>\r\n        </div>\r\n\r\n        <div class=\"row\" ng-if=\"!showSuccess && !loading\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-8\" style=\"padding-left: 0\">\r\n                        <button type=\"button\" ng-click=\"goToTab(activeTab + 1)\" class=\"btn btn-primary btn-block col-md-10\"\r\n                                ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false\">\r\n                            <i class=\"fa fa-arrow-right\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.next ||\r\n                            \"Next\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"col-md-4\" style=\"padding-right: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.renderOptions.infoMessage && !neatFormSuccess && !showSuccess\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"form-info\" ng-bind-html=\"config.renderOptions.infoMessage\">\r\n\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\" ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups\"\r\n         ng-init=\"navigationOpen = false;\">\r\n        <a class=\"neat-form-navigation-btn\" ng-click=\"navigationOpen = !navigationOpen\">\r\n            <i class=\"fa fa-navicon\"></i>\r\n        </a>\r\n        <div class=\"neat-form-navigation-content\">\r\n            <div class=\"row\">\r\n                <div class=\"col-md-12\">\r\n                    <a class=\"btn btn-primary\" ng-click=\"scrollToGroup(group)\" ng-repeat=\"group in config.groups\" ng-if=\"group.label\">{{group.label}}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
+	module.exports = "<form ng-submit=\"submit()\" class=\"form form-horizontal panel neat-form\" ng-class=\"{'panel-loading': loading}\" ng-cloak novalidate>\r\n    <div class=\"panel-body\">\r\n        <div class=\"panel-loader\" ng-if=\"loading\">\r\n            <div class=\"spinner-small\"></div>\r\n        </div>\r\n\r\n        <div class=\"wizard-tabs row\" ng-if=\"!showSuccess\">\r\n            <div class=\"col-md-2\">\r\n                <span class=\"fromDashTo\">\r\n                    {{activeTab + 1}} / {{maximumTabIndex + 1}}\r\n                </span>\r\n            </div>\r\n            <div class=\"col-md-10\">\r\n                <ul class=\"nav nav-tabs\">\r\n                    <li ng-class=\"{'active': conf.groupWizardTabIndex === activeTab, 'has-error': conf.hasError}\" ng-repeat=\"conf in config.groups\" ng-if=\"conf.label\"><a\r\n                            ng-click=\"goToTab(conf.groupWizardTabIndex)\" ng-attr-title=\"{{conf.groupWizardTabIndex + 1}}. {{conf.label}}\">{{conf.groupWizardTabIndex + 1}}\r\n                        <span class=\"tab-label\">. {{conf.label}}</span>\r\n                    </a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"row success-message\" ng-if=\"showSuccess\" ng-bind-html=\"config.renderOptions.successMessage\">\r\n        </div>\r\n\r\n        <div class=\"row\" ng-if=\"!showSuccess && !loading\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-8\" style=\"padding-left: 0\">\r\n                        <button type=\"button\" ng-click=\"goToTab(activeTab + 1)\" class=\"btn btn-primary btn-block col-md-10\"\r\n                                ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false\">\r\n                            <i class=\"fa fa-arrow-right\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.next ||\r\n                            \"Next\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"col-md-4\" style=\"padding-right: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups && !showSuccess\" ng-show=\"conf.groupWizardTabIndex == activeTab\">\r\n            <neat-form-section config=\"conf\" ng-if=\"conf.fields\" show-label=\"false\" options=\"config.renderOptions.groups\" labels=\"config.renderOptions.labels\">\r\n            </neat-form-section>\r\n        </div>\r\n\r\n        <div class=\"row\" ng-if=\"!showSuccess && !loading\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"col-md-8\" style=\"padding-left: 0\">\r\n                        <button type=\"button\" ng-click=\"goToTab(activeTab + 1)\" class=\"btn btn-primary btn-block col-md-10\"\r\n                                ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false\">\r\n                            <i class=\"fa fa-arrow-right\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.next ||\r\n                            \"Next\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"col-md-4\" style=\"padding-right: 0\">\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.save ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                        <button type=\"submit\" class=\"btn btn-success btn-block col-md-10\" ng-if=\"activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId\">\r\n                            <i class=\"fa fa-save\"></i>&nbsp;\r\n                            {{config.renderOptions.labels.update ||\r\n                            \"Save\"}}\r\n                        </button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"row\" ng-if=\"config.renderOptions.infoMessage && !neatFormSuccess && !showSuccess\">\r\n            <div class=\"panel panel-inverse\">\r\n                <div class=\"panel-body\">\r\n                    <div class=\"form-info\" ng-bind-html=\"config.renderOptions.infoMessage\">\r\n\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\" ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups\"\r\n         ng-init=\"navigationOpen = false;\">\r\n        <a class=\"neat-form-navigation-btn\" ng-click=\"navigationOpen = !navigationOpen\">\r\n            <i class=\"fa fa-navicon\"></i>\r\n        </a>\r\n        <div class=\"neat-form-navigation-content\">\r\n            <div class=\"row\">\r\n                <div class=\"col-md-12\">\r\n                    <a class=\"btn btn-primary\" ng-click=\"scrollToGroup(group)\" ng-repeat=\"group in config.groups\" ng-if=\"group.label\">{{group.label}}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>";
 
 /***/ }),
 /* 16 */
@@ -41605,6 +41678,7 @@
 	        $scope.fields = {};
 	        $scope.fieldsStatus = {};
 	        $scope.visible = true;
+	        $scope.config.visible = true;
 	        $scope.collapsed = $scope.options ? $scope.options.initiallyCollapsed || false : false;
 
 	        $scope.$on("field_visibility_changed", function (e, visibility, id) {
@@ -41619,6 +41693,12 @@
 	                if ($scope.fieldsStatus[id] && !($scope.fields[id].config.renderOptions && $scope.fields[id].config.renderOptions.ignoreVisibility)) {
 	                    visible = true;
 	                }
+	            }
+
+	            $scope.config.visible = visible;
+
+	            if ($scope.visible !== visible) {
+	                $scope.$emit("group_visibility_changed", this);
 	            }
 
 	            $scope.visible = visible;

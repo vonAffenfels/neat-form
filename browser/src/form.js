@@ -54,7 +54,7 @@ module.exports = function (neatFormModule) {
                     _id: $scope.connectedId
                 }, (config) => {
                     $scope.loading = false;
-                    $scope.config = config;
+                    $scope.config = $scope.processConfig(config);
                     $scope.error = null;
 
 
@@ -96,7 +96,9 @@ module.exports = function (neatFormModule) {
             $scope.fields = {};
             $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
                 fieldscope.setFormScope($scope);
-                $scope.fields[id] = fieldscope;
+                if (!$scope.fields[id]) {
+                    $scope.fields[id] = fieldscope;
+                }
             });
 
             $scope.getFieldById = function (id) {
@@ -155,7 +157,7 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
-                            $scope.config = config;
+                            $scope.config = $scope.processConfig(config);
 
                             // set id after create in case we want to just keep the form open (html decides)
                             if ($scope.config.connectedId) {
@@ -180,7 +182,7 @@ module.exports = function (neatFormModule) {
 
                             resolve();
                         }, (err) => {
-                            $scope.config = err.data;
+                            $scope.config = $scope.processConfig(err.data);
 
                             if ($scope.config.hasError) {
                                 $scope.scrollToFirstError();
@@ -202,6 +204,77 @@ module.exports = function (neatFormModule) {
                 return $scope.submitProm;
             };
 
+
+            $scope.validate = function () {
+                if ($scope.loading) {
+                    return $scope.validateProm;
+                }
+
+                $scope.validateProm = $q((resolve, reject) => {
+                    let toValidate = [];
+                    if ($scope.subforms && $scope.subforms.length) {
+                        for (let i = 0; i < $scope.subforms.length; i++) {
+                            toValidate.push($scope.subforms[i]);
+                        }
+                    }
+
+                    return $scope.validateAllSubforms(toValidate).then(() => {
+
+                        let values = $scope.getValues($scope.config);
+
+                        return neatApi.formValidate({
+                            _id: $scope.connectedId,
+                            data: values,
+                            form: $scope.form
+                        }, (config) => {
+                            $scope.loading = false;
+                            $scope.config = $scope.processConfig(config);
+
+                            if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
+                                $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
+                            }
+
+                            resolve();
+                        }, (err) => {
+                            $scope.config = $scope.processConfig(err.data);
+                            $scope.loading = false;
+                            reject(err);
+                        });
+                    }, (err) => {
+                        $scope.loading = false;
+                        reject(err);
+                    }).catch((err) => {
+                        $scope.loading = false;
+                        reject(err);
+                    });
+                });
+
+                $scope.loading = true;
+                return $scope.validateProm;
+            };
+
+            $scope.processConfig = function (config, knownFields) {
+                knownFields = knownFields || {};
+
+                if (config.fields) {
+                    for (let i = 0; i < config.fields.length; i++) {
+                        let field = config.fields[i];
+                        if (knownFields[field.id]) {
+                            config.fields[i] = knownFields[field.id];
+                        } else {
+                            knownFields[field.id] = field;
+                        }
+                    }
+                } else if (config.groups) {
+                    for (let i = 0; i < config.groups.length; i++) {
+                        let group = config.groups[i];
+                        config.groups[i] = $scope.processConfig(group, knownFields);
+                    }
+                }
+
+                return config;
+            }
+
             $scope.saveAllSubforms = function (subforms) {
                 return $q((resolve, reject) => {
 
@@ -213,6 +286,21 @@ module.exports = function (neatFormModule) {
 
                     return subform.submit().then(() => {
                         return $scope.saveAllSubforms(subforms).then(resolve, reject);
+                    }, reject);
+                });
+            }
+
+            $scope.validateAllSubforms = function (subforms) {
+                return $q((resolve, reject) => {
+
+                    if (!subforms || !subforms.length) {
+                        return resolve();
+                    }
+
+                    let subform = subforms.shift();
+
+                    return subform.validate().then(() => {
+                        return $scope.validateAllSubforms(subforms).then(resolve, reject);
                     }, reject);
                 });
             }

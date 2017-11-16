@@ -83,14 +83,16 @@ module.exports = class FormModule extends Module {
                     form.setConnectedId(req.body._id);
                 }
 
-                return form.validate(req.body.data || {}).then((valid) => {
+                form.validating = true;
+                return form.validate(req.body.data || {}).then(() => {
                     return form.getSchema();
                 }).then((schema) => {
                     if (schema.hasError) {
                         res.status(400);
                     }
                     res.json(schema);
-                });
+                })
+
             }, 9999);
 
             return this;

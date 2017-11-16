@@ -72,6 +72,20 @@ module.exports = function (neatFormModule) {
                 $scope.validate().then(handleResponseValidate, handleResponseValidate);
             }
 
+            $scope.recalcGroupIndexes = () => {
+                let wizardIndex = 0;
+                if ($scope.config && $scope.config) {
+                    for (let i = 0; i < $scope.config.groups.length; i++) {
+                        let group = $scope.config.groups[i];
+                        if (group.label && i !== 0) {
+                            wizardIndex++;
+                        }
+                        $scope.maximumTabIndex = wizardIndex;
+                        group.groupWizardTabIndex = wizardIndex;
+                    }
+                }
+            }
+
             $scope.reset = function () {
                 if ($scope.loading) {
                     return;
@@ -82,22 +96,10 @@ module.exports = function (neatFormModule) {
                     form: $scope.form,
                     _id: $scope.connectedId
                 }, (config) => {
-
-                    let wizardIndex = 0;
-                    if (config && config.groups) {
-                        for (let i = 0; i < config.groups.length; i++) {
-                            let group = config.groups[i];
-                            if (group.label && i !== 0) {
-                                wizardIndex++;
-                            }
-                            $scope.maximumTabIndex = wizardIndex;
-                            group.groupWizardTabIndex = wizardIndex;
-                        }
-                    }
-
                     $scope.loading = false;
-                    $scope.config = config;
+                    $scope.config = $scope.processConfig(config);
                     $scope.error = null;
+                    $scope.recalcGroupIndexes();
 
                     if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.infoMessage) {
                         if (typeof $scope.config.renderOptions.infoMessage === "string") {
@@ -124,7 +126,10 @@ module.exports = function (neatFormModule) {
             $scope.fields = {};
             $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
                 fieldscope.setFormScope($scope);
-                $scope.fields[id] = fieldscope;
+                // if it already exists, ignore its a duplicate, the first one counts!
+                if (!$scope.fields[id]) {
+                    $scope.fields[id] = fieldscope;
+                }
             });
 
             $scope.getFieldById = function (id) {
@@ -154,6 +159,9 @@ module.exports = function (neatFormModule) {
                         $scope.getValues(field, values);
                     }
                 } else {
+                    if(values[sectionsOrFields.id]) {
+                        console.log(2, sectionsOrFields);
+                    }
                     values[sectionsOrFields.id] = sectionsOrFields.value;
                 }
 
@@ -183,20 +191,8 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
-
-                            let wizardIndex = 0;
-                            if (config && config.groups) {
-                                for (let i = 0; i < config.groups.length; i++) {
-                                    let group = config.groups[i];
-                                    if (group.label && i !== 0) {
-                                        wizardIndex++;
-                                    }
-                                    $scope.maximumTabIndex = wizardIndex;
-                                    group.groupWizardTabIndex = wizardIndex;
-                                }
-                            }
-
-                            $scope.config = config;
+                            $scope.config = $scope.processConfig(config);
+                            $scope.recalcGroupIndexes();
 
                             // set id after create in case we want to just keep the form open (html decides)
                             if ($scope.config.connectedId) {
@@ -215,23 +211,15 @@ module.exports = function (neatFormModule) {
                                 $rootScope.neatFormSuccess = false;
                             }
 
+                            let pos = getElementOffset(document.querySelector("neat-form-wizard"));
+                            window.scrollTo(0, pos.y);
                             resolve();
                         }, (err) => {
-                            let config = err.data;
-                            let wizardIndex = 0;
-                            if (config && config.groups) {
-                                for (let i = 0; i < config.groups.length; i++) {
-                                    let group = config.groups[i];
-                                    if (group.label && i !== 0) {
-                                        wizardIndex++;
-                                    }
-                                    $scope.maximumTabIndex = wizardIndex;
-                                    group.groupWizardTabIndex = wizardIndex;
-                                }
-                            }
-
-                            $scope.config = config;
+                            $scope.config = $scope.processConfig(err.data);
+                            $scope.recalcGroupIndexes();
                             $scope.loading = false;
+                            let pos = getElementOffset(document.querySelector("neat-form-wizard"));
+                            window.scrollTo(0, pos.y);
                             reject(err);
                         });
                     }, (err) => {
@@ -271,20 +259,8 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
-
-                            let wizardIndex = 0;
-                            if (config && config.groups) {
-                                for (let i = 0; i < config.groups.length; i++) {
-                                    let group = config.groups[i];
-                                    if (group.label && i !== 0) {
-                                        wizardIndex++;
-                                    }
-                                    $scope.maximumTabIndex = wizardIndex;
-                                    group.groupWizardTabIndex = wizardIndex;
-                                }
-                            }
-
-                            $scope.config = config;
+                            $scope.config = $scope.processConfig(config);
+                            $scope.recalcGroupIndexes();
 
                             if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
                                 $scope.config.renderOptions.successMessage = $sce.trustAsHtml($scope.config.renderOptions.successMessage);
@@ -292,20 +268,8 @@ module.exports = function (neatFormModule) {
 
                             resolve();
                         }, (err) => {
-                            let config = err.data;
-                            let wizardIndex = 0;
-                            if (config && config.groups) {
-                                for (let i = 0; i < config.groups.length; i++) {
-                                    let group = config.groups[i];
-                                    if (group.label && i !== 0) {
-                                        wizardIndex++;
-                                    }
-                                    $scope.maximumTabIndex = wizardIndex;
-                                    group.groupWizardTabIndex = wizardIndex;
-                                }
-                            }
-
-                            $scope.config = config;
+                            $scope.config = $scope.processConfig(err.data);
+                            $scope.recalcGroupIndexes();
                             $scope.loading = false;
                             reject(err);
                         });
@@ -321,6 +285,29 @@ module.exports = function (neatFormModule) {
                 $scope.loading = true;
                 return $scope.validateProm;
             };
+
+            $scope.processConfig = function (config, knownFields) {
+                knownFields = knownFields || {};
+
+                if (config.fields) {
+                    for (let i = 0; i < config.fields.length; i++) {
+                        let field = config.fields[i];
+                        if (knownFields[field.id]) {
+                            config.fields[i] = knownFields[field.id];
+                        } else {
+                            knownFields[field.id] = field;
+                        }
+                    }
+
+                } else if (config.groups) {
+                    for (let i = 0; i < config.groups.length; i++) {
+                        let group = config.groups[i];
+                        config.groups[i] = $scope.processConfig(group, knownFields);
+                    }
+                }
+
+                return config;
+            }
 
             $scope.saveAllSubforms = function (subforms) {
                 return $q((resolve, reject) => {

@@ -1,4 +1,4 @@
-<form ng-submit="submit()" class="form form-horizontal panel neat-form" ng-class="{'panel-loading': loading}" ng-cloak>
+<form ng-submit="submit()" class="form form-horizontal panel neat-form" ng-class="{'panel-loading': loading}" ng-cloak novalidate>
     <div class="panel-body">
         <div class="panel-loader" ng-if="loading">
             <div class="spinner-small"></div>
@@ -22,6 +22,43 @@
         </div>
 
         <div class="row success-message" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
+        </div>
+
+        <div class="row" ng-if="!showSuccess && !loading">
+            <div class="panel panel-inverse">
+                <div class="panel-body">
+                    <div class="col-md-8" style="padding-left: 0">
+                        <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary btn-block col-md-10"
+                                ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false">
+                            <i class="fa fa-arrow-right"></i>&nbsp;
+                            {{config.renderOptions.labels.next ||
+                            "Next"}}
+                        </button>
+                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                            <i class="fa fa-save"></i>&nbsp;
+                            {{config.renderOptions.labels.save ||
+                            "Save"}}
+                        </button>
+                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                            <i class="fa fa-save"></i>&nbsp;
+                            {{config.renderOptions.labels.update ||
+                            "Save"}}
+                        </button>
+                    </div>
+                    <div class="col-md-4" style="padding-right: 0">
+                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                            <i class="fa fa-save"></i>&nbsp;
+                            {{config.renderOptions.labels.save ||
+                            "Save"}}
+                        </button>
+                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                            <i class="fa fa-save"></i>&nbsp;
+                            {{config.renderOptions.labels.update ||
+                            "Save"}}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess" ng-show="conf.groupWizardTabIndex == activeTab">
