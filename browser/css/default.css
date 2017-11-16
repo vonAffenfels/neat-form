@@ -2433,6 +2433,10 @@ neat-form .form-control, neat-form-wizard .form-control { background-image: inhe
 
 neat-form .success-message, neat-form-wizard .success-message { padding: 20px; font-size: 120%; }
 
+neat-form .form-group.headline, neat-form-wizard .form-group.headline { font-size: 20px; font-weight: 300; padding: 0 0 6px; margin: 17px 0 20px; border-bottom: 1px solid #ccc; }
+
+neat-form .form-group.info-text, neat-form-wizard .form-group.info-text { margin-left: 16.6666666667%; padding: 0 0 0 8px; font-weight: 300; }
+
 neat-form .neat-form-section-body, neat-form-wizard .neat-form-section-body { display: flex; flex-wrap: wrap; }
 
 neat-form .neat-7-col-form, neat-form-wizard .neat-7-col-form { width: 14.28571428571429%; padding: 0 0 0 15px; flex-flow: column; }

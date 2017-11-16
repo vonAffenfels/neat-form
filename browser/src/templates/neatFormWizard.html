@@ -13,8 +13,7 @@
             <div class="col-md-10">
                 <ul class="nav nav-tabs">
                     <li ng-class="{'active': conf.groupWizardTabIndex === activeTab, 'has-error': conf.hasError}" ng-repeat="conf in config.groups" ng-if="conf.label"><a
-                            ng-click="goToTab(conf.groupWizardTabIndex)" ng-attr-title="{{conf.groupWizardTabIndex + 1}}. {{conf.label}}">{{conf.groupWizardTabIndex + 1}}
-                        <span class="tab-label">. {{conf.label}}</span>
+                            ng-click="goToTab(conf.groupWizardTabIndex)" ng-attr-title="{{conf.groupWizardTabIndex + 1}}. {{conf.label}}">{{conf.groupWizardTabIndex + 1}}. {{conf.label}}
                     </a>
                     </li>
                 </ul>

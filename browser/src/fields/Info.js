@@ -5,7 +5,7 @@ module.exports = function (neatFormModule) {
         function () {
             return {
                 restrict: "E",
-                template: require("./Headline.html"),
+                template: require("./Info.html"),
                 scope: {
                     config: "="
                 },

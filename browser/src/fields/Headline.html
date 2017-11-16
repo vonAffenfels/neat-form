@@ -1,6 +1,2 @@
-<div class="form-group">
-    <legend ng-if="config.renderOptions.showLegend">{{config.label}}</legend>
-    <label class="col-md-2 control-label align-left" ng-if="!config.renderOptions.showLegend">
-        <b>{{config.label}}</b>
-    </label>
+<div class="form-group headline" ng-bind-html="config.label">
 </div>
