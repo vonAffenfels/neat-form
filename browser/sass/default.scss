@@ -5,7 +5,7 @@ $fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts" !default;
 @import "bootstrap/mixins";
 @import "features/GoogleAutocomplete";
 
-neat-form {
+neat-form, neat-form-wizard {
   [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
   }
@@ -23,13 +23,20 @@ neat-form {
   @import "bootstrap/labels";
   @import "bootstrap/dropdowns";
   @import "bootstrap/buttons";
+  @import "bootstrap/navs";
 
   .form-control {
     background-image: inherit;
   }
 
+  .success-message {
+    padding: 20px;
+    font-size: 120%;
+  }
+
   @import "sections";
   @import "features/Navigation";
+  @import "features/Wizard";
   @import "fields/Price";
   @import "fields/PricePerUnit";
   @import "fields/Multiimageupload";

@@ -1,0 +1,44 @@
+.wizard-tabs {
+
+  .col-md-2 {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px 0 0 0;
+  }
+
+  .fromDashTo {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 180%;
+  }
+
+  li {
+
+    &.has-error {
+      a {
+        color: #a94442;
+      }
+    }
+
+    &.has-success {
+      a {
+        color: #35a93e;
+      }
+    }
+
+    .tab-label {
+      display: none;
+    }
+
+    &:hover {
+
+    }
+
+    &.active {
+
+      .tab-label {
+        display: inline;
+      }
+    }
+  }
+}

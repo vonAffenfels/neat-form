@@ -3,7 +3,7 @@
         <div class="panel-loader" ng-if="loading">
             <div class="spinner-small"></div>
         </div>
-        <div class="row" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
+        <div class="row success-message" ng-if="showSuccess" ng-bind-html="config.renderOptions.successMessage">
         </div>
         <div class="row" ng-repeat="conf in config.groups" ng-if="config.groups && !showSuccess">
             <neat-form-section config="conf" ng-if="conf.fields" options="config.renderOptions.groups" labels="config.renderOptions.labels">
@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" ng-if="config.renderOptions.infoMessage && !neatFormSuccess">
+        <div class="row" ng-if="config.renderOptions.infoMessage && !neatFormSuccess && !showSuccess">
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="form-info" ng-bind-html="config.renderOptions.infoMessage">

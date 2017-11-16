@@ -5,10 +5,10 @@ import ngDatePicker from 'angular-date-picker'
 import angularFileUpload from 'angular-file-upload'
 import googlePlaces from 'angular-google-places-autocomplete'
 import angularLoad from 'angular-load'
+import neatApi from 'neat-api'
 
 (function (window, ng) {
 
-    let neatApi = require("neat-api");
     const neatFormModule = ng.module("neat-form", [
         "ngMap",
         "mp.datePicker",
@@ -21,6 +21,7 @@ import angularLoad from 'angular-load'
     neatFormModule.templateRoot = "./templates/";
 
     require("./form.js")(neatFormModule);
+    require("./formWizard.js")(neatFormModule);
     require("./section.js")(neatFormModule);
     require("./field.js")(neatFormModule);
 

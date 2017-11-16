@@ -72,6 +72,27 @@ module.exports = class FormModule extends Module {
                 });
             }, 9999);
 
+            Application.modules[this.config.webserverModuleName].addRoute("post", "/form-api/:form/validate", (req, res, next) => {
+                let form = this.getForm(req.params.form);
+
+                if (!form) {
+                    return res.status(404).end();
+                }
+
+                if (req.body._id) {
+                    form.setConnectedId(req.body._id);
+                }
+
+                return form.validate(req.body.data || {}).then((valid) => {
+                    return form.getSchema();
+                }).then((schema) => {
+                    if (schema.hasError) {
+                        res.status(400);
+                    }
+                    res.json(schema);
+                });
+            }, 9999);
+
             return this;
         });
     }

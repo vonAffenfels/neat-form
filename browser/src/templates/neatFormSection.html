@@ -1,5 +1,5 @@
 <div class="panel panel-inverse" id="{{config.id}}" ng-show="visible">
-    <div class="panel-heading" ng-if="config.label">
+    <div class="panel-heading" ng-if="config.label && showLabel">
         <div class="pull-right" ng-if="options.saveButtons || options.collapsible">
             <button type="submit" ng-if="options.saveButtons" class="btn btn-primary btn-xs">
                 {{labels.save}}
@@ -11,7 +11,7 @@
                     'fa-caret-down': collapsed,
                     'fa-caret-up': !collapsed
                     }"
-                   >
+                >
 
                 </i>
             </button>

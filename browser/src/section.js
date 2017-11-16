@@ -10,7 +10,8 @@ module.exports = function (neatFormModule) {
                 scope: {
                     config: "=",
                     options: "=",
-                    labels: "="
+                    labels: "=",
+                    showLabel: "=?"
                 },
                 controller: "neatFormSectionCtrl"
             };
@@ -20,6 +21,7 @@ module.exports = function (neatFormModule) {
     neatFormModule.controller("neatFormSectionCtrl", [
         "$scope",
         function ($scope) {
+            $scope.showLabel = $scope.showLabel !== undefined ? $scope.showLabel : true;
             $scope.fields = {};
             $scope.fieldsStatus = {};
             $scope.visible = true;
