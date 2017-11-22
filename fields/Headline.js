@@ -14,7 +14,20 @@ module.exports = class Headline extends Field {
      * @returns {string}
      */
     getId() {
-        return crypto.createHash('md5').update("headline-"+this.label).digest("hex");
+        let number = 0;
+        let form = this.getForm();
+
+        if (form) {
+            if (form.headlineCounter === undefined) {
+                form.headlineCounter = 0;
+            } else {
+                form.headlineCounter++;
+            }
+
+            number = form.headlineCounter;
+        }
+
+        return crypto.createHash('md5').update("headline-" + this.label + "-" + number).digest("hex");
     }
 
     loadSchema(defaultSchema) {

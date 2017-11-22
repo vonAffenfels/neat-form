@@ -104,7 +104,7 @@
 	        var directiveName = "neatFormField" + firstPart;
 	        directiveName = directiveName.replace(/\.js$/i, "");
 	        directivePath = directivePath.replace(/^\.\//i, "");
-	        neatFormModule.directive(directiveName, __webpack_require__(61)("./" + directivePath)(neatFormModule));
+	        neatFormModule.directive(directiveName, __webpack_require__(63)("./" + directivePath)(neatFormModule));
 	    });
 	})(window, window.angular);
 
@@ -41944,20 +41944,20 @@
 		"./Email.js": 29,
 		"./Gps.js": 31,
 		"./Headline.js": 33,
-		"./Info.js": 62,
-		"./Input.js": 35,
-		"./Multifieldselect.js": 37,
-		"./Multiimageupload.js": 39,
-		"./Multiselect.js": 41,
-		"./Password.js": 43,
-		"./Price.js": 45,
-		"./Priceperunit.js": 47,
-		"./Radio.js": 49,
-		"./Remoteselect.js": 51,
-		"./Select.js": 53,
-		"./Subform.js": 55,
-		"./Subformarray.js": 57,
-		"./Textarea.js": 59
+		"./Info.js": 35,
+		"./Input.js": 37,
+		"./Multifieldselect.js": 39,
+		"./Multiimageupload.js": 41,
+		"./Multiselect.js": 43,
+		"./Password.js": 45,
+		"./Price.js": 47,
+		"./Priceperunit.js": 49,
+		"./Radio.js": 51,
+		"./Remoteselect.js": 53,
+		"./Select.js": 55,
+		"./Subform.js": 57,
+		"./Subformarray.js": 59,
+		"./Textarea.js": 61
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -42431,10 +42431,20 @@
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", "$sce", function ($scope, $sce) {
+	            controller: ["$scope", "$sce", "$element", function ($scope, $sce, $element) {
 	                if (typeof $scope.config.label === "string") {
 	                    $scope.config.label = $sce.trustAsHtml($scope.config.label);
 	                }
+
+	                // remove any col classes
+	                var container = $element.parent().parent();
+	                container.addClass("neat-1-col-form");
+	                container.removeClass("neat-2-col-form");
+	                container.removeClass("neat-3-col-form");
+	                container.removeClass("neat-4-col-form");
+	                container.removeClass("neat-5-col-form");
+	                container.removeClass("neat-6-col-form");
+	                container.removeClass("neat-7-col-form");
 	            }]
 	        };
 	    }];
@@ -42460,7 +42470,11 @@
 	            scope: {
 	                config: "="
 	            },
-	            controller: ["$scope", function ($scope) {}]
+	            controller: ["$scope", "$sce", function ($scope, $sce) {
+	                if (typeof $scope.config.label === "string") {
+	                    $scope.config.label = $sce.trustAsHtml($scope.config.label);
+	                }
+	            }]
 	        };
 	    }];
 	};
@@ -42469,7 +42483,7 @@
 /* 36 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   ng-required=\"config.renderOptions.required\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readOnly\"\r\n                    ng-disabled=\"config.disabled\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               ng-required=\"config.renderOptions.required\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readOnly\" ng-model=\"config.value\"\r\n               ng-disabled=\"config.disabled\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group info-text\" ng-bind-html=\"config.label\">\r\n</div>";
 
 /***/ }),
 /* 37 */
@@ -42494,10 +42508,35 @@
 /* 38 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"(key, label) in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n                {{label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"(key, label) in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n            {{label}}\r\n        </label>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\" ng-if=\"config.renderOptions.unit\">\r\n            <input type=\"text\"\r\n                   ng-required=\"config.renderOptions.required\"\r\n                   placeholder=\"{{config.renderOptions.placeholder}}\"\r\n                   autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                   ng-readonly=\"config.readOnly\"\r\n                    ng-disabled=\"config.disabled\"\r\n                   ng-model=\"config.value\"\r\n                   class=\"form-control\">\r\n            <span class=\"input-group-addon\">{{config.renderOptions.unit}}</span>\r\n        </div>\r\n        <input type=\"text\"\r\n               ng-required=\"config.renderOptions.required\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-if=\"!config.renderOptions.unit\"\r\n               placeholder=\"{{config.renderOptions.placeholder}}\"\r\n               ng-readonly=\"config.readOnly\" ng-model=\"config.value\"\r\n               ng-disabled=\"config.disabled\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(40),
+	            scope: {
+	                config: "="
+	            },
+	            controller: ["$scope", function ($scope) {}]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"(key, label) in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n                {{label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"(key, label) in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n            {{label}}\r\n        </label>\r\n    </div>\r\n</div>";
+
+/***/ }),
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42508,7 +42547,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(40),
+	            template: __webpack_require__(42),
 	            scope: {
 	                config: "="
 	            },
@@ -42625,35 +42664,10 @@
 	};
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\" ng-class=\"{\r\n            'inline-images': config.renderOptions.subforminvisible\r\n        }\">\r\n        <div class=\"image\" ng-repeat=\"item in config.value\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\" ng-show=\"!config.renderOptions.subforminvisible\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(42),
-	            scope: {
-	                config: "="
-	            },
-	            controller: ["$scope", function ($scope) {}]
-	        };
-	    }];
-	};
-
-/***/ }),
 /* 42 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"images\">\r\n    <div class=\"images-container row clearfix\" ng-class=\"{\r\n            'inline-images': config.renderOptions.subforminvisible\r\n        }\">\r\n        <div class=\"image\" ng-repeat=\"item in config.value\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <button ng-if=\"item._id\" class=\"remove btn btn-sm btn-danger\" type=\"button\" ng-click=\"imageRemove($index)\">\r\n                    <i class=\"fa fa-trash\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index > 0\" class=\"move-left btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveLeft($index)\">\r\n                    <i class=\"fa fa-arrow-left\"></i>\r\n                </button>\r\n\r\n                <button ng-if=\"item._id && $index < config.value.length - 1\" class=\"move-right btn btn-sm btn-primary\" type=\"button\" ng-click=\"imageMoveRight($index)\">\r\n                    <i class=\"fa fa-arrow-right\"></i>\r\n                </button>\r\n\r\n                <a ng-attr-href=\"{{item.fileurl.orig}}\" data-lightbox=\"config.value\" ng-attr-data-title=\"{{item[lang].caption}}\">\r\n                    <img ng-attr-src=\"{{item.fileurl.thumbBackend}}\" ng-if=\"item.fileurl.thumbBackend\">\r\n                </a>\r\n\r\n                <canvas ng-show=\"item.uploading\" ng-if=\"!item._id\"></canvas>\r\n                <div ng-show=\"item.progress\" ng-if=\"!item._id\" class=\"progress\" ng-style=\"{height: item.progress + '%'}\"></div>\r\n            </div>\r\n            <div class=\"data-container\" ng-show=\"!config.renderOptions.subforminvisible\">\r\n                <neat-form form=\"config.renderOptions.subform\" id=\"item._id\" is-sub-form=\"true\"></neat-form>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"image upload\" ng-class=\"{\r\n            'col-md-6': !config.renderOptions.subforminvisible,\r\n            'inline-image-upload': config.renderOptions.subforminvisible\r\n        }\">\r\n            <div class=\"image-container\">\r\n                <div class=\"fileselect-button\">\r\n                    <input class=\"fileselect\" type=\"file\" nv-file-select=\"\" uploader=\"uploader\"/>\r\n                    <i class=\"fa fa-plus-circle fa-4x\"></i>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 43 */
@@ -42678,7 +42692,7 @@
 /* 44 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-readonly=\"config.readonly\"\r\n               ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
 /* 45 */
@@ -42703,7 +42717,7 @@
 /* 46 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.price || config.renderOptions.required === true \">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <input type=\"password\"\r\n               autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n               ng-readonly=\"config.readonly\"\r\n               ng-model=\"config.value\"\r\n               class=\"form-control\">\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 47 */
@@ -42728,7 +42742,7 @@
 /* 48 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n            <span class=\"input-group-addon\">{{config.renderOptions.perLabel || 'per'}}</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.amount\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control unit-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.unit\" ng-options=\"option as option for option in config.renderOptions.units\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.price || config.renderOptions.required === true \">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 49 */
@@ -42741,6 +42755,31 @@
 	        return {
 	            restrict: "E",
 	            template: __webpack_require__(50),
+	            scope: {
+	                config: "="
+	            },
+	            controller: ["$scope", function ($scope) {}]
+	        };
+	    }];
+	};
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"input-group\">\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.price\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control currency-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.currency\" ng-options=\"option as option for option in config.renderOptions.currencies\">\r\n                </select>\r\n            </span>\r\n            <span class=\"input-group-addon\">{{config.renderOptions.perLabel || 'per'}}</span>\r\n            <input type=\"text\" ng-readonly=\"config.readonly\" number-formatter ng-model=\"config.value.amount\" class=\"form-control\">\r\n            <span class=\"input-group-btn\">\r\n                <select class=\"form-control unit-select\" ng-readonly=\"config.readonly\" ng-model=\"config.value.unit\" ng-options=\"option as option for option in config.renderOptions.units\">\r\n                </select>\r\n            </span>\r\n        </div>\r\n    </div>\r\n</div>";
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = function (neatFormModule) {
+	    return [function () {
+	        return {
+	            restrict: "E",
+	            template: __webpack_require__(52),
 	            scope: {
 	                config: "="
 	            },
@@ -42779,13 +42818,13 @@
 	};
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"radio\" ng-repeat=\"option in options\">\r\n            <label>\r\n                <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"option.value\" ng-model=\"config.value\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42794,7 +42833,7 @@
 	    return ["$timeout", "$http", function ($timeout, $http) {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(52),
+	            template: __webpack_require__(54),
 	            scope: {
 	                config: "=",
 	                form: "="
@@ -42876,13 +42915,13 @@
 	};
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" id=\"{{config.id}}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\"\r\n                ng-disabled=\"loading\"\r\n        >\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42891,7 +42930,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(54),
+	            template: __webpack_require__(56),
 	            scope: {
 	                config: "="
 	            },
@@ -42946,13 +42985,13 @@
 	};
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\" id=\"{{config.id}}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" ng-required=\"config.renderOptions.required\" ng-model=\"value\" ng-options=\"option.label for option in options\"\r\n                autocomplete=\"{{config.renderOptions.autocomplete || 'off'}}\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42961,7 +43000,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(56),
+	            template: __webpack_require__(58),
 	            scope: {
 	                config: "=",
 	                value: "=",
@@ -43027,13 +43066,13 @@
 	};
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"panel-body\" ng-if=\"!collapsed\">\r\n    <div class=\"neat-form-navigation\" ng-class=\"{'active': navigationOpen}\"\r\n         ng-if=\"config.renderOptions.groups.navigation && !showSuccess && !loading && config.groups && config.groups.length\" >\r\n\r\n        <div class=\"dropdown m-b-10\" >\r\n            <button class=\"btn btn-info dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\r\n                {{config.renderOptions.navigationLabel || \"Groups\"}}\r\n                <span class=\"caret\"></span>\r\n            </button>\r\n            <ul class=\"dropdown-menu\">\r\n                <li ng-repeat=\"group in config.groups\" ng-if=\"group.label\"><a ng-click=\"scrollToGroup(group)\" >{{group.label}}</a></li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"conf in config.groups\" ng-if=\"config.groups\">\r\n        <neat-form-section config=\"conf\" ng-if=\"conf.fields\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n    <div class=\"row\" ng-if=\"config.fields\">\r\n        <neat-form-section config=\"config\" options=\"options\" labels=\"labels\">\r\n        </neat-form-section>\r\n    </div>\r\n</div>";
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43042,7 +43081,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(58),
+	            template: __webpack_require__(60),
 	            scope: {
 	                config: "=",
 	                options: "=",
@@ -43085,13 +43124,13 @@
 	};
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\">\r\n    <div class=\"panel panel-inverse\">\r\n        <div class=\"panel-heading\" ng-if=\"config.label\">\r\n            <h4 class=\"panel-title\">{{config.label}}</h4>\r\n        </div>\r\n        <div class=\"panel-body\">\r\n            <div class=\"panel\" ng-repeat=\"item in forms\" ng-init=\"collapsed = item.__collapsed === false ? false : true;\" style=\"margin: 0;border-bottom: 1px solid #ccc\">\r\n                <div class=\"panel-heading\" ng-click=\"collapsed = !collapsed\" style=\" cursor: pointer; \">\r\n                    <div class=\"btn-group pull-right\">\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index-1)\" ng-if=\"$index > 0\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-up\"></i> {{config.renderOptions.moveUpButtonLabel}}\r\n                        </button>\r\n                        <button type=\"button\" ng-click=\"move($event, $index, $index+1)\" ng-if=\"$index < forms.length\" class=\"btn btn-primary btn-xs\">\r\n                            <i class=\"fa fa-caret-down\"></i> {{config.renderOptions.moveDownButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <div class=\"btn-group pull-right\" style=\"margin-right: 15px;\">\r\n                        <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-if=\"!collapsed\" ng-click=\"removeItem($event,$index)\">\r\n                            <i class=\"fa fa-remove\"></i> {{config.renderOptions.removeButtonLabel}}\r\n                        </button>\r\n                    </div>\r\n                    <h4 class=\"panel-title\">#{{$index+1}} {{config.renderOptions.positionLabel}}</h4>\r\n                </div>\r\n                <neat-form-field-subform array=\"true\" collapsed=\"collapsed\" config=\"item\" labels=\"labels\" options=\"options\" value=\"config.value[$index]\"></neat-form-field-subform>\r\n            </div>\r\n\r\n            <div class=\"row\">\r\n                <div class=\"panel panel-inverse\">\r\n                    <div class=\"panel-body\">\r\n                        <div class=\"col-md-12\">\r\n                            <button ng-click=\"addItem($event)\" type=\"button\" class=\"btn btn-primary btn-block col-md-10\"><i class=\"fa fa-plus\"></i>{{config.renderOptions.addButtonLabel || \"\"}}\r\n                            </button>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43100,7 +43139,7 @@
 	    return [function () {
 	        return {
 	            restrict: "E",
-	            template: __webpack_require__(60),
+	            template: __webpack_require__(62),
 	            scope: {
 	                config: "="
 	            },
@@ -43110,13 +43149,13 @@
 	};
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports) {
 
 	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <textarea type=\"text\" ng-readonly=\"config.readonly\" ng-model=\"config.value\" class=\"form-control\"></textarea>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var map = {
@@ -43141,48 +43180,48 @@
 		"./Headline": 33,
 		"./Headline.html": 34,
 		"./Headline.js": 33,
-		"./Info": 62,
-		"./Info.html": 63,
-		"./Info.js": 62,
-		"./Input": 35,
-		"./Input.html": 36,
-		"./Input.js": 35,
-		"./Multifieldselect": 37,
-		"./Multifieldselect.html": 38,
-		"./Multifieldselect.js": 37,
-		"./Multiimageupload": 39,
-		"./Multiimageupload.html": 40,
-		"./Multiimageupload.js": 39,
-		"./Multiselect": 41,
-		"./Multiselect.html": 42,
-		"./Multiselect.js": 41,
-		"./Password": 43,
-		"./Password.html": 44,
-		"./Password.js": 43,
-		"./Price": 45,
-		"./Price.html": 46,
-		"./Price.js": 45,
-		"./Priceperunit": 47,
-		"./Priceperunit.html": 48,
-		"./Priceperunit.js": 47,
-		"./Radio": 49,
-		"./Radio.html": 50,
-		"./Radio.js": 49,
-		"./Remoteselect": 51,
-		"./Remoteselect.html": 52,
-		"./Remoteselect.js": 51,
-		"./Select": 53,
-		"./Select.html": 54,
-		"./Select.js": 53,
-		"./Subform": 55,
-		"./Subform.html": 56,
-		"./Subform.js": 55,
-		"./Subformarray": 57,
-		"./Subformarray.html": 58,
-		"./Subformarray.js": 57,
-		"./Textarea": 59,
-		"./Textarea.html": 60,
-		"./Textarea.js": 59
+		"./Info": 35,
+		"./Info.html": 36,
+		"./Info.js": 35,
+		"./Input": 37,
+		"./Input.html": 38,
+		"./Input.js": 37,
+		"./Multifieldselect": 39,
+		"./Multifieldselect.html": 40,
+		"./Multifieldselect.js": 39,
+		"./Multiimageupload": 41,
+		"./Multiimageupload.html": 42,
+		"./Multiimageupload.js": 41,
+		"./Multiselect": 43,
+		"./Multiselect.html": 44,
+		"./Multiselect.js": 43,
+		"./Password": 45,
+		"./Password.html": 46,
+		"./Password.js": 45,
+		"./Price": 47,
+		"./Price.html": 48,
+		"./Price.js": 47,
+		"./Priceperunit": 49,
+		"./Priceperunit.html": 50,
+		"./Priceperunit.js": 49,
+		"./Radio": 51,
+		"./Radio.html": 52,
+		"./Radio.js": 51,
+		"./Remoteselect": 53,
+		"./Remoteselect.html": 54,
+		"./Remoteselect.js": 53,
+		"./Select": 55,
+		"./Select.html": 56,
+		"./Select.js": 55,
+		"./Subform": 57,
+		"./Subform.html": 58,
+		"./Subform.js": 57,
+		"./Subformarray": 59,
+		"./Subformarray.html": 60,
+		"./Subformarray.js": 59,
+		"./Textarea": 61,
+		"./Textarea.html": 62,
+		"./Textarea.js": 61
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -43195,37 +43234,8 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 61;
+	webpackContext.id = 63;
 
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = function (neatFormModule) {
-	    return [function () {
-	        return {
-	            restrict: "E",
-	            template: __webpack_require__(63),
-	            scope: {
-	                config: "="
-	            },
-	            controller: ["$scope", "$sce", function ($scope, $sce) {
-	                if (typeof $scope.config.label === "string") {
-	                    $scope.config.label = $sce.trustAsHtml($scope.config.label);
-	                }
-	            }]
-	        };
-	    }];
-	};
-
-/***/ }),
-/* 63 */
-/***/ (function(module, exports) {
-
-	module.exports = "<div class=\"form-group info-text\" ng-bind-html=\"config.label\">\r\n</div>";
 
 /***/ })
 /******/ ]);
