@@ -43,10 +43,13 @@ module.exports = function (neatFormModule) {
         function ($scope, $rootScope, $q, $sce, $anchorScroll, $document, $timeout, neatApi, angularLoad) {
             $scope.connectedId = $scope.id;
             $scope.activeTab = 0;
+            $scope.activeTabRef = null;
             $scope.maximumTabIndex = 0;
             $scope.currentTabValid = true;
 
             $scope.goToTab = function (index) {
+                $scope.activeTabRef = null;
+
                 function handleResponseValidate() {
                     let currentGroups = [];
 
@@ -54,6 +57,9 @@ module.exports = function (neatFormModule) {
                         let group = $scope.config.groups[i];
 
                         if (group.groupWizardTabIndex === $scope.activeTab) {
+                            if (!$scope.activeTabRef) {
+                                $scope.activeTabRef = group;
+                            }
                             currentGroups.push(group.hasError);
                         }
                     }
@@ -74,6 +80,7 @@ module.exports = function (neatFormModule) {
 
             $scope.recalcGroupIndexes = () => {
                 let wizardIndex = 0;
+                $scope.activeTabRef = null;
                 if ($scope.config && $scope.config) {
                     for (let i = 0; i < $scope.config.groups.length; i++) {
                         let group = $scope.config.groups[i];
@@ -82,6 +89,12 @@ module.exports = function (neatFormModule) {
                         }
                         $scope.maximumTabIndex = wizardIndex;
                         group.groupWizardTabIndex = wizardIndex;
+
+                        if (group.groupWizardTabIndex === $scope.activeTab) {
+                            if (!$scope.activeTabRef) {
+                                $scope.activeTabRef = group;
+                            }
+                        }
                     }
                 }
             }
@@ -159,7 +172,7 @@ module.exports = function (neatFormModule) {
                         $scope.getValues(field, values);
                     }
                 } else {
-                    if(values[sectionsOrFields.id]) {
+                    if (values[sectionsOrFields.id]) {
                         console.log(2, sectionsOrFields);
                     }
                     values[sectionsOrFields.id] = sectionsOrFields.value;

@@ -1,0 +1,53 @@
+@media screen and (max-width: 700px) {
+  .neat-1-col-form,
+  .neat-2-col-form,
+  .neat-3-col-form,
+  .neat-4-col-form,
+  .neat-5-col-form,
+  .neat-6-col-form,
+  .neat-7-col-form {
+    width: 100%;
+  }
+
+  .input-group {
+    display: block;
+    clear: both;
+
+    .form-control {
+      width: 80%;
+      float: left;
+    }
+
+    .input-group-addon {
+      width: 20%;
+      height: 30px;
+      float: left;
+    }
+  }
+
+  .radio-inline + .radio-inline {
+    margin-left: 0;
+    display: block;
+  }
+
+  neat-form-field-info .form-group.info-text {
+    margin-left: 0;
+    padding: 0;
+  }
+
+  .degree-field {
+    display: none;
+  }
+
+  neat-form-field-checkbox {
+    .control-label {
+      vertical-align: top;
+      width: 13px;
+      display: inline-block;
+
+      &.control-label-right {
+        width: 80%;
+      }
+    }
+  }
+}

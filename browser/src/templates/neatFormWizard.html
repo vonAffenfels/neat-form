@@ -6,11 +6,16 @@
 
         <div class="wizard-tabs row" ng-if="!showSuccess">
             <div class="col-md-2">
-                <span class="fromDashTo">
-                    {{activeTab + 1}} / {{maximumTabIndex + 1}}
+                <span class="fromDashTo hidden-xs">
+                    {{activeTab + 1}}
+                    /
+                    {{maximumTabIndex + 1}}
+                </span>
+                <span class="fromDashTo visible-xs-inline">
+                    {{activeTab + 1}}. {{activeTabRef.label}} / {{maximumTabIndex + 1}}
                 </span>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10 hidden-xs">
                 <ul class="nav nav-tabs">
                     <li ng-class="{'active': conf.groupWizardTabIndex === activeTab, 'has-error': conf.hasError}" ng-repeat="conf in config.groups" ng-if="conf.label"><a
                             ng-click="goToTab(conf.groupWizardTabIndex)" ng-attr-title="{{conf.groupWizardTabIndex + 1}}. {{conf.label}}">{{conf.groupWizardTabIndex + 1}}. {{conf.label}}
@@ -26,7 +31,7 @@
         <div class="row" ng-if="!showSuccess && !loading">
             <div class="panel panel-inverse">
                 <div class="panel-body">
-                    <div class="col-md-8" style="padding-left: 0">
+                    <div class="col-md-8">
                         <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary btn-block col-md-10"
                                 ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false">
                             <i class="fa fa-arrow-right"></i>&nbsp;
@@ -44,7 +49,7 @@
                             "Save"}}
                         </button>
                     </div>
-                    <div class="col-md-4" style="padding-right: 0">
+                    <div class="col-md-4">
                         <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||
@@ -68,7 +73,7 @@
         <div class="row" ng-if="!showSuccess && !loading">
             <div class="panel panel-inverse">
                 <div class="panel-body">
-                    <div class="col-md-8" style="padding-left: 0">
+                    <div class="col-md-8">
                         <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary btn-block col-md-10"
                                 ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false">
                             <i class="fa fa-arrow-right"></i>&nbsp;
@@ -86,7 +91,7 @@
                             "Save"}}
                         </button>
                     </div>
-                    <div class="col-md-4" style="padding-right: 0">
+                    <div class="col-md-4">
                         <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||

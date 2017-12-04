@@ -15,6 +15,9 @@ neat-form, neat-form-wizard {
     opacity: 1;
   }
 
+  @import "bootstrap/responsive-embed";
+  @import "bootstrap/responsive-utilities";
+  @import "bootstrap/utilities";
   @import "bootstrap/scaffolding";
   @import "bootstrap/grid";
   @import "bootstrap/forms";
@@ -27,6 +30,13 @@ neat-form, neat-form-wizard {
 
   .form-control {
     background-image: inherit;
+  }
+
+  .fromDashTo {
+    display: block;
+  }
+  .fromDashToMobile {
+    display: none;
   }
 
   .success-message {
@@ -48,7 +58,42 @@ neat-form, neat-form-wizard {
     font-weight: 300;
   }
 
+  .col-md-1,
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-5,
+  .col-md-6,
+  .col-md-7,
+  .col-md-8,
+  .col-md-9,
+  .col-md-10,
+  .col-md-11,
+  .col-md-12 {
+
+    .col-md-1,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    .col-md-7,
+    .col-md-8,
+    .col-md-9,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12 {
+
+      padding: 0;
+
+      &.btn {
+        padding: 6px 12px;
+      }
+    }
+  }
+
   @import "sections";
+  @import "mobile";
   @import "features/Navigation";
   @import "features/Wizard";
   @import "fields/Price";
@@ -56,4 +101,5 @@ neat-form, neat-form-wizard {
   @import "fields/Multiimageupload";
   @import "fields/Address";
   @import "fields/Checkbox";
+
 }
