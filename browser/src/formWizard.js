@@ -110,6 +110,7 @@ module.exports = function (neatFormModule) {
                     _id: $scope.connectedId
                 }, (config) => {
                     $scope.loading = false;
+                    $scope.fields = [];
                     $scope.config = $scope.processConfig(config);
                     $scope.error = null;
                     $scope.recalcGroupIndexes();
@@ -137,7 +138,7 @@ module.exports = function (neatFormModule) {
                 $scope.subforms.push(subformscope);
             });
             $scope.fields = {};
-            $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+            $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
                 fieldscope.setFormScope($scope);
                 // if it already exists, ignore its a duplicate, the first one counts!
                 if (!$scope.fields[id]) {
@@ -204,6 +205,7 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(config);
                             $scope.recalcGroupIndexes();
 
@@ -228,6 +230,7 @@ module.exports = function (neatFormModule) {
                             window.scrollTo(0, pos.y);
                             resolve();
                         }, (err) => {
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(err.data);
                             $scope.recalcGroupIndexes();
                             $scope.loading = false;
@@ -272,7 +275,9 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(config);
+
                             $scope.recalcGroupIndexes();
 
                             if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -281,6 +286,7 @@ module.exports = function (neatFormModule) {
 
                             resolve();
                         }, (err) => {
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(err.data);
                             $scope.recalcGroupIndexes();
                             $scope.loading = false;

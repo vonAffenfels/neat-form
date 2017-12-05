@@ -41002,6 +41002,10 @@
 	    neatFormModule.controller("neatFormCtrl", ["$scope", "$rootScope", "$q", "$sce", "$anchorScroll", "$document", "$timeout", "neatApi", "angularLoad", function ($scope, $rootScope, $q, $sce, $anchorScroll, $document, $timeout, neatApi, angularLoad) {
 	        $scope.connectedId = $scope.id;
 
+	        $scope.getNeatFormValues = function () {
+	            return $scope.getValues($scope.config);
+	        };
+
 	        $scope.reset = function () {
 	            if ($scope.loading) {
 	                return;
@@ -41052,8 +41056,9 @@
 	            $scope.subforms.push(subformscope);
 	        });
 	        $scope.fields = {};
-	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+	        $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
 	            fieldscope.setFormScope($scope);
+	            // if it already exists, ignore its a duplicate, the first one counts!
 	            if (!$scope.fields[id]) {
 	                $scope.fields[id] = fieldscope;
 	            }
@@ -41115,6 +41120,7 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(config);
 
 	                        // set id after create in case we want to just keep the form open (html decides)
@@ -41140,6 +41146,7 @@
 
 	                        resolve();
 	                    }, function (err) {
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(err.data);
 
 	                        if ($scope.config.hasError) {
@@ -41185,6 +41192,7 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(config);
 
 	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -41193,6 +41201,7 @@
 
 	                        resolve();
 	                    }, function (err) {
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(err.data);
 	                        $scope.loading = false;
 	                        reject(err);
@@ -41395,6 +41404,7 @@
 	                _id: $scope.connectedId
 	            }, function (config) {
 	                $scope.loading = false;
+	                $scope.fields = [];
 	                $scope.config = $scope.processConfig(config);
 	                $scope.error = null;
 	                $scope.recalcGroupIndexes();
@@ -41422,7 +41432,7 @@
 	            $scope.subforms.push(subformscope);
 	        });
 	        $scope.fields = {};
-	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+	        $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
 	            fieldscope.setFormScope($scope);
 	            // if it already exists, ignore its a duplicate, the first one counts!
 	            if (!$scope.fields[id]) {
@@ -41489,6 +41499,7 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(config);
 	                        $scope.recalcGroupIndexes();
 
@@ -41513,6 +41524,7 @@
 	                        window.scrollTo(0, pos.y);
 	                        resolve();
 	                    }, function (err) {
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(err.data);
 	                        $scope.recalcGroupIndexes();
 	                        $scope.loading = false;
@@ -41556,7 +41568,9 @@
 	                        form: $scope.form
 	                    }, function (config) {
 	                        $scope.loading = false;
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(config);
+
 	                        $scope.recalcGroupIndexes();
 
 	                        if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -41565,6 +41579,7 @@
 
 	                        resolve();
 	                    }, function (err) {
+	                        $scope.fields = [];
 	                        $scope.config = $scope.processConfig(err.data);
 	                        $scope.recalcGroupIndexes();
 	                        $scope.loading = false;
@@ -41686,7 +41701,7 @@
 	        };
 	    }]);
 
-	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", function ($scope) {
+	    neatFormModule.controller("neatFormSectionCtrl", ["$scope", "$rootScope", function ($scope, $rootScope) {
 	        $scope.showLabel = $scope.showLabel !== undefined ? $scope.showLabel : true;
 	        $scope.fields = {};
 	        $scope.fieldsStatus = {};
@@ -41717,7 +41732,7 @@
 	            $scope.visible = visible;
 	        };
 
-	        $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+	        $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
 	            $scope.fields[id] = fieldscope;
 	            $scope.fieldsStatus[id] = true;
 	        });
@@ -41768,7 +41783,7 @@
 
 	module.exports = function (neatFormModule) {
 
-	    neatFormModule.directive("neatFormField", ["$compile", function ($compile) {
+	    neatFormModule.directive("neatFormField", ["$compile", "$rootScope", function ($compile, $rootScope) {
 	        return {
 	            restrict: "E",
 	            scope: {
@@ -41780,7 +41795,6 @@
 
 	                $scope.checkCondition = function (fields, conditions) {
 	                    var show = true;
-
 	                    for (var id in conditions) {
 	                        var val = conditions[id];
 	                        var isNotCondition = false;
@@ -41790,63 +41804,60 @@
 	                            id = id.substr(1);
 	                        }
 
-	                        for (var fieldId in fields) {
-	                            var field = fields[fieldId].config;
-
-	                            if (id == fieldId) {
-	                                if (val && (typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
-	                                    for (var fieldKey in val) {
-	                                        var fieldVal = val[fieldKey];
-	                                        if (fieldVal instanceof Array) {
-	                                            // not condition
-	                                            if (isNotCondition) {
-	                                                if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
-	                                                    show = false;
-	                                                }
-	                                            } else {
-	                                                // if condition
-	                                                if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
-	                                                    show = false;
-	                                                }
-	                                            }
-	                                        } else {
-	                                            // not condition
-	                                            if (isNotCondition) {
-	                                                if (field.value[fieldKey] == fieldVal) {
-	                                                    show = false;
-	                                                }
-	                                            } else {
-	                                                // if condition
-	                                                if (field.value[fieldKey] != fieldVal) {
-	                                                    show = false;
-	                                                }
-	                                            }
-	                                        }
-	                                    }
-	                                } else {
-	                                    if (val && val instanceof Array) {
+	                        if (fields[id]) {
+	                            var field = fields[id].config;
+	                            if (val && (typeof val === "undefined" ? "undefined" : _typeof(val)) === "object") {
+	                                for (var fieldKey in val) {
+	                                    var fieldVal = val[fieldKey];
+	                                    if (fieldVal instanceof Array) {
 	                                        // not condition
 	                                        if (isNotCondition) {
-	                                            if (val.indexOf(field.value) !== -1) {
+	                                            if (fieldVal.indexOf(field.value[fieldKey]) !== -1) {
 	                                                show = false;
 	                                            }
 	                                        } else {
 	                                            // if condition
-	                                            if (val.indexOf(field.value) === -1) {
+	                                            if (fieldVal.indexOf(field.value[fieldKey]) === -1) {
 	                                                show = false;
 	                                            }
 	                                        }
 	                                    } else {
 	                                        // not condition
 	                                        if (isNotCondition) {
-	                                            if (field.value == val) {
+	                                            if (field.value[fieldKey] == fieldVal) {
 	                                                show = false;
 	                                            }
 	                                        } else {
 	                                            // if condition
-	                                            if (field.value != val) {
+	                                            if (field.value[fieldKey] != fieldVal) {
 	                                                show = false;
 	                                            }
+	                                        }
+	                                    }
+	                                }
+	                            } else {
+	                                if (val && val instanceof Array) {
+	                                    // not condition
+	                                    if (isNotCondition) {
+	                                        if (val.indexOf(field.value) !== -1) {
+	                                            show = false;
+	                                        }
+	                                    } else {
+	                                        // if condition
+	                                        if (val.indexOf(field.value) === -1) {
+	                                            show = false;
+	                                        }
+	                                    }
+	                                } else {
+	                                    // not condition
+	                                    if (isNotCondition) {
+	                                        if (field.value == val) {
+	                                            show = false;
+	                                        }
+	                                    } else {
+	                                        // if condition
+	                                        if (field.value != val) {
+	                                            show = false;
 	                                        }
 	                                    }
 	                                }
@@ -41876,7 +41887,6 @@
 	                $scope.lastVisible = true;
 	                $scope.isVisible = function () {
 	                    var show = true;
-
 	                    if ($scope.config && $scope.config.renderOptions && $scope.config.renderOptions.if) {
 	                        try {
 	                            var formScope = $scope.neatFormScope;
@@ -41933,7 +41943,7 @@
 
 	                try {
 	                    $compile('<neat-form-field-' + $scope.config.type + ' config="config" options="options" labels="labels" form="neatFormScope" ng-show="isVisible()"></neat-form-field-' + $scope.config.type + '>')($scope, function (el, elScope) {
-	                        $scope.$emit("neat-form-field-register", $scope.config.id, $scope);
+	                        $rootScope.$emit("neat-form-field-register", $scope.config.id, $scope);
 	                        element.append(el);
 	                    });
 	                } catch (e) {

@@ -20,7 +20,8 @@ module.exports = function (neatFormModule) {
 
     neatFormModule.controller("neatFormSectionCtrl", [
         "$scope",
-        function ($scope) {
+        "$rootScope",
+        function ($scope, $rootScope) {
             $scope.showLabel = $scope.showLabel !== undefined ? $scope.showLabel : true;
             $scope.fields = {};
             $scope.fieldsStatus = {};
@@ -51,7 +52,7 @@ module.exports = function (neatFormModule) {
                 $scope.visible = visible;
             }
 
-            $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+            $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
                 $scope.fields[id] = fieldscope;
                 $scope.fieldsStatus[id] = true;
             });

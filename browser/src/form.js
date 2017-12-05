@@ -43,6 +43,10 @@ module.exports = function (neatFormModule) {
         function ($scope, $rootScope, $q, $sce, $anchorScroll, $document, $timeout, neatApi, angularLoad) {
             $scope.connectedId = $scope.id;
 
+            $scope.getNeatFormValues = function () {
+                return $scope.getValues($scope.config);
+            }
+
             $scope.reset = function () {
                 if ($scope.loading) {
                     return;
@@ -94,8 +98,9 @@ module.exports = function (neatFormModule) {
                 $scope.subforms.push(subformscope);
             });
             $scope.fields = {};
-            $scope.$on("neat-form-field-register", function (event, id, fieldscope) {
+            $rootScope.$on("neat-form-field-register", function (event, id, fieldscope) {
                 fieldscope.setFormScope($scope);
+                // if it already exists, ignore its a duplicate, the first one counts!
                 if (!$scope.fields[id]) {
                     $scope.fields[id] = fieldscope;
                 }
@@ -157,6 +162,7 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(config);
 
                             // set id after create in case we want to just keep the form open (html decides)
@@ -182,6 +188,7 @@ module.exports = function (neatFormModule) {
 
                             resolve();
                         }, (err) => {
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(err.data);
 
                             if ($scope.config.hasError) {
@@ -228,6 +235,7 @@ module.exports = function (neatFormModule) {
                             form: $scope.form
                         }, (config) => {
                             $scope.loading = false;
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(config);
 
                             if ($scope.config.renderOptions && $scope.config.renderOptions.successMessage) {
@@ -236,6 +244,7 @@ module.exports = function (neatFormModule) {
 
                             resolve();
                         }, (err) => {
+                            $scope.fields = [];
                             $scope.config = $scope.processConfig(err.data);
                             $scope.loading = false;
                             reject(err);
