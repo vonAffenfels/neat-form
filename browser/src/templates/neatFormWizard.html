@@ -32,30 +32,39 @@
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="col-md-8">
-                        <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary btn-block col-md-10"
+                        <button type="button" ng-click="goToTab(activeTab - 1)" class="btn btn-default col-md-6"
+                                ng-if="activeTab !== 0 && config.renderOptions.labels.prev !== false">
+                            <i class="fa fa-arrow-left"></i>&nbsp;
+                            {{config.renderOptions.labels.prev ||
+                            "Previous"}}
+                        </button>
+                        <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary" ng-class="{
+                            'col-md-12': activeTab === 0,
+                            'col-md-6': activeTab > 0
+                        }"
                                 ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false">
                             <i class="fa fa-arrow-right"></i>&nbsp;
                             {{config.renderOptions.labels.next ||
                             "Next"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                        <button type="submit" class="btn btn-success col-md-6" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||
                             "Save"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                        <button type="submit" class="btn btn-success col-md-6" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.update ||
                             "Save"}}
                         </button>
                     </div>
                     <div class="col-md-4">
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                        <button type="submit" class="btn btn-success col-md-12" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||
                             "Save"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                        <button type="submit" class="btn btn-success col-md-12" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.update ||
                             "Save"}}
@@ -74,30 +83,39 @@
             <div class="panel panel-inverse">
                 <div class="panel-body">
                     <div class="col-md-8">
-                        <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary btn-block col-md-10"
+                        <button type="button" ng-click="goToTab(activeTab - 1)" class="btn btn-default col-md-6"
+                                ng-if="activeTab !== 0 && config.renderOptions.labels.prev !== false">
+                            <i class="fa fa-arrow-left"></i>&nbsp;
+                            {{config.renderOptions.labels.prev ||
+                            "Previous"}}
+                        </button>
+                        <button type="button" ng-click="goToTab(activeTab + 1)" class="btn btn-primary" ng-class="{
+                            'col-md-12': activeTab === 0,
+                            'col-md-6': activeTab > 0
+                        }"
                                 ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.next !== false">
                             <i class="fa fa-arrow-right"></i>&nbsp;
                             {{config.renderOptions.labels.next ||
                             "Next"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                        <button type="submit" class="btn btn-success col-md-6" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||
                             "Save"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                        <button type="submit" class="btn btn-success col-md-6" ng-if="activeTab === maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.update ||
                             "Save"}}
                         </button>
                     </div>
                     <div class="col-md-4">
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
+                        <button type="submit" class="btn btn-success col-md-12" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.save !== false  && !connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.save ||
                             "Save"}}
                         </button>
-                        <button type="submit" class="btn btn-success btn-block col-md-10" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
+                        <button type="submit" class="btn btn-success col-md-12" ng-if="activeTab !== maximumTabIndex && config.renderOptions.labels.update !== false && connectedId">
                             <i class="fa fa-save"></i>&nbsp;
                             {{config.renderOptions.labels.update ||
                             "Save"}}

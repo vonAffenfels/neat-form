@@ -103,3 +103,18 @@ neat-form, neat-form-wizard {
   @import "fields/Checkbox";
 
 }
+
+neat-form-wizard {
+  .neat-2-col-form {
+    neat-form-field-radio {
+      .col-md-2 {
+        width: 25%;
+      }
+      .col-md-10 {
+        width: 75%;
+      }
+    }
+
+
+  }
+}

@@ -2660,4 +2660,8 @@ neat-form neat-form-field-multiimageupload .images .images-container .image.uplo
 
 neat-form neat-form-field-checkbox .control-label.control-label-right, neat-form-wizard neat-form-field-checkbox .control-label.control-label-right { text-align: left; padding-top: 16px; }
 
+neat-form-wizard .neat-2-col-form neat-form-field-radio .col-md-2 { width: 25%; }
+
+neat-form-wizard .neat-2-col-form neat-form-field-radio .col-md-10 { width: 75%; }
+
 /*# sourceMappingURL=default.css.map */
