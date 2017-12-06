@@ -2546,6 +2546,8 @@ neat-form .nav-tabs .dropdown-menu, neat-form-wizard .nav-tabs .dropdown-menu { 
 
 neat-form .form-control, neat-form-wizard .form-control { background-image: inherit; }
 
+neat-form select.form-control, neat-form-wizard select.form-control { appearance: inherit; -moz-appearance: toolbarbutton-dropdown; -webkit-appearance: menulist-button; }
+
 neat-form .fromDashTo, neat-form-wizard .fromDashTo { display: block; }
 
 neat-form .fromDashToMobile, neat-form-wizard .fromDashToMobile { display: none; }

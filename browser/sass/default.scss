@@ -32,6 +32,12 @@ neat-form, neat-form-wizard {
     background-image: inherit;
   }
 
+  select.form-control {
+    appearance: inherit;
+    -moz-appearance: toolbarbutton-dropdown;
+    -webkit-appearance: menulist-button;
+  }
+
   .fromDashTo {
     display: block;
   }
@@ -114,7 +120,6 @@ neat-form-wizard {
         width: 75%;
       }
     }
-
 
   }
 }
