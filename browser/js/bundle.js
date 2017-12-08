@@ -42202,7 +42202,7 @@
 /* 28 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"control-label\" ng-class=\"'col-md-' + config.renderOptions.seperatorLabelWidth\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.value1\">*</span>\r\n    </label>\r\n    <div ng-class=\"'col-md-' + config.renderOptions.value1Width\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value1\" ng-options=\"key as label for (key, label) in config.options.value1\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n    <label class=\"control-label\" ng-class=\"'col-md-' + config.renderOptions.seperatorLabelWidth\" ng-if=\"config.renderOptions.seperatorLabel\">{{config.renderOptions.seperatorLabel}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.value2\">*</span>\r\n    </label>\r\n    <div ng-class=\"'col-md-' + config.renderOptions.value2Width\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value2\" ng-options=\"key as label for (key, label) in config.options.value2\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"control-label\" ng-class=\"'col-md-' + config.renderOptions.seperatorLabelWidth\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.value1\">*</span>\r\n    </label>\r\n    <div ng-class=\"'col-md-' + config.renderOptions.value1Width\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value1\" ng-options=\"option.value as option.label for option in config.options.value1\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n    <label class=\"control-label\" ng-class=\"'col-md-' + config.renderOptions.seperatorLabelWidth\" ng-if=\"config.renderOptions.seperatorLabel\">{{config.renderOptions.seperatorLabel}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required.value2\">*</span>\r\n    </label>\r\n    <div ng-class=\"'col-md-' + config.renderOptions.value2Width\">\r\n        <select class=\"form-control\" ng-model=\"config.value.value2\" ng-options=\"option.value as option.label for option in config.options.value2\">\r\n            <option value=\"\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
 /* 29 */
@@ -42556,7 +42556,7 @@
 /* 40 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"(key, label) in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n                {{label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"(key, label) in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[key]\">\r\n            {{label}}\r\n        </label>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"checkbox\" ng-repeat=\"option in config.options\" ng-if=\"!config.renderOptions.inline\">\r\n            <label>\r\n                <input type=\"checkbox\" ng-model=\"config.value[option.value]\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n        <label class=\"checkbox-inline\" ng-repeat=\"option in config.options\" ng-if=\"config.renderOptions.inline\">\r\n            <input type=\"checkbox\" ng-model=\"config.value[option.value]\">\r\n            {{option.label}}\r\n        </label>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 41 */
@@ -42715,7 +42715,7 @@
 /* 44 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"key as label for (key, label) in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}</label>\r\n    <div class=\"col-md-10\">\r\n        <select class=\"form-control\" multiple ng-model=\"config.value\" ng-options=\"option.value as option.label for option in config.options\">\r\n            <option value=\"\" ng-if=\"config.renderOptions.emptySelectLabel !== false\">{{config.renderOptions.emptySelectLabel || \"Choose...\"}}</option>\r\n        </select>\r\n    </div>\r\n</div>\r\n\r\n";
 
 /***/ }),
 /* 45 */
@@ -42811,19 +42811,7 @@
 	                $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
 
 	                $scope.$watch("config.options", function () {
-	                    var arr = [];
-
-	                    if ($scope.config.options instanceof Object) {
-	                        for (var value in $scope.config.options) {
-	                            var label = $scope.config.options[value];
-	                            arr.push({
-	                                value: value,
-	                                label: label
-	                            });
-	                        }
-	                    }
-
-	                    arr = arr.sort(function (a, b) {
+	                    $scope.config.options = $scope.config.options.sort(function (a, b) {
 	                        if (a.value === null || a.value === "null") {
 	                            return -1;
 	                        } else if (b.value === null || b.value === "null") {
@@ -42832,8 +42820,6 @@
 
 	                        return 0;
 	                    });
-
-	                    $scope.options = arr;
 	                });
 	            }]
 	        };
@@ -42844,7 +42830,7 @@
 /* 52 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}<span class=\"required\" ng-if=\"config.renderOptions.required\">*</span></label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"radio\" ng-repeat=\"option in options\">\r\n            <label>\r\n                <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"option.value\" ng-model=\"config.value\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div class=\"form-group\" ng-class=\"{'has-error': config.errors}\">\r\n    <label class=\"col-md-2 control-label\">{{config.label}}\r\n        <span class=\"required\" ng-if=\"config.renderOptions.required\">*</span>\r\n    </label>\r\n    <div class=\"col-md-10\">\r\n        <div class=\"radio\" ng-repeat=\"option in config.options\">\r\n            <label>\r\n                <input type=\"radio\" name=\"{{config._id}}\" ng-value=\"option.value\" ng-model=\"config.value\">\r\n                {{option.label}}\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }),
 /* 53 */

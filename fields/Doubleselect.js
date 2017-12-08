@@ -15,19 +15,20 @@ module.exports = class DoubleSelect extends Radio {
         this.options = {};
 
         if (this.config.options) {
-            for (let key in this.config.options) {
-                let options = this.config.options[key] || [];
+            for (let fieldKey in this.config.options) {
+                let options = this.config.options[fieldKey] || [];
 
-                if (options instanceof Array) {
-                    for (let i = 0; i < options.length; i++) {
-                        let val = options[i];
-                        if (!this.options[key]) {
-                            this.options[key] = {};
-                        }
-                        this.options[key][val] = val;
+                if (options instanceof Object) {
+                    let opts = [];
+                    for (let key in options) {
+                        opts.push({
+                            label: options[key],
+                            value: key
+                        });
                     }
+                    this.options[fieldKey] = opts;
                 } else {
-                    this.options[key] = options;
+                    this.options[fieldKey] = options;
                 }
             }
         }

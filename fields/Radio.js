@@ -12,15 +12,19 @@ module.exports = class Radio extends Field {
      *
      */
     init() {
-        this.options = {};
+        this.options = [];
 
         let options = this.config.options || [];
 
-        if (options instanceof Array) {
-            for (let i = 0; i < options.length; i++) {
-                let val = options[i];
-                this.options[val] = val;
+        if (options instanceof Object) {
+            let opts = [];
+            for (let key in options) {
+                opts.push({
+                    label: options[key],
+                    value: key
+                });
             }
+            this.options = opts;
         } else {
             this.options = options;
         }
@@ -32,8 +36,8 @@ module.exports = class Radio extends Field {
 
     loadSchema(defaultSchema) {
         return new Promise((resolve, reject) => {
-            if(this.hasLazyOptions()){
-                this.options.then((result)=> {
+            if (this.hasLazyOptions()) {
+                this.options.then((result) => {
                     let options = {};
 
                     if (result instanceof Array) {

@@ -3,7 +3,7 @@
         <span class="required" ng-if="config.renderOptions.required.value1">*</span>
     </label>
     <div ng-class="'col-md-' + config.renderOptions.value1Width">
-        <select class="form-control" ng-model="config.value.value1" ng-options="key as label for (key, label) in config.options.value1">
+        <select class="form-control" ng-model="config.value.value1" ng-options="option.value as option.label for option in config.options.value1">
             <option value="">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
     </div>
@@ -11,7 +11,7 @@
         <span class="required" ng-if="config.renderOptions.required.value2">*</span>
     </label>
     <div ng-class="'col-md-' + config.renderOptions.value2Width">
-        <select class="form-control" ng-model="config.value.value2" ng-options="key as label for (key, label) in config.options.value2">
+        <select class="form-control" ng-model="config.value.value2" ng-options="option.value as option.label for option in config.options.value2">
             <option value="">{{config.renderOptions.emptySelectLabel || "Choose..."}}</option>
         </select>
     </div>

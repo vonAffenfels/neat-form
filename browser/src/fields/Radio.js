@@ -16,19 +16,7 @@ module.exports = function (neatFormModule) {
                         $scope.config.value = typeof $scope.config.value === "number" ? String($scope.config.value) : $scope.config.value;
 
                         $scope.$watch("config.options", () => {
-                            let arr = [];
-
-                            if ($scope.config.options instanceof Object) {
-                                for (let value in $scope.config.options) {
-                                    let label = $scope.config.options[value];
-                                    arr.push({
-                                        value,
-                                        label
-                                    });
-                                }
-                            }
-
-                            arr = arr.sort((a, b) => {
+                            $scope.config.options = $scope.config.options.sort((a, b) => {
                                 if (a.value === null || a.value === "null") {
                                     return -1;
                                 } else if (b.value === null || b.value === "null") {
@@ -37,8 +25,6 @@ module.exports = function (neatFormModule) {
 
                                 return 0;
                             });
-
-                            $scope.options = arr;
                         });
                     }
                 ]
