@@ -17,12 +17,22 @@ module.exports = class Radio extends Field {
         let options = this.config.options || [];
 
         if (options instanceof Object) {
+
             let opts = [];
-            for (let key in options) {
-                opts.push({
-                    label: options[key],
-                    value: key
-                });
+            if (options instanceof Array) {
+                for (let key in options) {
+                    opts.push({
+                        label: options[key],
+                        value: options[key]
+                    });
+                }
+            } else {
+                for (let key in options) {
+                    opts.push({
+                        label: options[key],
+                        value: key
+                    });
+                }
             }
             this.options = opts;
         } else {
