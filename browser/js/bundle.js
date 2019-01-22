@@ -42956,7 +42956,7 @@
 	                var arr = [];
 
 	                // convert object to array for sorting reasons
-	                if ($scope.config.options instanceof Object) {
+	                if ($scope.config.options instanceof Object && !($scope.config.options instanceof Array)) {
 	                    for (var value in $scope.config.options) {
 	                        var label = $scope.config.options[value];
 	                        arr.push({
@@ -42964,6 +42964,8 @@
 	                            label: label
 	                        });
 	                    }
+	                } else if ($scope.config.options instanceof Array) {
+	                    arr = $scope.config.options;
 	                }
 
 	                // Sort default option to the top

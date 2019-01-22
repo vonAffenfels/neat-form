@@ -24,7 +24,7 @@ module.exports = function (neatFormModule) {
                         let arr = [];
 
                         // convert object to array for sorting reasons
-                        if ($scope.config.options instanceof Object) {
+                        if ($scope.config.options instanceof Object && !($scope.config.options instanceof Array)) {
                             for (let value in $scope.config.options) {
                                 let label = $scope.config.options[value];
                                 arr.push({
@@ -32,20 +32,19 @@ module.exports = function (neatFormModule) {
                                     label
                                 });
                             }
+                        } else if ($scope.config.options instanceof Array) {
+                            arr = $scope.config.options;
                         }
 
                         // Sort default option to the top
                         arr = arr.sort((a, b) => {
                             if (a.value === null || a.value === "null") {
                                 return -1;
-                            }
-                            else if (b.value === null || b.value === "null") {
+                            } else if (b.value === null || b.value === "null") {
                                 return 1;
-                            }
-                            else if (a.label < b.label) {
+                            } else if (a.label < b.label) {
                                 return -1;
-                            }
-                            else if (b.label < a.label) {
+                            } else if (b.label < a.label) {
                                 return 1;
                             }
 
