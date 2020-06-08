@@ -1,0 +1,25 @@
+<div class="form-group" ng-class="{'has-error': config.errors}">
+    <label class="col-md-2 control-label">{{config.label}}
+        <span class="required" ng-if="config.renderOptions.required">*</span>
+    </label>
+    <div class="col-md-10">
+        <div class="col-md-4">
+            <input type="text"
+                   ng-required="config.renderOptions.required"
+                   autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
+                   placeholder="{{config.renderOptions.placeholder.prefix}}"
+                   ng-readonly="config.readOnly" ng-model="config.value.prefix"
+                   ng-disabled="config.disabled"
+                   class="form-control">
+        </div>
+        <div class="col-md-8">
+            <input type="text"
+                   ng-required="config.renderOptions.required"
+                   autocomplete="{{config.renderOptions.autocomplete || 'off'}}"
+                   placeholder="{{config.renderOptions.placeholder.number}}"
+                   ng-readonly="config.readOnly" ng-model="config.value.number"
+                   ng-disabled="config.disabled"
+                   class="form-control col-md-8">
+        </div>
+    </div>
+</div>
