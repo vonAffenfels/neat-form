@@ -43,8 +43,8 @@
     "webpack": "^1.12.15"
   },
   "dependencies": {
-    "grunt-sass": "^2.0.0",
-    "node-sass": "^4.6.1",
+    "grunt-contrib-sass": "^2.0.0",
+    "node-sass": "^5.0.0",
     "webpack-dev-server": "^3.9.0"
   }
 }
